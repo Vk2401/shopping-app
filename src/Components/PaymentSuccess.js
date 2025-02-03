@@ -1,0 +1,27 @@
+import React from "react";
+import thankyou from '../utils/images/Thankyouforshopping.png';
+import success from '../utils/images/checklist.png';
+import reciptIcon from '../utils/images/reciptIcon.png';
+
+
+const PaymentSuccess=()=>{
+    return(
+        <div className="flex flex-col px-6 h-screen">
+            <div className="h-1/2 flex flex-col items-center justify-center">
+              <img src={success} alt="" className="h-20 w-20"/>
+              <strong>Payment Successful!</strong>
+            </div>
+
+            <div className="h-1/2 flex flex-col gap-5 items-center">
+                <img src={thankyou} alt="" className="w-[300px] h-[250px]"/>
+
+                <div className="flex flex-col gap-5 items-center">
+                    <button className="bg-ligghtGray text-black text-center rounded-full w-[250px] py-3 flex items-center justify-center"><img src={reciptIcon} alt="" className="h-7 w-7"/>  Receipt</button>
+                    <button className="bg-buttonColor text-lightWhite text-center rounded-full w-[250px] py-3">Done</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default PaymentSuccess;

@@ -1,10 +1,10 @@
 import React from "react";
-
+import bg from '../utils/images/desktop-bg.png';
 const ErrorScreen=()=>{
     return(
-        <div className="flex flex-col">
+        <div className="flex flex-col h-screen">
             <div className="bg-buttonColor">
-                <img src="" alt="" />
+                <img src={bg} alt="" />
             </div>
 
             <div className="flex flex-col justify-center items-center">

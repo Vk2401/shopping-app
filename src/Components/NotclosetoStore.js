@@ -12,7 +12,7 @@ const NotclosetoStore=()=>{
                 <img src={LanguageSwitch} alt="" className="w-10 h-10 absolute right-5"/>
             </div>
 
-            <div className="flex flex-col items-center justify-around px-5 h-2/3 py-10">
+            <div className="flex flex-col items-center justify-around px-5 h-full py-10">
                 <div className="flex flex-col gap-7">
                     <strong className="text-2xl font-bold text-black">You are not close to <br /> our Store</strong>
                     <div className="flex flex-col items-center gap-5 bg-ligghtGray px-10 py-8 rounded-md">
@@ -22,7 +22,7 @@ const NotclosetoStore=()=>{
                 </div>
             </div>
 
-            <div className="flex flex-col gap-5 items-center px-5 h-1/3 py-10">
+            <div className="flex flex-col gap-5 items-center px-5 h-2/3 py-10">
                 <strong className="text-black">Nearby Store</strong>
 
                 <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md">

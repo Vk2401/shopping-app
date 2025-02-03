@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import Systemscreen from './Components/Systemscreen';
+import ReachedStore from './Components/ReachedStore.js';
 
 function App() {
   return (
     <div className="App">
-       <Systemscreen/>
+       <ReachedStore/>
     </div>
   );
 }

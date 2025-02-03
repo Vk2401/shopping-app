@@ -8,7 +8,12 @@ module.exports = {
       colors: {
         customGreen: "#459132", 
         buttonColor:'#61AD4E',
-        redColor:'#FF2A2A'
+        redColor:'#FF2A2A',
+        lightBlack:'#666666',
+        lightWhite:'#FFFFFF'
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },

@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import ReachedStore from './Components/ReachedStore.js';
+import NotclosetoStore from './Components/NotclosetoStore.js';
 
 function App() {
   return (
     <div className="App">
-       <ReachedStore/>
+       <NotclosetoStore/>
     </div>
   );
 }

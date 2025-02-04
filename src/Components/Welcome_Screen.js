@@ -1,27 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext  } from "react";
 import loginUser from '../utils/images/loginUser.png';
 import bgImage from '../utils/images/desktop-bg.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { GlobalContext } from "../GlobalContext";
 
 const Welcome_Screen = () => {
+  const { isLocationEnabled, setIsLocationEnabled } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [data, setData] = useState('');
   const [location, setLocation] = useState(null);
-  const [gpsEnabled, setGpsEnabled] = useState(false); 
+  const [gpsEnabled, setGpsEnabled] = useState(true); 
   const [err, setErr] = useState('');
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState(""); 
   const [showOTPField, setShowOTPField] = useState(false);
 
+
   const getCurrectLocation = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        setGpsEnabled(true);
         setLocation({ latitude, longitude });
-        setGpsEnabled(true); // GPS is enabled
+     // GPS is enabled
       },
       (err) => {
+  
+        console.log(err.code);
+        console.log(err.PERMISSION_DENIED);
         if (err.code === err.PERMISSION_DENIED) {
           setGpsEnabled(false); // GPS denied
         }
@@ -103,7 +110,8 @@ const Welcome_Screen = () => {
       console.log(response);
 
       if (response.data.success) {
-        alert("OTP verified successfully!");
+        alert("OTP verified successfully!"); 
+        navigate('/products');
         // Redirect user or perform another action after successful verification
       } else {
         setErr("Invalid OTP. Please try again.");
@@ -114,19 +122,17 @@ const Welcome_Screen = () => {
     }
   };
 
-  // useEffect(() => {
-  //   getCurrectLocation(); // Get location on component mount
+  useEffect(() => {
+    getCurrectLocation();
+  }, []);
 
-  //   // Check GPS status
-  //   if (!gpsEnabled) {
-  //     window.alert('Need to enable location');
-  //     navigate('/no-location'); // Redirect if GPS is disabled
-  //   } else {
-  //     if (!location) {
-  //       window.alert('Something went wrong with the location');
-  //     }
-  //   }
-  // }, [gpsEnabled, location, navigate]); // Adding dependencies for correct behavior
+  useEffect(() => {
+    
+    if (gpsEnabled === false) {
+      window.alert('Need to enable location');
+      navigate('/no-location'); // Redirect if GPS is disabled
+    }
+  }, [gpsEnabled]);
 
   return (
     <div className="flex flex-col h-screen font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>

@@ -1,36 +1,101 @@
-import React, { useEffect } from "react";
-import LanguageSwitch from '../utils/images/LanguageSwitch.png';
-import noLocation from '../utils/images/noLocation.png';
+import React, { useState } from "react";
+import noLocation from "../utils/images/noLocation.png";
 
-const NolocationScreen=()=>{
-    useEffect(()=>{
-        console.log('lok');
-    },[]);
-    return(
-        <div className="flex flex-col justify-between h-screen font-poppins">
-            <div className="bg-buttonColor py-10 relative px-6 flex flex-col items-center justify-center"
-            style={{ borderBottomLeftRadius: '18%', borderBottomRightRadius: '18%' }}>
-                {/* <img src={LanguageSwitch} alt="" className="w-10 h-10 absolute right-5"/> */}
-            </div>
+const NolocationScreen = () => {
+  const [gpsEnabled, setGpsEnabled] = useState(false);
+  const [showPopup, setShowPopup] = useState(false); // State for modal visibility
 
-            <div className="flex flex-col h-full items-center justify-between px-6 pt-10">
-                <div className="flex flex-col items-center h-1/2 py-10 pt-20 w-full gap-3">
-                  <img src={noLocation} alt="" className="w-[280px] h-[350px]" />
+  function enableGPS() {
+    // Open Android GPS settings
+    window.location.href =
+      "intent://settings/#Intent;scheme=android-app;action=android.settings.LOCATION_SOURCE_SETTINGS;end;";
+    
+    // Close modal after clicking Yes
+    setShowPopup(false);
 
-                    <div className="flex flex-col items-center gap-3">
-                        <h3 className="text-redColor font-bold text-2xl">No Access to Location</h3>
-                        <h4 className="text-black text-lg font-semibold text-center text-wrap">
-                        Please Enable location permission <br /> to unlock all the Awesome features <br /> of our App!
-                        </h4>
-                    </div>
-                </div>
+    // Retry location after 5 seconds (to give time for user to enable GPS)
+    setTimeout(() => {
+      getCurrectLocation();
+    }, 5000);
+  }
 
-                <div className="flex flex-col items-center justify-center  h-1/2 w-full relative">
-                 <button  className="bg-redColor text-white text-center rounded-full w-[250px] py-4 absolute bottom-24 font-bold">Enable Location</button>
-                </div>
-            </div>
+  function getCurrectLocation() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log("Location enabled!", latitude, longitude);
+          setGpsEnabled(true);
+        },
+        (err) => {
+          console.log("Error:", err);
+          if (err.code === err.PERMISSION_DENIED) {
+            setShowPopup(true); // Show custom modal
+          } else if (err.code === err.POSITION_UNAVAILABLE) {
+            setShowPopup(true); // Show custom modal
+          }
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+  return (
+    <div className="flex flex-col justify-between h-screen font-poppins">
+      {/* Header Section */}
+      <div
+        className="bg-buttonColor py-10 relative px-6 flex flex-col items-center justify-center"
+        style={{ borderBottomLeftRadius: "18%", borderBottomRightRadius: "18%" }}
+      ></div>
+
+      {/* Content Section */}
+      <div className="flex flex-col h-full items-center justify-center px-6 pt-10 gap-6">
+        <div className="flex flex-col items-center flex-1 w-full gap-4 text-center">
+          <img src={noLocation} alt="No Location" className="w-[250px] h-[320px]" />
+
+          <h3 className="text-redColor font-bold text-2xl">No Access to Location</h3>
+          <h4 className="text-black text-lg font-semibold text-center">
+            Please enable location permission <br /> to unlock all the awesome features of our app!
+          </h4>
         </div>
-    );
-}
+
+        {/* Button Section */}
+        <div className="flex items-center justify-center w-full pb-10">
+          <button
+            className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
+            onClick={getCurrectLocation}
+          >
+            {gpsEnabled ? "Location Enabled ✅" : "Enable Location"}
+          </button>
+        </div>
+      </div>
+
+      {/* Custom Modal Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 w-80 text-center">
+            <h2 className="text-lg font-bold mb-4">Enable GPS</h2>
+            <p className="text-gray-600 mb-4">GPS is turned off. Would you like to enable it?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+                onClick={enableGPS}
+              >
+                Yes, Enable
+              </button>
+              <button
+                className="bg-gray-400 text-white px-4 py-2 rounded-md"
+                onClick={() => setShowPopup(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default NolocationScreen;

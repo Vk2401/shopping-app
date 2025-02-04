@@ -10,6 +10,9 @@ const Welcome_Screen = () => {
   const [location, setLocation] = useState(null);
   const [gpsEnabled, setGpsEnabled] = useState(false); 
   const [err, setErr] = useState('');
+  const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
+  const [serverOTP, setServerOTP] = useState(""); 
+  const [showOTPField, setShowOTPField] = useState(false);
 
   const getCurrectLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -27,8 +30,6 @@ const Welcome_Screen = () => {
     );
   };
 
-  const [showOTPField, setShowOTPField] = useState(false);
-
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value })); 
@@ -39,10 +40,20 @@ const Welcome_Screen = () => {
     return phoneRegex.test(phoneNumber);
   };
 
-  const handleOTPChange = (e) => {
-    const { name, value } = e.target;
-    const index = name.replace("otp", "");
-    console.log(`OTP digit at position ${index}: ${value}`);
+  const handleOTPChange = (e, index) => {
+   
+    const { value } = e.target;
+
+    if (value.length > 1) return;
+
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
+
+    // Move focus to the next input
+    if (value && index < 4) {
+      document.getElementById(`otp-${index + 1}`).focus();
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -55,18 +66,19 @@ const Welcome_Screen = () => {
     }
 
     setErr(''); // Reset error
-
     setShowOTPField(true); // Show OTP fields
 
     try {
-      const response = await axios.post("http://localhost:30001/api/user/signin", data);
+      const response = await axios.post("http://localhost:30001/api/auth/request-otp", data);
+      console.log(response);
       
-      if (!response.data.success) {
-        window.alert('Failed to sign in');
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // if (!response.data.success) {
+      //   window.alert('Failed to sign in');
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
+      // setServerOTP(response.data.otp)
       
-      setData(''); // Reset form data on success
+
 
     } catch (error) {
       console.error('Error signing in:', error);
@@ -74,19 +86,47 @@ const Welcome_Screen = () => {
     }
   };
 
-  useEffect(() => {
-    getCurrectLocation(); // Get location on component mount
+  const handleOTPSubmit = async (e) => {
+    e.preventDefault();
+    const enteredOTP = otpValues.join("");
 
-    // Check GPS status
-    if (!gpsEnabled) {
-      window.alert('Need to enable location');
-      navigate('/no-location'); // Redirect if GPS is disabled
-    } else {
-      if (!location) {
-        window.alert('Something went wrong with the location');
-      }
+    if (enteredOTP.length !== 5) {
+      setErr("Please enter the complete OTP");
+      return;
     }
-  }, [gpsEnabled, location, navigate]); // Adding dependencies for correct behavior
+
+    try {
+      const response = await axios.post("http://localhost:30001/api/auth/verify-otp", {
+        phoneNumber: data.pnumber,
+        otp: enteredOTP,
+      });
+      console.log(response);
+
+      if (response.data.success) {
+        alert("OTP verified successfully!");
+        // Redirect user or perform another action after successful verification
+      } else {
+        setErr("Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      setErr("Error verifying OTP.");
+    }
+  };
+
+  // useEffect(() => {
+  //   getCurrectLocation(); // Get location on component mount
+
+  //   // Check GPS status
+  //   if (!gpsEnabled) {
+  //     window.alert('Need to enable location');
+  //     navigate('/no-location'); // Redirect if GPS is disabled
+  //   } else {
+  //     if (!location) {
+  //       window.alert('Something went wrong with the location');
+  //     }
+  //   }
+  // }, [gpsEnabled, location, navigate]); // Adding dependencies for correct behavior
 
   return (
     <div className="flex flex-col h-screen font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
@@ -95,10 +135,10 @@ const Welcome_Screen = () => {
         <img src={loginUser} alt="" className="h-[200px] w-[200px]" />
       </div>
 
-      <div className="h-1/2 w-full flex flex-col items-center gap-1">
+      <div className="h-1/2 w-full flex flex-col items-center gaxp-1">
         <h1 className="text-3xl font-bold text-white">Sign In</h1>
 
-        <form onSubmit={handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg w-[90%] max-w-md">
+        <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit}  className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg w-[90%] max-w-md">
           <div className="flex flex-col gap-3 w-full">
             <label htmlFor="phone" className="font-semibold text-lg text-gray-700">Phone Number</label>
             <input
@@ -119,10 +159,12 @@ const Welcome_Screen = () => {
                       key={index}
                       type="number"
                       name={`otp${index}`}
+                      id={`otp-${index}`} // Add ID for focus
                       maxLength={1}
                       className="w-[50px] h-[50px] border border-gray-300 outline-none py-3 px-4 text-center rounded-md focus:ring-2 focus:ring-buttonColor transition-all"
                       placeholder="-"
-                      onChange={handleOTPChange}
+                      value={otpValues[index]}
+                      onChange={(e) => handleOTPChange(e, index)}
                     />
                   ))}
                 </div>

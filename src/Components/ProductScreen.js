@@ -4,9 +4,26 @@ import rightArrow from '../utils/images/rightArrow.png';
 import searchicon from '../utils/images/search.png';
 import productImage from '../utils/images/ic_at_dawn.png';
 import basketImage from '../utils/images/basket.png';
+import { useLocation } from '../context/locationContext.js';
+import axios from "axios";
 
 const ProductScreen=()=>{
-    useEffect(()=>{
+  const { location, setLocation, gpsEnabled, setGpsEnabled,accessToken,setaccessToken,refreshToken,setrefreshToken,user,setUser } = useLocation();
+
+    useEffect(async ()=>{
+   
+      const response = await axios.get(
+        'https://devapi-tanlux.storetech.ai/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=lo',
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'accept': '*/*',
+            'env': 'demo'
+          }
+        }
+      );
+      console.log(response);
+
         Products.forEach((product) => {
             if(product.isVending){
                 console.log(product.title);
@@ -16,7 +33,6 @@ const ProductScreen=()=>{
     },[])
 
     const [searchTerm, setSearchTerm] = useState('');
-
     const [productCounts, setProductCounts] = useState({});
     // State to store selected products
     const [selectedProducts, setSelectedProducts] = useState({});

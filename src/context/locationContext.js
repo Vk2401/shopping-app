@@ -4,10 +4,13 @@ const LocationContext=createContext();
 
 const LocationProvider=({children})=>{
     const [location,setLocation]=useState(null);
-     const [gpsEnabled, setGpsEnabled] = useState(true); 
+    const [gpsEnabled, setGpsEnabled] = useState(true); 
+    const [accessToken,setaccessToken]=useState('');
+    const [refreshToken,setrefreshToken]=useState('');
+    const [user,setUser]=useState(null);
 
     return(
-        <LocationContext.Provider value={{location,setLocation,gpsEnabled,setGpsEnabled}}>
+        <LocationContext.Provider value={{user,setUser,location,setLocation,gpsEnabled,setGpsEnabled,setaccessToken,accessToken,setrefreshToken,refreshToken}}>
             {children}
         </LocationContext.Provider>
     )

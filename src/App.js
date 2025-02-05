@@ -5,6 +5,7 @@ import NolocationScreen from './Components/NolocationScreen.js';
 import ProductScreen from './Components/ProductScreen.js';
 import SystemScreen from './Components/Systemscreen.js';
 import NotclosetoStore from './Components/NotclosetoStore.js';
+import Stores from './Components/Stores.js';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
       <Route path="/no-location" element={<NolocationScreen />} />
       <Route path="/products" element={<ProductScreen />} />
       <Route path="/notClose-toStore" element={<NotclosetoStore />} />
+      <Route path="/stores" element={<Stores />} />
+
 
       <Route path="/" element={<Welcome_Screen />} />
     </Routes>

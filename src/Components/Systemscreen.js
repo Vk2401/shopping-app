@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import bgImage from '../utils/images/desktop-bg.png';
 
 const Systemscreen = () => {

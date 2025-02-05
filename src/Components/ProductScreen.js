@@ -3,6 +3,7 @@ import Products from '../products.json';
 import rightArrow from '../utils/images/rightArrow.png';
 import searchicon from '../utils/images/search.png';
 import productImage from '../utils/images/ic_at_dawn.png';
+import basketImage from '../utils/images/basket.png';
 
 const ProductScreen=()=>{
     useEffect(()=>{
@@ -13,59 +14,92 @@ const ProductScreen=()=>{
             }
         });
     },[])
-    const [showCounter, setShowCounter] = useState(false);
-    const [count, setCount] = useState(1);
+
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [productCounts, setProductCounts] = useState({});
     // State to store selected products
     const [selectedProducts, setSelectedProducts] = useState({});
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
   
+    const updateTotals = (newSelectedProducts) => {
+      let count = 0;
+      let price = 0;
+    
+      Object.values(newSelectedProducts).forEach((product) => {
+        count += product.quantity;
+        price += product.quantity * product.price; // Assuming `price` is a number
+      });
+    
+      setTotalCount(count);
+      setTotalPrice(price);
+    };
+    
     const handleAddClick = (product) => {
       setProductCounts((prev) => ({
         ...prev,
-        [product._id]: 1, // Set initial count to 1
+        [product._id]: 1,
       }));
-  
-      setSelectedProducts((prev) => ({
-        ...prev,
+    
+      const updatedProducts = {
+        ...selectedProducts,
         [product._id]: { ...product, quantity: 1 },
-      }));
+      };
+    
+      setSelectedProducts(updatedProducts);
+      updateTotals(updatedProducts);
     };
-  
+    
     const handleIncrement = (product) => {
       setProductCounts((prev) => ({
         ...prev,
         [product._id]: (prev[product._id] || 0) + 1,
       }));
-  
-      setSelectedProducts((prev) => ({
-        ...prev,
+    
+      const updatedProducts = {
+        ...selectedProducts,
         [product._id]: {
           ...product,
-          quantity: (prev[product._id]?.quantity || 0) + 1,
+          quantity: (selectedProducts[product._id]?.quantity || 0) + 1,
         },
-      }));
+      };
+    
+      setSelectedProducts(updatedProducts);
+      updateTotals(updatedProducts);
     };
-  
+    
     const handleDecrement = (product) => {
       setProductCounts((prev) => {
         const newCount = Math.max((prev[product._id] || 0) - 1, 0);
         const updatedCounts = { ...prev, [product._id]: newCount };
-  
+    
+        const newSelectedProducts = { ...selectedProducts };
         if (newCount === 0) {
-          const newSelected = { ...selectedProducts };
-          delete newSelected[product._id]; // Remove product if count is 0
-          setSelectedProducts(newSelected);
+          delete newSelectedProducts[product._id];
         } else {
-          setSelectedProducts((prev) => ({
-            ...prev,
-            [product._id]: { ...product, quantity: newCount },
-          }));
+          newSelectedProducts[product._id] = {
+            ...product,
+            quantity: newCount,
+          };
         }
-  
+    
+        setSelectedProducts(newSelectedProducts);
+        updateTotals(newSelectedProducts);
+    
         return updatedCounts;
       });
     };
+
+    const handleSearchChange = (e) => {
+      setSearchTerm(e.target.value.toLowerCase());
+      console.log(e.target.value.toLowerCase());
+    };
+
+    const filteredProducts = Products?.filter((product) =>
+      product.title.toLowerCase().includes(searchTerm) && product.isVending
+    );
+
     return(
         <div className="px-6 font-poppins h-screen">
             <div className="">
@@ -79,6 +113,7 @@ const ProductScreen=()=>{
                     <input 
                     type="text" 
                     placeholder="Search" 
+                    onChange={handleSearchChange} 
                     className="w-full font-semibold py-3 px-5 border-2 border-orange-400 outline-none text-left rounded-full focus:ring-2 focus:ring-orange-500 transition-all"
                     />
                     <img 
@@ -90,11 +125,11 @@ const ProductScreen=()=>{
                 </div>
             </div>
 
-            <div className="flex flex-col h-[720px] overflow-y-auto">
-                {Products?.filter((product) => product.isVending).map((product) => (
+            <div className="flex flex-col h-[650px] overflow-y-auto py-2">
+                {filteredProducts?.filter((product) => product.isVending).map((product) => (
                     <div
                     key={product._id}
-                    className="flex justify-between items-center w-full py-5 px-5 border-b-2 border-gray-200 outline-none"
+                    className="flex justify-between items-center w-full py-3  border-b-2 border-gray-200 outline-none"
                     >
                     <div className="flex items-center justify-center gap-3">
                         <img src={product.picture} alt={product.title} className="h-16 w-14" />
@@ -124,13 +159,24 @@ const ProductScreen=()=>{
                     </div>
                     </div>
                 ))}
-                <button
-                    onClick={() => console.log("Selected Products:", selectedProducts)}
-                    className="mt-5 p-2 bg-orange-500 text-white rounded"
-                >
-                    Checkout
-                </button>
+                
            </div>
+
+           <div className="shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor w-full px-3 flex items-center justify-between rounded-md py-5">
+                  <button
+                      onClick={() => console.log("Selected Products:", selectedProducts)}
+                      className="p-2 px-10 font-semibold text-lg bg-white text-black rounded-full text-center"
+                  >
+                      Checkout
+                  </button>
+
+                  <div className="flex items-center text-white font-semibold tracking-wider gap-2">
+                    <span>Total <br /> {totalPrice.toFixed(2)}</span>
+                    <div className="h-16 w-16 flex items-center justify-center bg-white rounded-full">
+                      <img src={basketImage} alt="" className="h-9 w-9" />
+                    </div>
+                  </div>
+            </div>
         </div>
     );
 }

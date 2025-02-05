@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import noLocation from "../utils/images/noLocation.png";
+import { useLocation } from '../context/locationContext.js';
 
 const NolocationScreen = () => {
-  const [gpsEnabled, setGpsEnabled] = useState(false);
+  const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
   const [showPopup, setShowPopup] = useState(false); // State for modal visibility
 
   function enableGPS() {
@@ -15,6 +16,7 @@ const NolocationScreen = () => {
 
     // Retry location after 5 seconds (to give time for user to enable GPS)
     setTimeout(() => {
+      console.log('l0k');
       getCurrectLocation();
     }, 5000);
   }
@@ -29,6 +31,7 @@ const NolocationScreen = () => {
         },
         (err) => {
           console.log("Error:", err);
+          console.log('yes');
           if (err.code === err.PERMISSION_DENIED) {
             setShowPopup(true); // Show custom modal
           } else if (err.code === err.POSITION_UNAVAILABLE) {
@@ -40,7 +43,10 @@ const NolocationScreen = () => {
       alert("Geolocation is not supported by this browser.");
     }
   }
-
+  
+    useEffect(() => {
+      getCurrectLocation();
+    }, []);
   return (
     <div className="flex flex-col justify-between h-screen font-poppins">
       {/* Header Section */}
@@ -52,10 +58,10 @@ const NolocationScreen = () => {
       {/* Content Section */}
       <div className="flex flex-col h-full items-center justify-center px-6 pt-10 gap-6">
         <div className="flex flex-col items-center flex-1 w-full gap-4 text-center">
-          <img src={noLocation} alt="No Location" className="w-[250px] h-[320px]" />
+          <img src={noLocation} alt="No Location" className="w-[250px] h-[300px]" />
 
-          <h3 className="text-redColor font-bold text-2xl">No Access to Location</h3>
-          <h4 className="text-black text-lg font-semibold text-center">
+          <h3 className="text-redColor font-bold text-2xl mt-5">No Access to Location</h3>
+          <h4 className="text-black text-lg font-semibold text-center mt-8">
             Please enable location permission <br /> to unlock all the awesome features of our app!
           </h4>
         </div>
@@ -66,7 +72,7 @@ const NolocationScreen = () => {
             className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
             onClick={getCurrectLocation}
           >
-            {gpsEnabled ? "Location Enabled ✅" : "Enable Location"}
+            {gpsEnabled ? "Location Enabled" : "Enable Location"}
           </button>
         </div>
       </div>

@@ -3,39 +3,52 @@ import loginUser from '../utils/images/loginUser.png';
 import bgImage from '../utils/images/desktop-bg.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import { GlobalContext } from "../GlobalContext";
+import { useLocation } from '../context/locationContext.js';
 
 const Welcome_Screen = () => {
-  const { isLocationEnabled, setIsLocationEnabled } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [data, setData] = useState('');
-  const [location, setLocation] = useState(null);
-  const [gpsEnabled, setGpsEnabled] = useState(true); 
   const [err, setErr] = useState('');
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState(""); 
   const [showOTPField, setShowOTPField] = useState(false);
-
+  const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
+  const [error, setError] = useState(null);
 
   const getCurrectLocation = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log(latitude);
+        console.log(longitude);
+
         setGpsEnabled(true);
-        setLocation({ latitude, longitude });
-     // GPS is enabled
+        setLocation({latitude,longitude});
+        // GPS is enabled
       },
       (err) => {
-  
-        console.log(err.code);
-        console.log(err.PERMISSION_DENIED);
         if (err.code === err.PERMISSION_DENIED) {
           setGpsEnabled(false); // GPS denied
         }
-        setLocation(null);
       }
     );
   };
+
+  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // Earth's radius in meters
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      
+      const a = 
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c; // Distance in meters
+      
+      return distance;
+  }
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -85,8 +98,6 @@ const Welcome_Screen = () => {
       // }
       // setServerOTP(response.data.otp)
       
-
-
     } catch (error) {
       console.error('Error signing in:', error);
       setErr('Error signing in');
@@ -111,8 +122,19 @@ const Welcome_Screen = () => {
 
       if (response.data.success) {
         alert("OTP verified successfully!"); 
-        navigate('/products');
-        // Redirect user or perform another action after successful verification
+        const {latitude,longitude}=location;
+        const newLat = 13.0220500; // Example latitude
+        const newLon = 80.2423200; // Example longitude
+        const distance = getDistanceFromLatLonInMeters(latitude, longitude, newLat, newLon);
+
+        if (distance <= 5) {
+          navigate('/products');
+            console.log("The location is within 5 meters.");
+        } else {
+          navigate('/notClose-toStore');
+            console.log("The location is farther than 5 meters.");
+        }
+
       } else {
         setErr("Invalid OTP. Please try again.");
       }
@@ -127,23 +149,21 @@ const Welcome_Screen = () => {
   }, []);
 
   useEffect(() => {
-    
     if (gpsEnabled === false) {
-      window.alert('Need to enable location');
       navigate('/no-location'); // Redirect if GPS is disabled
     }
   }, [gpsEnabled]);
 
+
   return (
     <div className="flex flex-col h-screen font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
-      <div className="h-1/2 w-full flex flex-col items-center justify-center gap-4">
+      <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6">
         <strong className="text-white text-3xl font-bold">Welcome!</strong>
         <img src={loginUser} alt="" className="h-[200px] w-[200px]" />
+        <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
       <div className="h-1/2 w-full flex flex-col items-center gaxp-1">
-        <h1 className="text-3xl font-bold text-white">Sign In</h1>
-
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit}  className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg w-[90%] max-w-md">
           <div className="flex flex-col gap-3 w-full">
             <label htmlFor="phone" className="font-semibold text-lg text-gray-700">Phone Number</label>

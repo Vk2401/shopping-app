@@ -4,6 +4,7 @@ import bgImage from '../utils/images/desktop-bg.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../context/locationContext.js';
+import { useInfo } from '../context/infoContext.js';
 
 const Welcome_Screen = () => {
   const navigate = useNavigate();
@@ -12,8 +13,15 @@ const Welcome_Screen = () => {
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState(""); 
   const [showOTPField, setShowOTPField] = useState(false);
-  const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
+  const { location, setLocation, gpsEnabled, setGpsEnabled,accessToken,setaccessToken,refreshToken,setrefreshToken,user,setUser } = useLocation();
+  const {apiBase,env}=useInfo();
   const [error, setError] = useState(null);
+  const loginData = {
+      "login_type": "bankid",
+      "login_id": "199609052387",
+      "login_name": "Jegan",
+      "device_type": "android"
+  };
 
   const getCurrectLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -118,8 +126,6 @@ const Welcome_Screen = () => {
         phoneNumber: data.pnumber,
         otp: enteredOTP,
       });
-      console.log(response);
-
       if (response.data.success) {
         alert("OTP verified successfully!"); 
         const {latitude,longitude}=location;
@@ -131,8 +137,27 @@ const Welcome_Screen = () => {
           navigate('/products');
             console.log("The location is within 5 meters.");
         } else {
-          navigate('/notClose-toStore');
-            console.log("The location is farther than 5 meters.");
+          // `${apiBase}/auth/customer-login`
+
+          const response = await axios.post(`${apiBase}/auth/customer-login`, loginData, {
+            headers: {
+              'accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          });
+          console.log(response);
+
+          setaccessToken(response.data.tokens.access.token);
+          setrefreshToken(response.data.tokens.refresh);
+          setUser(response.data.user);
+
+          sessionStorage.setItem("user", JSON.stringify(response.data.user));
+          sessionStorage.setItem('refreshToken',response.data.tokens.refresh.token);
+          sessionStorage.setItem('accessToken',response.data.tokens.access.token);
+
+
+          navigate('/stores');
+          console.log("The location is farther than 5 meters.");
         }
 
       } else {
@@ -153,7 +178,6 @@ const Welcome_Screen = () => {
       navigate('/no-location'); // Redirect if GPS is disabled
     }
   }, [gpsEnabled]);
-
 
   return (
     <div className="flex flex-col h-screen font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>

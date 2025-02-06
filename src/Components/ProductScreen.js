@@ -1,40 +1,69 @@
-import React, { useEffect, useState } from "react";
-import Products from '../products.json';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import rightArrow from '../utils/images/rightArrow.png';
 import searchicon from '../utils/images/search.png';
 import productImage from '../utils/images/ic_at_dawn.png';
 import basketImage from '../utils/images/basket.png';
+import { useInfo } from '../context/infoContext.js';
 import { useLocation } from '../context/locationContext.js';
+import { useCart } from "../context/CartContext.js";
 import axios from "axios";
 
 const ProductScreen=()=>{
-  const { location, setLocation, gpsEnabled, setGpsEnabled,accessToken,setaccessToken,refreshToken,setrefreshToken,user,setUser } = useLocation();
+  const {cart, addToCart , removeFromCart} = useCart();
+  const {apiBase,env}=useInfo();
+  const [Products,setProducts]=useState();
+  const [accessToken,setAccessToken]=useState();
+  const navigate = useNavigate();
 
-    useEffect(async ()=>{
-   
-      const response = await axios.get(
-        'https://devapi-tanlux.storetech.ai/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=lo',
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'accept': '*/*',
-            'env': 'demo'
-          }
-        }
-      );
-      console.log(response);
+  useEffect(() => {
+    console.log(cart);
+     setAccessToken(sessionStorage.getItem('accessToken'));
 
-        Products.forEach((product) => {
-            if(product.isVending){
-                console.log(product.title);
-                console.log(product.price);
+     const fetchProducts = async () => {
+          try {
+          const response = await axios.get(          
+            `${apiBase}/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
+            {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'accept': '*/*',
+                'env': env,
+              },
             }
-        });
-    },[])
+          );
+          console.log(response);
+          setProducts(response.data); // Set the fetched products
+        } catch (error) {
+          console.error('Error fetching products:', error);
+        }
+      };
+
+    fetchProducts();
+  }, [accessToken]); 
+
+  useEffect(() => {
+    if (cart.length > 0) {
+
+      // Create an object mapping product IDs to their quantities
+      const updatedCounts = cart.reduce((acc, product) => {
+        acc[product._id] = product.quantity; // Store quantity
+        return acc;
+      }, {});
+  
+      setProductCounts(updatedCounts);
+    }
+    if (Products?.length > 0) {
+      Products.forEach((product) => {
+        if (product.isVending) {
+          // Handle the logic for vending products
+        }
+      });
+    }
+  }, [Products]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [productCounts, setProductCounts] = useState({});
-    // State to store selected products
     const [selectedProducts, setSelectedProducts] = useState({});
     const [totalCount, setTotalCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -64,10 +93,13 @@ const ProductScreen=()=>{
       };
     
       setSelectedProducts(updatedProducts);
-      updateTotals(updatedProducts);
+      updateTotals(updatedProducts); // Call function to update total count & price
     };
     
+  
     const handleIncrement = (product) => {
+      addToCart({ ...product, quantity: 1 });
+    
       setProductCounts((prev) => ({
         ...prev,
         [product._id]: (prev[product._id] || 0) + 1,
@@ -82,34 +114,62 @@ const ProductScreen=()=>{
       };
     
       setSelectedProducts(updatedProducts);
-      updateTotals(updatedProducts);
+      updateTotals(updatedProducts); // Call function to update totals
     };
     
-    const handleDecrement = (product) => {
-      setProductCounts((prev) => {
-        const newCount = Math.max((prev[product._id] || 0) - 1, 0);
-        const updatedCounts = { ...prev, [product._id]: newCount };
+  
+   const handleDecrement = (product) => {
+  setProductCounts((prev) => {
+    const newCount = Math.max((prev[product._id] || 0) - 1, 0);
+
+    if (newCount === 0) {
+      removeFromCart(product._id); // ✅ Remove from cart when count reaches 0
+    } else {
+      addToCart({ ...product, quantity: newCount }); // ✅ Update the cart with new quantity
+    }
+
+    return { ...prev, [product._id]: newCount };
+  });
+};
+
     
-        const newSelectedProducts = { ...selectedProducts };
-        if (newCount === 0) {
-          delete newSelectedProducts[product._id];
-        } else {
-          newSelectedProducts[product._id] = {
-            ...product,
-            quantity: newCount,
-          };
-        }
-    
-        setSelectedProducts(newSelectedProducts);
-        updateTotals(newSelectedProducts);
-    
-        return updatedCounts;
-      });
+
+    const handleSearchChange = async (e) => {
+      const value=e.target.value.toLowerCase();
+
+      if(e.target.value.toLowerCase()===''){
+        const response = await axios.get(          
+          `${apiBase}/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'accept': '*/*',
+              'env': env,
+            },
+          }
+        );
+        setProducts(response.data);
+      }
+      else{
+        const response = await axios.get(
+          `https://devapi-tanlux.storetech.ai/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'accept': '*/*',
+              'env': 'demo',
+            },
+          }
+        );
+        setProducts(response.data);
+      }
+
+      setSearchTerm(e.target.value.toLowerCase());
     };
 
-    const handleSearchChange = (e) => {
-      setSearchTerm(e.target.value.toLowerCase());
-      console.log(e.target.value.toLowerCase());
+    const handleCheckout = () => {
+      // Passing selectedProducts to checkout page using `navigate`
+      navigate('/checkout', { state: { selectedProducts } });
     };
 
     const filteredProducts = Products?.filter((product) =>
@@ -180,7 +240,7 @@ const ProductScreen=()=>{
 
            <div className="shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor w-full px-3 flex items-center justify-between rounded-md py-5">
                   <button
-                      onClick={() => console.log("Selected Products:", selectedProducts)}
+                      onClick={handleCheckout}
                       className="p-2 px-10 font-semibold text-lg bg-white text-black rounded-full text-center"
                   >
                       Checkout

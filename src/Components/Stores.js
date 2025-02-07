@@ -6,7 +6,6 @@ import 'leaflet/dist/leaflet.css';
 import axios from "axios";
 import { useLocation } from '../context/locationContext.js';
 import { useInfo } from '../context/infoContext.js';
-import rightArrow from '../utils/images/rightArrow.png';
 import searchicon from '../utils/images/search.png';
 import leftArrow from '../utils/images/leftArrow.png';
 
@@ -83,8 +82,6 @@ const Stores = ()=>{
                   'env': env,
                 },
               });
-
-              console.log(response);
               setShops(response.data.data);
         }
         fetchStores();

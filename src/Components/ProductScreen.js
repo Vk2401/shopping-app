@@ -7,13 +7,18 @@ import loader from '../utils/images/loader.gif';
 import axios from "axios";
 import leftArrow from '../utils/images/leftArrow.png';
 import { useLocation as useRouterLocation,useNavigate  } from 'react-router-dom';
+import productDefaultimg from '../utils/images/grocery.png';
+import discountImag from '../utils/images/discount.png';
+import closeImage from '../utils/images/ios-close-circle.png';
 
 const ProductScreen=()=>{
     
   const location2 = useRouterLocation();
-  const { storeID } = location2.state || {};
+   const [showPopup, setShowPopup] = useState(false);
+  // const { storeID } = location2.state || {};
+  const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
   const [loading, setLoading] = useState(true); // Loader state
-  const {cart, addToCart , removeFromCart} = useCart();
+  const {cart, addToCart , removeFromCart,total} = useCart();
   const {apiBase,env,refreshTokenFunction}=useInfo();
   const [Products,setProducts]=useState();
   const [accessToken,setAccessToken]=useState('');
@@ -25,6 +30,8 @@ const ProductScreen=()=>{
   },[])
 
   useEffect(() => {
+    console.log(sessionStorage.getItem('accessToken'));
+    console.log(storeID)
      const fetchProducts = async () => {
           try {
 
@@ -79,6 +86,7 @@ const ProductScreen=()=>{
     const [selectedProducts, setSelectedProducts] = useState({});
     const [totalCount, setTotalCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [saleruleProduct,setSaleruleProduct]=useState([]);
   
     const updateTotals = (newSelectedProducts) => {
       let count = 0;
@@ -109,7 +117,6 @@ const ProductScreen=()=>{
       updateTotals(updatedProducts); // Call function to update total count & price
     };
     
-
     const handleIncrement = (product) => {
       addToCart({ ...product, quantity: 1 });
     
@@ -129,20 +136,20 @@ const ProductScreen=()=>{
       setSelectedProducts(updatedProducts);
       updateTotals(updatedProducts); // Call function to update totals
     };
-  
+
    const handleDecrement = (product) => {
-  setProductCounts((prev) => {
-    const newCount = Math.max((prev[product._id] || 0) - 1, 0);
+    setProductCounts((prev) => {
+      const newCount = Math.max((prev[product._id] || 0) - 1, 0);
 
-    if (newCount === 0) {
-      removeFromCart(product._id); // ✅ Remove from cart when count reaches 0
-    } else {
-      addToCart({ ...product, quantity: newCount }); // ✅ Update the cart with new quantity
-    }
+      if (newCount === 0) {
+        removeFromCart(product._id); // ✅ Remove from cart when count reaches 0
+      } else {
+        addToCart({ ...product, quantity: newCount }); // ✅ Update the cart with new quantity
+      }
 
-    return { ...prev, [product._id]: newCount };
-  });
-  };
+      return { ...prev, [product._id]: newCount };
+    });
+    };
 
     const handleSearchChange = async (e) => {
       const value=e.target.value.toLowerCase();
@@ -178,13 +185,20 @@ const ProductScreen=()=>{
     };
 
     const handleCheckout = () => {
-      // Passing selectedProducts to checkout page using `navigate`
       navigate('/checkout', { state: { selectedProducts } });
     };
 
     const filteredProducts = Products?.filter((product) =>
       product.title.toLowerCase().includes(searchTerm) && product.isVending
     );
+    
+
+    const showSalePopup=(productID)=>{
+
+      const foundProduct = filteredProducts.find(product => product._id === productID);
+      setSaleruleProduct(foundProduct);
+      setShowPopup(true);
+    }
 
     return(
       <div>
@@ -196,7 +210,7 @@ const ProductScreen=()=>{
         <div className="px-6 font-poppins h-screen">
           <div className="">
               <div className="flex items-center justify-center relative py-7">
-              <img src={leftArrow} alt="" className="absolute left-0 h-8 w-8" />
+              <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="absolute left-0 h-8 w-8" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
               </div>
 
@@ -225,7 +239,7 @@ const ProductScreen=()=>{
                   >
                   <div className="flex items-center justify-center gap-3">
                       <div className="flex flex-col rounded-md">
-                        <img src={product.picture} alt={product.title} className="h-16 w-14 p-1 bg-gray-100" />
+                        <img src={product.picture || productDefaultimg} alt={product.title} className="h-16 w-14 p-1 bg-gray-100" />
                         {product.ageRestriction && (
                           <span className="bg-red-700 text-white text-center rounded-b-md w-full">
                             18+
@@ -234,9 +248,39 @@ const ProductScreen=()=>{
                       </div>
                       <div className="flex flex-col gap-2">
                       <div className="flex flex-col">
-                          <p className="text-lightBlack">{product.title}</p>
+                        <strong>{product.title}</strong>
+                        {!product.isDiscount ? (
+                          <div className="flex items-center">
+                            <strong className="text-buttonColor font-semibold">{product.price} $</strong>
+                            {product.sale && 
+                            <img onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }} 
+                             src={discountImag} alt="Sale" className="h-5 w-5 ml-2" />}  
+                            {/* {product.sale && product.salePrice === 0 && product.saleGroupRules.length === 0 && (
+                              <img 
+                                onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }} 
+                                src={discountImag} 
+                                alt="Sale" 
+                                className="h-5 w-5 ml-3" 
+                              />
+                            )} */}
+                          </div>
+                        ) : (
+                          <div className="flex items-center">
+                            <strong className="font-semibold text-buttonColor">
+                              {(product.price - (product.price * product.discount) / 100).toFixed(2)}
+                              <span className="text-gray-400 ml-2 line-through decoration-red-500">{product.price} kr</span>
+                            </strong>
+                          </div>
+                        )}
+                                                {/* {!product.isDiscount ? (
+                          <strong className="text-buttonColor font-semibold">{product.price} $</strong> 
+                        ) : (
+                          <strong className=" font-semibold text-buttonColor">
+                            { (product.price - (product.price * product.discount) / 100).toFixed(2) }
+                             <span className="text-gray-400 ml-2 line-through decoration-red-500">{product.price} kr</span> 
+                          </strong>
+                        )} */}
                       </div>
-                      <strong className="text-buttonColor">{product.price} kr</strong>
                       </div>
                   </div>
 
@@ -270,11 +314,92 @@ const ProductScreen=()=>{
                 </button>
 
                 <div className="flex items-center text-white font-semibold tracking-wider gap-2">
-                  <span>Total <br /> {totalPrice}</span>
+                  <span>Total <br /> {total}</span>
                   <div className="h-16 w-16 flex items-center justify-center bg-white rounded-full">
                     <img src={basketImage} alt="" className="h-9 w-9" />
                   </div>
                 </div>
+          </div>
+        </div>
+      )}
+
+      {showPopup && (
+        <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 px-5 pb-5">
+          <div className="w-full max-h-[500px] bg-white rounded-2xl px-2">
+              <div className="flex items-center justify-between py-5 ">
+                  <div className="flex  items-center justify-start gap-x-2">
+                      <img src={discountImag} alt="" className="h-8 w-8"/>
+                      <strong>Offers</strong>
+                  </div>
+
+                  <img src={closeImage}onClick={() => setShowPopup(false)}  alt="" className="h-8 w-8"/>
+              </div>
+
+              <div key={saleruleProduct._id} className="flex justify-between items-center w-full py-3  border-b-2 border-gray-200 outline-none">
+                <div className="flex items-center justify-center gap-3">
+                      <div className="flex flex-col rounded-md">
+                        <img src={saleruleProduct.picture || productDefaultimg} alt={saleruleProduct.title} className="h-16 w-14 p-1 bg-gray-100" />
+                        {saleruleProduct.ageRestriction && (
+                          <span className="bg-red-700 text-white text-center rounded-b-md w-full">
+                            18+
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col">
+                        <strong>{saleruleProduct.title}</strong>
+                        {!saleruleProduct.isDiscount ? (
+                          <div className="flex items-center">
+                            <strong className="text-buttonColor font-semibold">{saleruleProduct.price} $</strong>
+                            {saleruleProduct.sale && 
+                            <img onClick={(e) => { e.stopPropagation(); showSalePopup(saleruleProduct._id); }} 
+                             src={discountImag} alt="Sale" className="h-5 w-5 ml-2" />}  
+                            {/* {product.sale && product.salePrice === 0 && product.saleGroupRules.length === 0 && (
+                              <img 
+                                onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }} 
+                                src={discountImag} 
+                                alt="Sale" 
+                                className="h-5 w-5 ml-3" 
+                              />
+                            )} */}
+                          </div>
+                        ) : (
+                          <div className="flex items-center">
+                            <strong className="font-semibold text-buttonColor">
+                              {(saleruleProduct.price - (saleruleProduct.price * saleruleProduct.discount) / 100).toFixed(2)}
+                              <span className="text-gray-400 ml-2 line-through decoration-red-500">{saleruleProduct.price} kr</span>
+                            </strong>
+                          </div>
+                        )}
+                                                {/* {!product.isDiscount ? (
+                          <strong className="text-buttonColor font-semibold">{product.price} $</strong> 
+                        ) : (
+                          <strong className=" font-semibold text-buttonColor">
+                            { (product.price - (product.price * product.discount) / 100).toFixed(2) }
+                             <span className="text-gray-400 ml-2 line-through decoration-red-500">{product.price} kr</span> 
+                          </strong>
+                        )} */}
+                      </div>
+                      </div>
+                </div>
+
+                <div className="text-buttonColor font-bold text-lg">
+                      {!productCounts[saleruleProduct._id] ? (
+                      <button
+                          onClick={() => handleAddClick(saleruleProduct)}
+                          className="border-2 border-orange-400 outline-none py-1 px-5 text-center rounded-full"
+                      >
+                          Add
+                      </button>
+                      ) : (
+                      <div className="flex justify-between gap-4 border-2 border-orange-400 outline-none py-1 px-5 text-center rounded-full">
+                          <button onClick={() => handleDecrement(saleruleProduct)}>-</button>
+                          <span>{productCounts[saleruleProduct._id]}</span>
+                          <button onClick={() => handleIncrement(saleruleProduct)}>+</button>
+                      </div>
+                      )}
+                </div>
+              </div>
           </div>
         </div>
       )}

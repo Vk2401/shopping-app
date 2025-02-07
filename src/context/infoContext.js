@@ -39,8 +39,6 @@ const InfoProvider=({children})=>{
 
               sessionStorage.setItem('accessToken',response.data.access.token);
               sessionStorage.setItem('refreshToken',response.data.refresh.token);
-              console.log(sessionStorage.getItem('accessToken')); // Check if the token is saved correctly
-              console.log(sessionStorage.getItem('refreshToken'));
               return ;  // Optionally, return the data from the response
             }
       

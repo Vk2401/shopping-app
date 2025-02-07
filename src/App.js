@@ -12,7 +12,6 @@ import PaymentScreen from './Components/PaymentScreen.js';
 import PaymentSuccess from './Components/PaymentSuccess.js';
 import ProfileScreen from './Components/ProfileScreen.js';
 import ReachedStore from './Components/ReachedStore.js';
-
 import ProtectedRoute from "./context/ProtectedRoute.js";
 import NotFoundScreen from "./Pages/NotFoundScreen.js"; 
 

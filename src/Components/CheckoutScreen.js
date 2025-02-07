@@ -7,14 +7,10 @@ import leftArrow from '../utils/images/leftArrow.png';
 const CheckoutScreen=()=>{
     const location = useLocation();
     const navigate = useNavigate();
-    const total=0;
-    const selectedProducts = location.state?.selectedProducts || [];
-    const { cart, removeFromCart, clearCart } = useCart();
 
-    const productsArray = Array.isArray(selectedProducts) ? selectedProducts : Object.values(selectedProducts);
-    const totalPrice = cart.reduce((total, product) => {
-        return total + (product.price * product.quantity);
-      }, 0); // Start with an initial value of 0
+    const selectedProducts = location.state?.selectedProducts || [];
+    const { cart,total, removeFromCart, clearCart } = useCart();
+    console.log(cart);
 
       const handleCheckout = () => {
         // Passing selectedProducts to checkout page using `navigate`
@@ -24,7 +20,7 @@ const CheckoutScreen=()=>{
     return(
        <div className="h-screen flex flex-col px-6 font-poppins relative">
          <div className="flex items-center justify-center relative h-10 py-8">
-            <img src={leftArrow} alt="" className="absolute left-0 h-7 w-7" />
+            <img  onClick={() => navigate('/products')}  src={leftArrow} alt="" className="absolute left-0 h-7 w-7" />
             <h1 className="text-lightBlack font-bold text-xl">Checkout</h1>
          </div>
 
@@ -50,8 +46,11 @@ const CheckoutScreen=()=>{
                 <span className="text-lightBlack">Qty: {product.quantity}</span>
                 {/* Display price */}
                 <span className="text-buttonColor font-semibold text-lg">
-                    ${product.price * product.quantity}
+                  ${product.isDiscount 
+                    ? ((product.price - (product.price * product.discount) / 100) * product.quantity).toFixed(2)
+                    : (product.price * product.quantity).toFixed(2)}
                 </span>
+
                 </div>
             </div>
 
@@ -65,7 +64,7 @@ const CheckoutScreen=()=>{
          </div>
 
          <div className="flex justify-center w-full items-center absolute bottom-10  right-0">
-           <button  onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay - {totalPrice} Rs</button>
+           <button  onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay - {total} Rs</button>
          </div>
        </div>
     );

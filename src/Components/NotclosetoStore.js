@@ -1,10 +1,79 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LanguageSwitch from '../utils/images/LanguageSwitch.png'
 import location from '../utils/images/location.png'
 import locationImage from '../utils/images/locatioImage.png'
-
+import { useLocation as useRouterLocation,useNavigate  } from 'react-router-dom';
+import { useLocation as useCustomLocation } from '../context/locationContext.js';
 
 const NotclosetoStore=()=>{
+    const navigate = useNavigate();
+    const [distance,setDistance]=useState('');
+    const [storeID,setStoreID]=useState('');
+    const { location, setLocation, setGpsEnabled} = useCustomLocation();
+    const location2 = useRouterLocation();
+    const { stores } = location2.state || { stores: [] };
+
+    const haversineDistance = (lat1, lon1, lat2, lon2) => {
+        const toRadians = (deg) => (deg * Math.PI) / 180;
+        const R = 6371; // Earth's radius in km
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c * 1000; // Convert km to meters
+      }
+ 
+    const getCurrectLocation2 = () => {
+        setStoreID(stores[0].id);
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const formattedDistance = (distance) => {
+                return distance % 1 === 0 ? distance : distance >= 100 ? Math.round(distance) : Number(distance.toFixed(3));
+              };
+              
+              const distance = haversineDistance(latitude, longitude, stores[0].location.lat, stores[0].location.lon);
+              setDistance(formattedDistance(distance));
+
+          },
+          (err) => {
+            if (err.code === err.PERMISSION_DENIED) {
+              setGpsEnabled(false); // GPS denied
+            }
+          }
+        );
+      };
+
+    const getCurrectLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setGpsEnabled(true);
+            setLocation({latitude,longitude});
+            // GPS is enabled
+          },
+          (err) => {
+            if (err.code === err.PERMISSION_DENIED) {
+              setGpsEnabled(false); // GPS denied
+            }
+          }
+        );
+      };
+      const openGoogleMaps = (currentLat, currentLon, storeLat, storeLon) => {
+        const googleMapsUrl = `https://www.google.com/maps/dir/${currentLat},${currentLon}/${storeLat},${storeLon}`;
+        window.open(googleMapsUrl, "_blank"); // Open in a new tab
+      };    
+
+    useEffect(()=>{
+        getCurrectLocation2();
+        getCurrectLocation();
+        // setDistance(haversineDistance(location.latitude,location.longitude,stores.location.lat,stores.location.lon))
+    },[]);
     return(
         <div className="flex flex-col justify-between h-screen w-full font-poppins">
             <div className="bg-buttonColor py-10 relative flex flex-col items-center justify-center"
@@ -34,11 +103,13 @@ const NotclosetoStore=()=>{
                         </div>
                     </div>
 
-                    <strong className="text-black">200 m</strong>
+                    <strong className="text-black">{distance+' m'}</strong>
                 </div>
 
-                <button className="bg-buttonColor text-white text-center text-lg font-semibold rounded-full w-[250px] py-3">Get Direction</button>
-                <button className="bg-ligghtGray text-black text-center text-lg font-semibold rounded-full w-[250px] py-3">Find Other Stores</button>
+                <button className="bg-buttonColor text-white text-center text-lg font-semibold rounded-full w-[250px] py-3"
+                  onClick={() => navigate('/products', { state: { storeID } })}>Get Product</button>
+                <button className="bg-ligghtGray text-black text-center text-lg font-semibold rounded-full w-[250px] py-3"
+                onClick={() => navigate('/stores')}>Find Other Stores</button>
             </div>
         </div>
     );

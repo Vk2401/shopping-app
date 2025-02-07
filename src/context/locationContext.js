@@ -1,5 +1,4 @@
 import  {React,createContext,useContext,useEffect,useState} from 'react';
-
 const LocationContext=createContext();
 
 const LocationProvider=({children})=>{

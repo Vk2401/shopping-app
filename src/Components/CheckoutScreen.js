@@ -1,11 +1,12 @@
 import { div } from "framer-motion/client";
 import react, { useEffect, useState } from "react";
-import rightArrow from '../utils/images/rightArrow.png';
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 import { useCart } from "../context/CartContext.js";
+import leftArrow from '../utils/images/leftArrow.png';
 
 const CheckoutScreen=()=>{
     const location = useLocation();
+    const navigate = useNavigate();
     const total=0;
     const selectedProducts = location.state?.selectedProducts || [];
     const { cart, removeFromCart, clearCart } = useCart();
@@ -15,10 +16,15 @@ const CheckoutScreen=()=>{
         return total + (product.price * product.quantity);
       }, 0); // Start with an initial value of 0
 
+      const handleCheckout = () => {
+        // Passing selectedProducts to checkout page using `navigate`
+        navigate('/payment', { state: { selectedProducts } });
+      };
+
     return(
        <div className="h-screen flex flex-col px-6 font-poppins relative">
          <div className="flex items-center justify-center relative h-10 py-8">
-            <img src={rightArrow} alt="" className="absolute left-0 h-7 w-7" />
+            <img src={leftArrow} alt="" className="absolute left-0 h-7 w-7" />
             <h1 className="text-lightBlack font-bold text-xl">Checkout</h1>
          </div>
 
@@ -59,7 +65,7 @@ const CheckoutScreen=()=>{
          </div>
 
          <div className="flex justify-center w-full items-center absolute bottom-10  right-0">
-           <button className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay - {totalPrice} Rs</button>
+           <button  onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay - {totalPrice} Rs</button>
          </div>
        </div>
     );

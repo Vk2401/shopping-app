@@ -3,7 +3,6 @@ import thankyou from '../utils/images/Thankyouforshopping.png';
 import success from '../utils/images/checklist.png';
 import reciptIcon from '../utils/images/reciptIcon.png';
 
-
 const PaymentSuccess=()=>{
     return(
         <div className="flex flex-col px-6 h-screen">

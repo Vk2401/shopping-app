@@ -24,7 +24,6 @@ export const CartProvider = ({ children }) => {
       localStorage.setItem("cart", JSON.stringify(cart));
     } else {
       localStorage.removeItem("cart"); // Clear storage if cart is empty
-      console.log('iess');
     }
   }, [cart]);
 

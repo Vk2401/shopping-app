@@ -1,16 +1,37 @@
 import { div } from "framer-motion/client";
-import react from "react";
-import rightArrow from '../utils/images/rightArrow.png';
+import react, { useEffect } from "react";
 import visaImage from '../utils/images/visa.png';
 import cardImage from '../utils/images/card.png';
 import gPay from '../utils/images/Google-Pay-hero.webp'
 import closeIcon from '../utils/images/ios-close-circle.png';
+import { useLocation ,useNavigate} from 'react-router-dom';
+import { useCart } from "../context/CartContext.js";
+import { useAuth } from "../context/AuthContext.js";
+import leftArrow from '../utils/images/leftArrow.png';
+
 
 const PaymentScreen =()=>{
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {logout }=useAuth();
+    const total=0;
+    const selectedProducts = location.state?.selectedProducts || [];
+    const { cart, removeFromCart, clearCart } = useCart();
+
+
+    const totalPrice = cart.reduce((total, product) => {
+        return total + (product.price * product.quantity);
+      }, 0);
+
+      const handleCheckout = () => {
+        // Passing selectedProducts to checkout page using `navigate`
+        navigate('/PaymentSuccess');
+      };
+
     return(
         <div className="flex flex-col px-5 font-poppins h-screen">
              <div className="flex items-center justify-between py-7">
-                <img src={rightArrow} alt="" className="h-8 w-8" />
+                <img src={leftArrow} alt="" className="h-8 w-8" />
                 <h1 className="text-black font-bold text-xl">Payment</h1>
                 <img src={closeIcon} alt="" className=" h-8 w-8" />
             </div>
@@ -49,7 +70,7 @@ const PaymentScreen =()=>{
                        <div className="flex flex-col gap-2 border-b-2 border-black-100">
                             <div className="flex items-center justify-between py-2">
                                 <span className="font-bold">Sub Total</span>
-                                <span className="font-bold">128 kr</span>
+                                <span className="font-bold">{totalPrice} Rs</span>
                             </div>
 
                             <div className="flex items-center justify-between py-2">
@@ -59,11 +80,11 @@ const PaymentScreen =()=>{
                        </div>
                        <div className="flex justify-between items-center py-4">
                             <strong className="font-bold text-xl">Total</strong>
-                            <strong className="font-bold text-xl">106 kr</strong>
+                            <strong className="font-bold text-xl">{totalPrice} Rs</strong>
                        </div>
                     </div>
-                  
-                    <button className="bg-buttonColor text-white text-center rounded-full py-3 px-8 font-semibold">Continue</button>
+                    
+                    <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full py-3 px-8 font-semibold">Continue</button>
                 </div>
             </div>
         </div>

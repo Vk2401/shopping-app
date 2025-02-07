@@ -8,7 +8,7 @@ import { useLocation } from '../context/locationContext.js';
 import { useInfo } from '../context/infoContext.js';
 import rightArrow from '../utils/images/rightArrow.png';
 import searchicon from '../utils/images/search.png';
-
+import leftArrow from '../utils/images/leftArrow.png';
 
 const Stores = ()=>{
       const {apiBase,env}=useInfo();
@@ -95,7 +95,7 @@ const Stores = ()=>{
         <div className="h-screen font-poppins">
             <div className="flex flex-col px-7 h-1/2">
                 <div className="flex items-center justify-center relative py-7">
-                <img src={rightArrow} alt="" className="absolute left-0 h-8 w-8" />
+                <img src={leftArrow} alt="" className="absolute left-0 h-8 w-8" />
                 <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
                 </div>
 

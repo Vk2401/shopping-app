@@ -20,21 +20,32 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   // Save cart to localStorage whenever it changes
+  // useEffect(() => {
+  //   if (cart.length > 0) {
+  //     localStorage.setItem("cart", JSON.stringify(cart));
+  //   } else {
+  //     localStorage.removeItem("cart"); // Clear storage if cart is empty
+  //   }
+  // }, [cart]);
+
+  // Update total whenever the cart changes
+  
   useEffect(() => {
     if (cart.length > 0) {
       localStorage.setItem("cart", JSON.stringify(cart));
     } else {
       localStorage.removeItem("cart"); // Clear storage if cart is empty
     }
-  }, [cart]);
 
-  // Update total whenever the cart changes
-  useEffect(() => {
+
     const newTotal = cart.reduce((acc, item) => {
+
       const priceAfterDiscount = item.discount
         ? item.price - (item.price * item.discount) / 100 // Apply discount
         : item.price;
-
+        console.log(priceAfterDiscount);
+        console.log(item.quantity);
+        console.log( priceAfterDiscount * item.quantity);
       return acc + priceAfterDiscount * item.quantity;
     }, 0);
 
@@ -57,6 +68,7 @@ export const CartProvider = ({ children }) => {
       }
     });
   };
+
 
   // Function to remove item from cart
   const removeFromCart = (productId) => {

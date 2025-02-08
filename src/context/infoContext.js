@@ -10,7 +10,9 @@ const InfoProvider=({children})=>{
 
 
     const refreshTokenFunction = async () => {
+       console.log('lok');
         const refreshToken = sessionStorage.getItem('refreshToken');
+        console.log(refreshToken);
         const maxAttempts = 3;  // Max number of retries
         let attempt = 0;
 

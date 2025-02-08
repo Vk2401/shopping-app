@@ -5,7 +5,6 @@ import cardImage from '../utils/images/card.png';
 import gPay from '../utils/images/Google-Pay-hero.webp'
 import closeIcon from '../utils/images/ios-close-circle.png';
 import { useLocation ,useNavigate} from 'react-router-dom';
-import { useCart } from "../context/CartContext.js";
 import { useAuth } from "../context/AuthContext.js";
 import leftArrow from '../utils/images/leftArrow.png';
 
@@ -16,12 +15,11 @@ const PaymentScreen =()=>{
     const {logout }=useAuth();
     const total=0;
     const selectedProducts = location.state?.selectedProducts || [];
-    const { cart, removeFromCart, clearCart } = useCart();
 
 
-    const totalPrice = cart.reduce((total, product) => {
-        return total + (product.price * product.quantity);
-      }, 0);
+    // const totalPrice = cart.reduce((total, product) => {
+    //     return total + (product.price * product.quantity);
+    //   }, 0);
 
       const handleCheckout = () => {
         // Passing selectedProducts to checkout page using `navigate`
@@ -70,7 +68,7 @@ const PaymentScreen =()=>{
                        <div className="flex flex-col gap-2 border-b-2 border-black-100">
                             <div className="flex items-center justify-between py-2">
                                 <span className="font-bold">Sub Total</span>
-                                <span className="font-bold">{totalPrice} Rs</span>
+                                <span className="font-bold"> Rs</span>
                             </div>
 
                             <div className="flex items-center justify-between py-2">
@@ -80,7 +78,7 @@ const PaymentScreen =()=>{
                        </div>
                        <div className="flex justify-between items-center py-4">
                             <strong className="font-bold text-xl">Total</strong>
-                            <strong className="font-bold text-xl">{totalPrice} Rs</strong>
+                            <strong className="font-bold text-xl">Rs</strong>
                        </div>
                     </div>
                     

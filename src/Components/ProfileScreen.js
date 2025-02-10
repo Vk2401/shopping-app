@@ -9,7 +9,6 @@ import leftArrow from '../utils/images/leftArrow.png';
 const ProfileScreen=()=>{
   const [user,setUser]=useState([]);
 
-
     useEffect(()=>{
       setUser(JSON.parse(sessionStorage.getItem("user")));
     },[]);

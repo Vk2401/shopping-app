@@ -12,10 +12,8 @@ import closeImage from '../utils/images/ios-close-circle.png';
 import tickMark from '../utils/images/tick.png';
 
 const ProductScreen=()=>{
-
- 
     
-   const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
   const [loading, setLoading] = useState(true); // Loader state
   const {apiBase,env,refreshTokenFunction}=useInfo();
@@ -61,7 +59,6 @@ const ProductScreen=()=>{
     }
   ]);
   
-
   useEffect(() => {
     const addedProducts=JSON.parse(localStorage.getItem("cart"))|| [];
 
@@ -118,7 +115,7 @@ const ProductScreen=()=>{
             "saleGroupRules": [
                 {
                     "count": 1,
-                    "price": 10,
+                    "price": 8,
                     "status": "Active"
                 },
                 {
@@ -195,8 +192,8 @@ const ProductScreen=()=>{
                   "status": "Active"
               },
               {
-                  "count": 8,
-                  "price": 10,
+                  "count": 10,
+                  "price": 7,
                   "status": "Active"
               }
           ],
@@ -236,14 +233,20 @@ const ProductScreen=()=>{
    
           let fetchProduct=response;
           let cart = JSON.parse(localStorage.getItem("cart"))|| [];
+ 
           if(cart.length>0){
-            fetchProduct.forEach(fPro=>{
+            console.log(response);
+            response.forEach(fPro=>{
               cart.forEach(cartPRO=>{
                 if(cartPRO.productID==fPro._id){
-                  fPro.quantity=cartPRO.productCount
+                  console.log(typeof(cartPRO.totalCount))
+                  console.log(fPro.quantity);
+                  
+                  fPro.quantity = (fPro.quantity ?? 0) + cartPRO.totalCount;
                 }
               })
             })
+
             setProducts(fetchProduct);
           }else{
             console.log(response);
@@ -268,13 +271,24 @@ const ProductScreen=()=>{
     let cartProduct = JSON.parse(localStorage.getItem('cart')) || [];
     let updatedProduct = null;
   
-    // Check if the product already exists
     for (let pro of cartProduct) {
       if (pro.productID === newProduct._id) {
         pro.price += newProduct.price - (newProduct.price * newProduct.discount) / 100;
         pro.productCount += 1; // Increase count
         updatedProduct = pro;
-        break;
+
+        localStorage.setItem('cart', JSON.stringify(cartProduct));
+  
+        // Reset state
+        setDiscountProduct({
+          productType: '',
+          productID: '',
+          discountRate: '',
+          originalAmount: 0,
+          price: 0,
+          productCount: 0
+        });
+        return;
       }
     }
   
@@ -291,8 +305,6 @@ const ProductScreen=()=>{
       cartProduct.push(updatedProduct);
     }
   
-    // Update localStorage with modified cart
-    console.log(cartProduct);
     localStorage.setItem('cart', JSON.stringify(cartProduct));
   
     // Reset state
@@ -308,72 +320,96 @@ const ProductScreen=()=>{
     setProducts(prevProducts =>
       prevProducts.map(pro =>
         pro._id === newProduct._id
-          ? { ...pro, quantity: pro.quantity + 1 } // Create a new object with updated quantity
+          ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
           : pro
       )
-    );
+    ); 
     
   };
 
   const addSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+    let ruleAppliedArr=[];
   
     if (cartProduct.length > 0) {
-      let flag = 0;
-  
       cartProduct.forEach((cartItem) => {
-        if (cartItem.productID === newProduct._id) {
-          const rules = newProduct.saleGroupRules;
+        if (cartItem.productID == newProduct._id) {
 
-          // const matchedRule = rules.find(rule => rule.count === newProduct.count);
+          const rules = newProduct.saleGroupRules;
+          let count = (newProduct.quantity) + 1
 
           rules.some((rule) => {
-            if (flag === 1) {
-              return true; // Stops the loop
+            if (rule.status === "Active" && !rule.count<=count) {
+            
+                let remainder = count % rule.count;
+                let appliedCount = Math.floor(count / rule.count);
+                let notAppliedPrice = remainder * newProduct.price;
+                let appliedPrice = appliedCount * rule.price;
+
+
+                let saleobj=
+                  {
+                    productType: 'saleRule',
+                    productID: newProduct._id,
+                    totalCount: count,
+                    saleAppliedCount: appliedCount,
+                    saleRuleNotAppliedCount: remainder,
+                    salePrice: appliedPrice,
+                    notSaleRulePrice: notAppliedPrice
+                  }
+                ruleAppliedArr.push(saleobj);
             }
-            if (rule.status === "Active") {
-              let count = (newProduct.quantity || 0) + 1;
-              let remainder = count % rule.count;
-              let appliedCount = Math.floor(count / rule.count);
-              console.log(remainder);
-              console.log(appliedCount);
-          
-              let notAppliedPrice = remainder * newProduct.price;
-              let appliedPrice = appliedCount * rule.price;
-          
-              cartItem.totalCount = count;
-              cartItem.saleAppliedCount = appliedCount;
-              cartItem.saleRuleNotAppliedCount = remainder;
-              cartItem.salePrice = appliedPrice;
-              cartItem.notSaleRulePrice = notAppliedPrice;
-          
-              flag = 1;
-              return true; // Breaks out of the loop
-            }
-            return false; // Continue looping
           });
-          
         }
       });
-  
-      if (flag === 0) {
-        newProduct.saleGroupRules.forEach((rule) => {
-          if (rule.status === "Active" && rule.count === 1) {
-            const newSaleRuleProduct = {
-              productType: "saleRule",
-              productID: newProduct._id,
-              totalCount: 1,
-              saleAppliedCount: 1,
-              saleRuleNotAppliedCount: 0,
-              salePrice: rule.price,
-              notSaleRulePrice: 0,
-            };
-  
-            cartProduct.push(newSaleRuleProduct);
+
+      if(ruleAppliedArr.length==0){
+        const rules = newProduct.saleGroupRules;
+      
+        rules.forEach((rule)=>{
+          if(rule.count==1 && rule.status=='Active'){
+
+            let saleOBJ=(
+              {
+                productType: 'saleRule',
+                productID: newProduct._id,
+                totalCount: 1,
+                saleAppliedCount: 1,
+                saleRuleNotAppliedCount: 0,
+                salePrice: rule.price,
+                notSaleRulePrice: 0
+              }
+            );
+
+            ruleAppliedArr.push(saleOBJ);
+
           }
         });
       }
+
+      let isReplaced = false;
+      const filteredArr = ruleAppliedArr.filter(obj => obj.saleAppliedCount !== 0);
+      console.log(filteredArr);
+
+      const lowestSaleApplied = filteredArr.length > 0 
+        ? filteredArr.reduce((min, obj) => obj.saleAppliedCount < min.saleAppliedCount ? obj : min, filteredArr[0]) 
+        : null;
+
+
+      cartProduct = cartProduct.map(product => {
+        if (String(product.productID) === String(lowestSaleApplied.productID)) {
+  
+          isReplaced = true; // Mark that we found a match
+          return lowestSaleApplied;
+        }
+        return product;
+      });
+
+      if(!isReplaced){
+        cartProduct.push(lowestSaleApplied);
+      }
     }
+
     else{
       newProduct.saleGroupRules.forEach((rule) => {
         if (rule.status === "Active" && rule.count === 1) {
@@ -392,71 +428,196 @@ const ProductScreen=()=>{
       });
     }
   
-    console.log(cartProduct);
     localStorage.setItem("cart", JSON.stringify(cartProduct));
 
     setProducts(prevProducts =>
       prevProducts.map(pro =>
         pro._id === newProduct._id
-          ? { ...pro, quantity: pro.quantity + 1 } // Create a new object with updated quantity
+          ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
           : pro
       )
-    );
+    );    
+    
   };
 
   const addNormalProduct=(newProduct)=>{
+    let cartProducts=JSON.parse(localStorage.getItem('cart')) || [];
 
+    if(cartProducts.length>0){
+      cartProducts.forEach(cartproduct=>{
+        if(cartproduct.productID==newProduct._id){
+          cartproduct.productCount++;
+          cartproduct.price+= cartproduct.price;
+          localStorage.setItem('cart',JSON.stringify(cartproduct));
+          return;
+        }
+      });
+    }
+
+    setNormalProduct({
+      productType: 'NormalProduct',
+      productID: newProduct.productID,
+      productCount: 1,
+      price: newProduct.price
+    })
+
+    cartProducts.push(normalProduct);
+    localStorage.setItem('cart',JSON.stringify(cartProducts));
+
+    setNormalProduct({
+      productType: '',
+      productID: '',
+      productCount: '',
+      price: ''
+    })
+
+    setProducts(prevProducts =>
+      prevProducts.map(pro =>
+        pro._id === newProduct._id
+          ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
+          : pro
+      )
+    ); 
   }
 
   const decrementSaleRuleProduct=(newProduct)=>{
-    const cartProducts=JSON.parse(localStorage.getItem('cart')) || [];
+  
+    let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
 
-    cartProducts.forEach((cartProduct)=>{
-      if(cartProduct.ProductID==newProduct._id){
-        newProduct.quantity=newProduct.quantity-1;
-        const rules=newProduct.saleGroupRules;
-        if( newProduct.quantity==1){
-          rules.forEach((rule)=>{
-          if(rule.status=='Active'){
-            if(rule.count==1){
-                cartProduct.totalCount= 1,
-                cartProduct.saleAppliedCount= 1,
-                cartProduct.saleRuleNotAppliedCount= 0,
-                cartProduct.salePrice= rule.price,
-                cartProductnotSaleRulePrice=0
-            }
-          }
-        })
-        }else if(newProduct.quantity>1){
+    if ((newProduct.quantity - 1) == 0) {
+      // Remove the object by filtering out the one with matching productID
+      cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
 
-          for (let rule of rules) {
-            if (rule.status == 'Active') {
-              if (!(newProduct.quantity < rule.count)) {
-                let count = (newProduct.quantity || 0) + 1;
+      // Update localStorage with the modified cart
+      localStorage.setItem("cart", JSON.stringify(cartProduct));
+
+      setProducts(prevProducts =>
+        prevProducts.map(pro =>
+          pro._id === newProduct._id
+            ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
+            : pro
+        )
+      );    
+      return;
+    }
+
+   
+    let ruleAppliedArr=[];
+ 
+    if (cartProduct.length > 0) {
+     
+      cartProduct.forEach((cartItem) => {
+        if (cartItem.productID == newProduct._id) {
+         
+          const rules = newProduct.saleGroupRules;
+          let count = (newProduct.quantity) - 1
+
+          rules.some((rule) => {
+            if (rule.status === "Active" && !rule.count<=count && !rule.count==0) {
+            
                 let remainder = count % rule.count;
                 let appliedCount = Math.floor(count / rule.count);
-          
                 let notAppliedPrice = remainder * newProduct.price;
                 let appliedPrice = appliedCount * rule.price;
-          
-                cartProduct.totalCount = count;
-                cartProduct.saleAppliedCount = appliedCount;
-                cartProduct.saleRuleNotAppliedCount = remainder;
-                cartProduct.salePrice = appliedPrice;
-                cartProduct.notSaleRulePrice = notAppliedPrice;
-          
-                break; // Exits the loop after this line
-              }
-            }
-          }
-        }
-        
-      }
-    })
 
-    localStorage.setItem('cart',JSON.stringify(cartProducts))
+
+                let saleobj=
+                  {
+                    productType: 'saleRule',
+                    productID: newProduct._id,
+                    totalCount: count,
+                    saleAppliedCount: appliedCount,
+                    saleRuleNotAppliedCount: remainder,
+                    salePrice: appliedPrice,
+                    notSaleRulePrice: notAppliedPrice
+                  }
+                ruleAppliedArr.push(saleobj);
+            }
+          });
+        }
+      });
+
+    
+      if(ruleAppliedArr.length==0){
+        const rules = newProduct.saleGroupRules;
+      
+        rules.forEach((rule)=>{
+          if(rule.count==1 && rule.status=='Active'){
+
+            let saleOBJ=(
+              {
+                productType: 'saleRule',
+                productID: newProduct._id,
+                totalCount: 1,
+                saleAppliedCount: 1,
+                saleRuleNotAppliedCount: 0,
+                salePrice: rule.price,
+                notSaleRulePrice: 0
+              }
+            );
+
+            ruleAppliedArr.push(saleOBJ);
+
+          }
+        });
+      }  
+   
+      let isReplaced = false;
+      const filteredArr = ruleAppliedArr.filter(obj => obj.saleAppliedCount !== 0);
+
+      const lowestSaleApplied = filteredArr.length > 0 
+        ? filteredArr.reduce((min, obj) => obj.saleAppliedCount < min.saleAppliedCount ? obj : min, filteredArr[0]) 
+        : null;
+
+      cartProduct = cartProduct.map(product => {
+        if (String(product.productID) === String(lowestSaleApplied.productID)) {
+  
+          isReplaced = true; // Mark that we found a match
+          return lowestSaleApplied;
+        }
+        return product;
+      });
+
+      if(!isReplaced){
+        cartProduct.push(lowestSaleApplied);
+      }
+    }
+  
+    localStorage.setItem("cart", JSON.stringify(cartProduct));
+
+    setProducts(prevProducts =>
+      prevProducts.map(pro =>
+        pro._id === newProduct._id
+          ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
+          : pro
+      )
+    );    
   }
 
+  const decrementProduct=(product)=>{
+    const cartProducts=JSON.parse(localStorage.getItem('cart')||[]);
+
+    cartProducts = cartProducts.filter(cartproduct => {
+      if (cartproduct.productID === product._id) {
+        cartproduct.productCount--;
+        let finalPrice=cartproduct.price - product.price;
+
+        if(product.isDiscount ){
+          finalPrice=product.price - (product.price * product.discount) / 100;
+        }
+
+        cartproduct.price =  finalPrice; 
+        product.quantity--;
+    
+        return product.quantity !== 0;
+      }
+      return true; // Keep all other products in the array
+    });
+    
+    // Update localStorage if needed
+    localStorage.setItem("cart", JSON.stringify(cartProducts));
+    
+  }
   
    const handleAddClick = (product)=>{
     if(product.isDiscount){
@@ -466,7 +627,7 @@ const ProductScreen=()=>{
       addSaleRuleProduct(product);
     }
     else{
-
+      addNormalProduct(product);
     }
    }
     
@@ -478,12 +639,18 @@ const ProductScreen=()=>{
       addSaleRuleProduct(Product);
     }
     else{
-
+      addNormalProduct(Product);
     }
    }
 
   const handleDecrement = (Product)=>{
-    
+    if(Product.sale && Product.salePrice==0 && Product.saleGroupRules.length>0){
+      decrementSaleRuleProduct(Product);
+    }
+    else{
+      decrementProduct(Product)
+    }
+   
   }
 
     const handleSearchChange = async (e) => {

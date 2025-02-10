@@ -530,12 +530,11 @@ const ProductScreen=()=>{
   const addnewSaleruleProduct=(cartProducts,Product)=>{
     let flag=0;
     let rules=Product.saleGroupRules;
-    console.log(rules);
 
     rules.forEach((rule)=>{
       if(rule.status=='Active' && rule.count==1){
         let srOBJ={
-          productType: 'sale rule',
+          productType: 'saleRule',
           productID: Product._id,
           totalCount: 1,
           saleAppliedCount: 1,
@@ -550,21 +549,18 @@ const ProductScreen=()=>{
     })
     if(flag==0){
       let srOBJ={
-        productType: 'sale rule',
+        productType: 'saleRule',
         productID: Product._id,
         totalCount: 1,
         saleAppliedCount: 0,
         saleRuleNotAppliedCount: 1,
-        salePrice: Product.price,
-        notSaleRulePrice: 1
+        salePrice: 0,
+        notSaleRulePrice: Product.price
       }
-
       cartProducts.push(srOBJ);
     }
-  
-
-    localStorage.setItem('cart',JSON.stringify(cartProducts));
   }
+  
   const findTotal=(cartProducts,op)=>{
     console.log(cartProducts);
 
@@ -656,53 +652,55 @@ const ProductScreen=()=>{
   const addSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     let ruleAppliedArr=[];
-    let flag=0;
   
     if (cartProduct.length > 0) {
-     
-      cartProduct.forEach((cartItem) => {
-      
-        if (cartItem.productID == newProduct._id) {
-          const rules = newProduct.saleGroupRules;
-          let count = (newProduct.quantity) + 1
+      let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
 
-          rules.forEach((rule) => {
-            if (rule.status === "Active" && (count % rule.count) == 0) {
-                let remainder = count % rule.count;
-                let appliedCount = Math.floor(count / rule.count);
-                let notAppliedPrice = remainder * newProduct.price;
-                let appliedPrice = appliedCount * rule.price;
+      if(matchingProduct!=null){
+        const rules = matchingProduct.saleGroupRules;
+        const count=matchingProduct.quantity+1;
 
-                let saleobj=
-                  {
-                    productType: 'saleRule',
-                    productID: newProduct._id,
-                    totalCount: count,
-                    saleAppliedCount: appliedCount,
-                    saleRuleNotAppliedCount: remainder,
-                    salePrice: appliedPrice,
-                    notSaleRulePrice: notAppliedPrice
-                  }
-                ruleAppliedArr.push(saleobj);
-            }
-          });
+        rules.forEach((rule) => {
+          if (rule.status === "Active" && rule.count <= count) {
+              let remainder = count % rule.count;
+              let appliedCount = Math.floor(count / rule.count);
+              let notAppliedPrice = remainder * newProduct.price;
+              let appliedPrice = appliedCount * rule.price;
+
+              let saleobj=
+                {
+                  productType: 'saleRule',
+                  productID: newProduct._id,
+                  totalCount: count,
+                  saleAppliedCount: appliedCount,
+                  saleRuleNotAppliedCount: remainder,
+                  salePrice: appliedPrice,
+                  notSaleRulePrice: notAppliedPrice
+                }
+              ruleAppliedArr.push(saleobj);
+          }
+        });
+
+        if(ruleAppliedArr.length==0){
+          matchingProduct.totalCount=totalCount++
+          matchingProduct.saleRuleNotAppliedCount=matchingProduct.saleRuleNotAppliedCount++,
+          matchingProduct.notSaleRulePrice+=newProduct.price
         }
-      });
-    
-      if(ruleAppliedArr.length>0){
-        console.log('lkjkj990');
-        ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
+        else{
+          ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
+          matchingProduct=ruleAppliedArr[0];
+        }
         cartProduct = cartProduct.map(product =>
-          product.productID === ruleAppliedArr[0].productID ? ruleAppliedArr[0] : product
+          product.productID === matchingProduct.productID ? matchingProduct : product
         );
-        localStorage.setItem('cart',JSON.stringify(cartProduct));
-        flag=1;
       }
-    }
+      else{
+        addnewSaleruleProduct(cartProduct,newProduct)
+      }
 
-    if(flag==0){
-      console.log('hh');
-      addnewSaleruleProduct(cartProduct,newProduct);
+    }
+    else{
+      addnewSaleruleProduct(cartProduct,newProduct)
     }
 
     let total=findTotal(cartProduct,'+');

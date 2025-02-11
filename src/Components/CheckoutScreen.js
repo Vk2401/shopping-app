@@ -47,7 +47,6 @@ const CheckoutScreen=()=>{
     
 
       const handleCheckout = async () => {
-        // Passing selectedProducts to checkout page using `navigate`
         const response =await axios.post(
           'https://devapi-tanlux.storetech.ai/storedatasync/erp-task',
           {
@@ -69,9 +68,9 @@ const CheckoutScreen=()=>{
         )
        
         if(response.status==201){
-          navigate('/PaymentSuccess');
           localStorage.removeItem('cart');
           localStorage.removeItem('total');
+          navigate('/PaymentSuccess');
         }
       };
 

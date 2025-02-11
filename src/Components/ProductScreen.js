@@ -906,7 +906,6 @@ const ProductScreen=()=>{
     else{
       decrementProduct(Product)
     }
-   
   }
 
   const handleSearchChange = async (e) => {

@@ -443,20 +443,21 @@ const Welcome_Screen = () => {
             console.log("The location is within 5 meters.");
         } else {
 
-          // const response = await axios.post(`${apiBase}/auth/customer-login`, loginData, {
-          //   headers: {
-          //     'accept': 'application/json',
-          //     'Content-Type': 'application/json',
-          //   },
-          // });
+          const response = await axios.post(`${apiBase}/auth/customer-login`, loginData, {
+            headers: {
+              'accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          });
+  
           const rToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJZVzVrY205cFpDTmlZVzVyYVdReE9UazJNRGt3TlRJek9EYz0iLCJpYXQiOjE3Mzg5MDgyNzksImV4cCI6MTc0MTUwMDI3OSwidHlwZSI6InJlZnJlc2gifQ.ccq5HZccZe3pRnH7LtMdnE5d02LdFv2rK0qobXNltBY';
-          const aToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJZVzVrY205cFpDTmlZVzVyYVdReE9UazJNRGt3TlRJek9EYz0iLCJpYXQiOjE3Mzg5MDgyNzksImV4cCI6MTczODkxMDA3OSwidHlwZSI6ImFjY2VzcyJ9._uj-jGeJvvRFu91GM5ILkGD8ArKYjesEe18RzebKcKQ';
-          const user={"name":"jegan","email":"android#bankid#199609052387","id":"YW5kcm9pZCNiYW5raWQxOTk2MDkwNTIzODc=","status":"active","activity_status":"","isVerified":false,"user_id":"YW5kcm9pZCNiYW5raWQxOTk2MDkwNTIzODc=","mobile_number":"8428863196","otp":"$2a$08$X29dScyMq3ylNlluxyOIrOKsW1dWrlJXbwXk0OiFNWCB5.oTJubP2","otp_valid":"1732605932109","bankid":"199609052387","device_types":{"android":"android"},"current_device":"android","login_types":{"bankid":{"name":"jegan","login_id":"199609052387","id":"YW5kcm9pZCNiYW5raWQxOTk2MDkwNTIzODc="}},"current_login":"bankid","vaultData":{},"idProof":[{"isPrimary":false},{"isPrimary":false},{"isPrimary":false},{"isPrimary":false},{"isPrimary":false},{"isPrimary":false},{"picturePath":"http://localhost:3000/uploads/customer/YW5kcm9pZCNiYW5raWQxOTk2MDkwNTIzODc=/Screenshot 2024-11-23 at 12.00.58â¯PM.png","id":1732535574257,"type":"card","isPrimary":true}],"last_login":1738908279117,"shops":[],"parent_user_id":"","created":"2024-11-21T17:58:31.163Z","updated":"2025-02-07T05:57:36.539Z","linkedAc":{"bankid":{"name":"jegan","login_id":"199609052387","id":"YW5kcm9pZCNiYW5raWQxOTk2MDkwNTIzODc="}}}
+          const aToken=response.data.tokens.access.token;
+          console.log(aToken);
           setaccessToken(aToken);
           setrefreshToken(rToken);
-          setUser(user);
+          setUser(response.data.user);
 
-          sessionStorage.setItem("user", JSON.stringify(user));
+          sessionStorage.setItem("user", JSON.stringify(response.data.user));
           sessionStorage.setItem('refreshToken',rToken);
           sessionStorage.setItem('accessToken',aToken);
           login(aToken);

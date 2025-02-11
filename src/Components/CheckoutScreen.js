@@ -18,11 +18,12 @@ const CheckoutScreen=()=>{
       let cartProduct = JSON.parse(localStorage.getItem('cart')) || [];
       setTotal(localStorage.getItem('total'));
       setCartProducts(cartProduct);
-      setUser(sessionStorage.getItem('user'));
+      setUser(JSON.parse(sessionStorage.getItem('user')));
     }, []); 
     
     useEffect(() => {
       let proArr=[]
+      console.log(cartProducts);
       cartProducts.forEach((pro)=>{
         console.log(pro)
         if(pro.productType=='saleRule'){
@@ -45,10 +46,9 @@ const CheckoutScreen=()=>{
     }, [cartProducts, total]); 
     
 
-      const handleCheckout = () => {
+      const handleCheckout = async () => {
         // Passing selectedProducts to checkout page using `navigate`
-
-        const response = axios.post(
+        const response =await axios.post(
           'https://devapi-tanlux.storetech.ai/storedatasync/erp-task',
           {
             storeId: storeID,
@@ -68,7 +68,11 @@ const CheckoutScreen=()=>{
           }
         )
        
-        console.log(response);
+        if(response.status==201){
+          navigate('/PaymentSuccess');
+          localStorage.removeItem('cart');
+          localStorage.removeItem('total');
+        }
       };
 
     return(

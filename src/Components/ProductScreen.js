@@ -562,8 +562,6 @@ const ProductScreen=()=>{
   }
   
   const findTotal=(cartProducts,op)=>{
-    console.log(cartProducts);
-
     let totalPrice = 0;
     let totalCount=0;
 
@@ -572,24 +570,20 @@ const ProductScreen=()=>{
     }
 
     cartProducts.forEach((pro)=>{
-      console.log(pro);
       if(pro.productType=='saleRule'){
-        console.log(pro);
           totalPrice+=(pro.notSaleRulePrice+pro.salePrice)
       }
       else{
-          console.log(pro);
           totalPrice+=pro.price;
       }
     })
-
-    return totalPrice;
+    return totalPrice.toFixed(1);
   }
 
   const addDiscountProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem('cart')) || [];
     let updatedProduct = null;
-  
+
     for (let pro of cartProduct) {
       if (pro.productID === newProduct._id) {
         pro.price += newProduct.price - (newProduct.price * newProduct.discount) / 100;
@@ -607,6 +601,18 @@ const ProductScreen=()=>{
           price: 0,
           productCount: 0
         });
+
+          let total=findTotal(cartProduct,'+');
+    setTotalPrice(total);
+    localStorage.setItem('total',total);
+    localStorage.setItem('cart', JSON.stringify(cartProduct));
+        setProducts(prevProducts =>
+          prevProducts.map(pro =>
+            pro._id === newProduct._id
+              ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
+              : pro
+          )
+        ); 
         return;
       }
     }
@@ -639,6 +645,7 @@ const ProductScreen=()=>{
       productCount: 0
     });
 
+
     setProducts(prevProducts =>
       prevProducts.map(pro =>
         pro._id === newProduct._id
@@ -657,16 +664,17 @@ const ProductScreen=()=>{
       let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
 
       if(matchingProduct!=null){
-        const rules = matchingProduct.saleGroupRules;
-        const count=matchingProduct.quantity+1;
-
+        const rules = newProduct.saleGroupRules;
+        const count=matchingProduct.totalCount+1;
+       
         rules.forEach((rule) => {
           if (rule.status === "Active" && rule.count <= count) {
+            
               let remainder = count % rule.count;
               let appliedCount = Math.floor(count / rule.count);
               let notAppliedPrice = remainder * newProduct.price;
               let appliedPrice = appliedCount * rule.price;
-
+          
               let saleobj=
                 {
                   productType: 'saleRule',
@@ -681,15 +689,19 @@ const ProductScreen=()=>{
           }
         });
 
+       
         if(ruleAppliedArr.length==0){
-          matchingProduct.totalCount=totalCount++
-          matchingProduct.saleRuleNotAppliedCount=matchingProduct.saleRuleNotAppliedCount++,
-          matchingProduct.notSaleRulePrice+=newProduct.price
+       
+          matchingProduct.totalCount=matchingProduct.totalCount++;
+          matchingProduct.saleRuleNotAppliedCount=matchingProduct.saleRuleNotAppliedCount++;
+          matchingProduct.notSaleRulePrice+=newProduct.price;
+          
         }
         else{
           ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
           matchingProduct=ruleAppliedArr[0];
         }
+
         cartProduct = cartProduct.map(product =>
           product.productID === matchingProduct.productID ? matchingProduct : product
         );
@@ -764,130 +776,56 @@ const ProductScreen=()=>{
   }
 
   const decrementSaleRuleProduct=(newProduct)=>{
- 
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
- 
-    if ((newProduct.quantity - 1) == 0) {
-      // Remove the object by filtering out the one with matching productID
-      cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
-
-      console.log(cartProduct);
-      let total=findTotal(cartProduct,'-');
-      setTotalPrice(total);
-      localStorage.setItem('total',total);
-      localStorage.setItem("cart", JSON.stringify(cartProduct));
-      console.log('lok');
-
-      setProducts(prevProducts =>
-        prevProducts.map(pro =>
-          pro._id === newProduct._id
-            ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
-            : pro
-        )
-      );    
-      return;
-    }
+    let quantityBecome=newProduct.quantity-1;
     let ruleAppliedArr=[];
-    console.log('jjj');
- 
-    if (cartProduct.length > 0) {
-     
-      cartProduct.forEach((cartItem) => {
-        if (cartItem.productID == newProduct._id) {
-         
+
+    if(quantityBecome!=0){
+          let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
           const rules = newProduct.saleGroupRules;
-          let count = (newProduct.quantity) - 1
-
-          rules.some((rule) => {
-            if (rule.status === "Active" && !rule.count<count && !rule.count==0 && ( Math.floor(count / rule.count))!=0) {
-            
-                let remainder = count % rule.count;
-                let appliedCount = Math.floor(count / rule.count);
-                let notAppliedPrice = remainder * newProduct.price;
-                let appliedPrice = appliedCount * rule.price;
-
-
-                let saleobj=
-                  {
-                    productType: 'saleRule',
-                    productID: newProduct._id,
-                    totalCount: count,
-                    saleAppliedCount: appliedCount,
-                    saleRuleNotAppliedCount: remainder,
-                    salePrice: appliedPrice,
-                    notSaleRulePrice: notAppliedPrice
-                  }
-                ruleAppliedArr.push(saleobj);
-            }
-          });
-        }
-      });
-
+          const count=matchingProduct.totalCount-1;
     
-      if(ruleAppliedArr.length==0){
-        const rules = newProduct.saleGroupRules;
-      
-        rules.forEach((rule)=>{
-          if(rule.count==1 && rule.status=='Active'){
-
-            let saleOBJ=(
-              {
-                productType: 'saleRule',
-                productID: newProduct._id,
-                totalCount: 1,
-                saleAppliedCount: 1,
-                saleRuleNotAppliedCount: 0,
-                salePrice: rule.price,
-                notSaleRulePrice: 0
+          rules.forEach((rule) => {
+              if (rule.status === "Active" && rule.count <= count) {
+                  let remainder = count % rule.count;
+                  let appliedCount = Math.floor(count / rule.count);
+                  let notAppliedPrice = remainder * newProduct.price;
+                  let appliedPrice = appliedCount * rule.price;
+    
+                  let saleobj=
+                    {
+                      productType: 'saleRule',
+                      productID: newProduct._id,
+                      totalCount: count,
+                      saleAppliedCount: appliedCount,
+                      saleRuleNotAppliedCount: remainder,
+                      salePrice: appliedPrice,
+                      notSaleRulePrice: notAppliedPrice
+                    }
+                  ruleAppliedArr.push(saleobj);
               }
-            );
-
-            ruleAppliedArr.push(saleOBJ);
-
+          });
+    
+          if(ruleAppliedArr.length==0){
+              matchingProduct.totalCount=matchingProduct.totalCount--;
+              matchingProduct.saleRuleNotAppliedCount= matchingProduct.saleRuleNotAppliedCount--;
+              matchingProduct.notSaleRulePrice-=newProduct.price;
           }
-        });
-      }  
-   
-      let isReplaced = false;
-      console.log(ruleAppliedArr);
+          else{
+            ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
+            matchingProduct=ruleAppliedArr[0];
+          }
 
-      if(ruleAppliedArr.length==0){
-        
-      let total=findTotal(cartProduct,'-');
-      setTotalPrice(total);
-      localStorage.setItem('total',total);
-      localStorage.setItem("cart", JSON.stringify(cartProduct));
-
-      setProducts(prevProducts =>
-        prevProducts.map(pro =>
-          pro._id === newProduct._id
-            ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
-            : pro
-        )
-      );  
-        return;
-      }
-      const filteredArr = ruleAppliedArr.filter(obj => obj.saleAppliedCount !== 0);
-
-      const lowestSaleApplied = filteredArr.length > 0 
-        ? filteredArr.reduce((min, obj) => obj.saleAppliedCount < min.saleAppliedCount ? obj : min, filteredArr[0]) 
-        : null;
-
-      cartProduct = cartProduct.map(product => {
-        if (String(product.productID) === String(lowestSaleApplied.productID)) {
-  
-          isReplaced = true; // Mark that we found a match
-          return lowestSaleApplied;
-        }
-        return product;
-      });
-
-      if(!isReplaced){
-        cartProduct.push(lowestSaleApplied);
-      }
+          cartProduct = cartProduct.map(product =>
+            product.productID === matchingProduct.productID ? matchingProduct : product
+          );
+          
+    }
+    else{
+      cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
     }
 
-
+    findTotal(cartProduct,'+');
     let total=findTotal(cartProduct,'-');
     setTotalPrice(total);
     localStorage.setItem('total',total);
@@ -903,32 +841,37 @@ const ProductScreen=()=>{
   }
 
   const decrementProduct=(product)=>{
-  
     let cartProducts=JSON.parse(localStorage.getItem('cart')||[]);
-    console.log(cartProducts);
-
-    cartProducts = cartProducts.filter(cartproduct => {
-      if (cartproduct.productID === product._id) {
-        cartproduct.productCount--;
-        let finalPrice=cartproduct.price - product.price;
-
-        if(product.isDiscount ){
-          finalPrice=product.price - (product.price * product.discount) / 100;
-        }
-
-        cartproduct.price =  finalPrice; 
-        product.quantity--;
+    let productQuantitybecome=product.quantity-1;
     
-        return product.quantity !== 0;
-      }
-      return true; // Keep all other products in the array
-    });
+    if(productQuantitybecome==0){
+      cartProducts = cartProducts.filter(cartProduct => cartProduct.productID !== product._id);
+    }else{
+      cartProducts.forEach((cartProduct)=>{
+        if(cartProduct.productID==product._id){
+          cartProduct.productCount--;
+          if(cartProduct.productType!='discountProduct'){
+            cartProduct.price=cartProduct.price-product.price;
+          }else{
+            cartProduct.price=cartProduct.price-(product.price - ((product.price * product.discount) / 100));
+          }
+        }
+      })
+    }
     
     // Update localStorage if needed
     let total=findTotal(cartProducts,'-');
     setTotalPrice(total);
     localStorage.setItem('total',total);
     localStorage.setItem("cart", JSON.stringify(cartProducts));
+
+    setProducts(prevProducts =>
+      prevProducts.map(pro =>
+        pro._id === product._id
+          ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
+          : pro
+      )
+    );    
     
   }
   

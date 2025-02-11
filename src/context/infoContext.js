@@ -4,15 +4,16 @@ import axios from 'axios';
 const infoContext=createContext();
 
 const InfoProvider=({children})=>{
-  const {storeID,setStoreID}=useState('');
-    const apiBase='https://devapi-tanlux.storetech.ai';
-    const env='demo';
+    let apiUrl = process.env.REACT_APP_API_URL;
+    let env=process.env.REACT_APP_ENVIRONMENT;
+    
+    const {storeID,setStoreID}=useState('');
+    const apiBase=apiUrl;
+    env='demo';
 
 
     const refreshTokenFunction = async () => {
-       console.log('lok');
         const refreshToken = sessionStorage.getItem('refreshToken');
-        console.log(refreshToken);
         const maxAttempts = 3;  // Max number of retries
         let attempt = 0;
 

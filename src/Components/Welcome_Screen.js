@@ -8,6 +8,8 @@ import { useInfo } from '../context/infoContext.js';
 import { useAuth } from "../context/AuthContext.js";
 
 const Welcome_Screen = () => {
+  const apiUrl = process.env.REACT_APP_API_URL
+  const environment = process.env.REACT_APP_ENVIRONMENT
   const { login } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState('');
@@ -427,11 +429,15 @@ const Welcome_Screen = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:30001/api/auth/verify-otp", {
-        phoneNumber: data.pnumber,
-        otp: enteredOTP,
-      });
-      if (response.data.success) {
+      // const response = await axios.post("http://localhost:30001/api/auth/verify-otp", {
+      //   phoneNumber: data.pnumber,
+      //   otp: enteredOTP,
+      // });
+      // const response={
+      //   data:'suc'
+      // };
+      const response=true;
+      if (response) {
         alert("OTP verified successfully!"); 
         const {latitude,longitude}=location;
         const newLat = 13.0220500; // Example latitude
@@ -442,8 +448,8 @@ const Welcome_Screen = () => {
           navigate('/products');
             console.log("The location is within 5 meters.");
         } else {
-
-          const response = await axios.post(`${apiBase}/auth/customer-login`, loginData, {
+          console.log(apiUrl);
+          const response = await axios.post(`${apiUrl}/auth/customer-login`, loginData, {
             headers: {
               'accept': 'application/json',
               'Content-Type': 'application/json',
@@ -452,7 +458,6 @@ const Welcome_Screen = () => {
   
           const rToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJZVzVrY205cFpDTmlZVzVyYVdReE9UazJNRGt3TlRJek9EYz0iLCJpYXQiOjE3Mzg5MDgyNzksImV4cCI6MTc0MTUwMDI3OSwidHlwZSI6InJlZnJlc2gifQ.ccq5HZccZe3pRnH7LtMdnE5d02LdFv2rK0qobXNltBY';
           const aToken=response.data.tokens.access.token;
-          console.log(aToken);
           setaccessToken(aToken);
           setrefreshToken(rToken);
           setUser(response.data.user);

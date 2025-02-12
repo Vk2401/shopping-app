@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import searchicon from '../utils/images/search.png';
 import basketImage from '../utils/images/basket.png';
 import { useInfo } from '../context/infoContext.js';
+import { useAuth } from "../context/AuthContext.js";
 import loader from '../utils/images/loader.gif';
 import axios from "axios";
 import leftArrow from '../utils/images/leftArrow.png';
@@ -14,7 +15,7 @@ import { p } from "framer-motion/client";
 import userIcon from '../utils/images/FontAwosemUser.png';
 
 const ProductScreen=()=>{
-    
+  const { isAuthenticated, logout } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
   const [loading, setLoading] = useState(true); // Loader state
@@ -62,7 +63,13 @@ const ProductScreen=()=>{
   ]);
   
   useEffect(() => {
+    if(!isAuthenticated){
+      console.log('lok');
+      navigate("/");
+    }
+    else{
     const addedProducts=JSON.parse(localStorage.getItem("cart"))|| [];
+    const tokens=JSON.parse(localStorage.getItem('authToken')) ;
 
     setTotalCount(addedProducts.length);
 
@@ -84,6 +91,7 @@ const ProductScreen=()=>{
               },
             }
           ); 
+          console.log(response.data);
          
         //   const response=[
         //     {
@@ -520,6 +528,7 @@ const ProductScreen=()=>{
       };
 
     fetchProducts();
+    }
   }, [])
 
 
@@ -987,18 +996,18 @@ const ProductScreen=()=>{
     }
 
     return(
-      <div>
+      <div className="h-screen">
       {loading ? (
         <div className="h-screen items-center justify-center bg-red-100">
           <img src={loader} alt="" className="bg-buttonColor h-full"/>
         </div>          
       ) : (
-        <div className="px-6 font-poppins h-screen">
+        <div className="px-6 font-poppins">
           <div className="">
               <div className="flex items-center justify-between relative py-7">
-              <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="h-8 w-8" />
+              <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img  onClick={() => navigate('/settings')}  src={userIcon} alt="" className=" h-7 w-7" />
+              <img  onClick={() => navigate('/settings')}  src={userIcon} alt="" className=" h-8 w-8" />
               </div>
 
               <div className="flex items-center justify-center">
@@ -1018,7 +1027,7 @@ const ProductScreen=()=>{
               </div>
           </div>
 
-          <div className="flex flex-col h-[650px] overflow-y-auto py-2">
+          <div className="flex flex-col h-[625px] overflow-y-auto py-2">
               {filteredProducts?.filter((product) => product.isVending).map((product) => (
                   <div
                   key={product._id}
@@ -1114,7 +1123,6 @@ const ProductScreen=()=>{
           </div>
         </div>
       )}
-
       {showPopup && (
         <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins">
           <div className="w-full max-h-[500px] bg-white rounded-2xl px-4 py-5">

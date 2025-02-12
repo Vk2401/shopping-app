@@ -8,8 +8,12 @@ import { useLocation } from '../context/locationContext.js';
 import { useInfo } from '../context/infoContext.js';
 import searchicon from '../utils/images/search.png';
 import leftArrow from '../utils/images/leftArrow.png';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from "react-router-dom";
 
 const Stores = ()=>{
+      const navigate=useNavigate();
+      const { isAuthenticated, logout } = useAuth();  
       const {apiBase,env}=useInfo();
       const [accessToken,setAccessToken]=useState();
       const [isExpanded, setIsExpanded] = useState(true);
@@ -37,6 +41,11 @@ const Stores = ()=>{
 
     }
     useEffect(()=>{
+
+        if(!isAuthenticated){
+            navigate('/');
+        }
+        
         setAccessToken(sessionStorage.getItem('accessToken'));
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(

@@ -1,6 +1,19 @@
-import React from "react";
+import React,{useEffect} from "react";
 import bg from '../utils/images/desktop-bg.png';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from "react-router-dom";
+
 const ErrorScreen=()=>{
+    const { isAuthenticated, logout } = useAuth();
+    const navigate=useNavigate();
+    
+     useEffect(()=>{
+                if(!isAuthenticated){
+                    console.log('lok');
+                    navigate("/");
+                  }
+            },[]);
+    
     return(
         <div className="flex flex-col h-screen">
             <div className="bg-buttonColor">

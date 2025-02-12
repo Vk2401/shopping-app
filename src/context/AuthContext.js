@@ -10,13 +10,12 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = (token) => {
-    localStorage.setItem("authToken", token);
+    localStorage.setItem("authToken", JSON.stringify(token)); // Store properly
     setIsAuthenticated(true);
   };
-
+  
   // Logout function
   const logout = () => {
-    console.log('lok');
     localStorage.removeItem("authToken");
     setIsAuthenticated(false);
   };

@@ -4,12 +4,15 @@ import location from '../utils/images/location.png'
 import locationImage from '../utils/images/locatioImage.png'
 import { useLocation as useRouterLocation,useNavigate  } from 'react-router-dom';
 import { useLocation as useCustomLocation } from '../context/locationContext.js';
+import { useAuth } from "../context/AuthContext.js";
+
 
 const NotclosetoStore=()=>{
     const navigate = useNavigate();
     const [distance,setDistance]=useState('');
     const [storeID,setStoreID]=useState('');
     const { location, setLocation, setGpsEnabled} = useCustomLocation();
+     const { isAuthenticated, logout } = useAuth();
     const location2 = useRouterLocation();
     const { stores } = location2.state || { stores: [] };
 
@@ -70,6 +73,10 @@ const NotclosetoStore=()=>{
       };    
 
     useEffect(()=>{
+
+      if(!isAuthenticated){
+        navigate('/');
+      }
         getCurrectLocation2();
         getCurrectLocation();
         // setDistance(haversineDistance(location.latitude,location.longitude,stores.location.lat,stores.location.lon))

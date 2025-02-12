@@ -5,20 +5,27 @@ import Userpic from '../utils/images/Userpic.png';
 import editIcon from '../utils/images/editIcon.png';
 import rightArrow from '../utils/images/rightArrow.png';
 import leftArrow from '../utils/images/leftArrow.png';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from "react-router-dom";
 
 const ProfileScreen=()=>{
   const [user,setUser]=useState([]);
-
+  const navigate=useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  
     useEffect(()=>{
+      if(!isAuthenticated){
+        navigate('/');
+      }
       setUser(JSON.parse(sessionStorage.getItem("user")));
     },[]);
 
     return(
       <div  className="px-6 font-poppins h-screen">
         <div className="flex items-center justify-between h-16">
-            <img src={leftArrow} alt="" className="h-8 w-8" />
+            <img src={leftArrow} alt="" className="h-8 w-8" onClick={()=>{navigate('/settings')}}/>
             <h1 className="text-black font-bold text-xl">Profile</h1>
-            <img src={closeicon} alt="" className="h-8 w-8" />
+            <img src={''} alt=""  />
         </div>
 
         <div className="flex flex-col items-center justify-between h-[83%] mt-10">

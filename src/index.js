@@ -13,9 +13,7 @@ root.render(
     <AuthProvider>
       <LocationProvider>
         <InfoProvider>
-      
            <App />
-    
         </InfoProvider>
       </LocationProvider>
     </AuthProvider>

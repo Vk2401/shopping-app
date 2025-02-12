@@ -12,7 +12,7 @@ const InfoProvider=({children})=>{
     env='demo';
 
 
-    const refreshTokenFunction = async () => {
+        const refreshTokenFunction = async () => {
         const refreshToken = sessionStorage.getItem('refreshToken');
         const maxAttempts = 3;  // Max number of retries
         let attempt = 0;

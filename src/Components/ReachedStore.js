@@ -1,8 +1,18 @@
-import React from "react";
+import React ,{useEffect} from "react";
 import locationReached from '../utils/images/locationReached.gif';
 import backArrow from '../\/utils/images/arrow-circle-left_solid.png';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from "react-router-dom";
 
 const ReachedStore=()=>{
+    const navigate=useEffect();
+    const { isAuthenticated, logout } = useAuth();
+    
+    useEffect(()=>{
+        if(!isAuthenticated){
+            navigate('/');
+        }
+    },[])
     return(
         <div className="flex flex-col justify-between h-screen w-full font-poppins px-5">
             <div className="flex items-center justify-center py-4 relative">

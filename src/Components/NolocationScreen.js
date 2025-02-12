@@ -1,10 +1,15 @@
 import React, { useState,useEffect } from "react";
 import noLocation from "../utils/images/noLocation.png";
 import { useLocation } from '../context/locationContext.js';
+import { useAuth } from "../context/AuthContext.js";
+import { useNavigate } from "react-router-dom";
 
 const NolocationScreen = () => {
   const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
+  const navigate=useNavigate();
   const [showPopup, setShowPopup] = useState(false); // State for modal visibility
+  const { isAuthenticated, logout } = useAuth();
+  
 
   function enableGPS() {
     // Open Android GPS settings
@@ -45,6 +50,10 @@ const NolocationScreen = () => {
   }
   
     useEffect(() => {
+      if(!isAuthenticated){
+        navigate('/');
+      }
+      
       getCurrectLocation();
     }, []);
   return (

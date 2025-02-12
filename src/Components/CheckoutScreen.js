@@ -6,8 +6,10 @@ import axios from 'axios';
 import { useInfo } from '../context/infoContext.js';
 import productDefaultimg from '../utils/images/grocery.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
+import { useAuth } from "../context/AuthContext.js";
 
 const CheckoutScreen=()=>{
+    const { isAuthenticated, logout } = useAuth();
     const location = useLocation(); 
     const params = new URLSearchParams(location.search);
     const storeID = params.get("storeID"); 
@@ -19,8 +21,15 @@ const CheckoutScreen=()=>{
     const {apiBase,env,refreshTokenFunction}=useInfo();
 
       useEffect(() => {
-        let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if(!isAuthenticated){
+          navigate('/');
+        }
         
+        let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+        if(cartProduct.length==0){
+          navigate('/products');
+        }
         const fetchProduct = async () => {
           try {
             const response = await axios.get(

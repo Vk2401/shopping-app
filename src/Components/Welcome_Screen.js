@@ -17,7 +17,7 @@ const Welcome_Screen = () => {
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState(""); 
   const [showOTPField, setShowOTPField] = useState(false);
-  const { location, setLocation, gpsEnabled, setGpsEnabled,accessToken,setaccessToken,refreshToken,setrefreshToken,user,setUser } = useLocation();
+  const { location, setLocation, gpsEnabled, setGpsEnabled,setaccessToken,setrefreshToken,setUser } = useLocation();
   const {apiBase,env}=useInfo();
   const [error, setError] = useState(null);
   const loginData = {
@@ -448,24 +448,27 @@ const Welcome_Screen = () => {
           navigate('/products');
             console.log("The location is within 5 meters.");
         } else {
-          console.log(apiUrl);
           const response = await axios.post(`${apiUrl}/auth/customer-login`, loginData, {
             headers: {
               'accept': 'application/json',
               'Content-Type': 'application/json',
             },
           });
-  
-          const rToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJZVzVrY205cFpDTmlZVzVyYVdReE9UazJNRGt3TlRJek9EYz0iLCJpYXQiOjE3Mzg5MDgyNzksImV4cCI6MTc0MTUwMDI3OSwidHlwZSI6InJlZnJlc2gifQ.ccq5HZccZe3pRnH7LtMdnE5d02LdFv2rK0qobXNltBY';
+
+          const rToken=response.data.tokens.refresh.token;
           const aToken=response.data.tokens.access.token;
           setaccessToken(aToken);
           setrefreshToken(rToken);
           setUser(response.data.user);
 
+
           sessionStorage.setItem("user", JSON.stringify(response.data.user));
           sessionStorage.setItem('refreshToken',rToken);
           sessionStorage.setItem('accessToken',aToken);
-          login(aToken);
+          login({
+            accessToke:aToken,
+            refreshToken:rToken
+          });
           fetchStores();
           // navigate('/stores');
         }

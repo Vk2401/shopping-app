@@ -10,6 +10,7 @@ import searchicon from '../utils/images/search.png';
 import leftArrow from '../utils/images/leftArrow.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
+import userIcon from '../utils/images/FontAwosemUser.png';
 
 const Stores = ()=>{
       const navigate=useNavigate();
@@ -36,6 +37,51 @@ const Stores = ()=>{
         const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
         window.open(url, "_blank");
      };
+
+     const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const toRadians = (degrees) => degrees * (Math.PI / 180);
+        const R = 6371; // Earth's radius in km
+      
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c * 1000; // Convert km to meters
+      };
+
+      const sortShopsByDistance = (shops, callback) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const userLat = position.coords.latitude;
+              const userLon = position.coords.longitude;
+
+              const sortedShops = shops
+                .map((shop) => ({
+                  ...shop,
+                  distance: calculateDistance(
+                    userLat, userLon,
+                    parseFloat(shop.location.lat), 
+                    parseFloat(shop.location.lon)
+                  )
+                }))
+                .sort((a, b) => a.distance - b.distance);
+      
+              callback(sortedShops); // Return sorted shops via callback
+            },
+            (error) => {
+              console.error("Error getting location:", error);
+            }
+          );
+        } else {
+          console.error("Geolocation is not supported by this browser.");
+        }
+      };
+      
 
     const handleSearchChange = async (e) => {
 
@@ -64,23 +110,6 @@ const Stores = ()=>{
           }
     },[]);
 
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        const toRad = (value) => (value * Math.PI) / 180;
-        const R = 6371; // Radius of Earth in km
-    
-        const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(toRad(lat1)) *
-            Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c * 1000; // Convert to meters
-    
-        return distance.toFixed(0); // Return distance in meters
-      };
 
     useEffect(()=>{
         const fetchStores=async ()=>{
@@ -91,7 +120,11 @@ const Stores = ()=>{
                   'env': env,
                 },
               });
-              setShops(response.data.data);
+           
+              sortShopsByDistance(response.data.data, (sortedShops) => {
+                setShops(sortedShops); // Update state with sorted shops
+              });
+
         }
         fetchStores();
 
@@ -101,7 +134,7 @@ const Stores = ()=>{
         <div className="h-screen font-poppins">
             <div className="flex flex-col px-7 h-1/2">
                 <div className="flex items-center justify-center relative py-7">
-                <img src={leftArrow} alt="" className="absolute left-0 h-8 w-8" />
+                <img src={userIcon} alt="" className="absolute left-0 h-8 w-8" onClick={()=>{navigate('/settings')}}/>
                 <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
                 </div>
 
@@ -169,9 +202,18 @@ const Stores = ()=>{
 
                         // Calculate distance if user location is available
                         const distance =
-                        userLocation && shopLat && shopLon
-                            ? calculateDistance(userLocation.lat, userLocation.lon, shopLat, shopLon)
-                            : "Calculating...";
+                            userLocation && shopLat && shopLon
+                                ? formatDistance(
+                                    calculateDistance(userLocation.lat, userLocation.lon, shopLat, shopLon)
+                                )
+                                : "Calculating...";
+
+                            // Function declaration (hoisted)
+                            function formatDistance(distanceInMeters) {
+                            return distanceInMeters >= 1000
+                                ? `${(distanceInMeters / 1000).toFixed(1)} km`
+                                : `${Math.round(distanceInMeters)} m`;
+                            }
 
                         return (
                             <div key={shop.id} className="flex justify-between items-center border-b py-3">
@@ -193,7 +235,7 @@ const Stores = ()=>{
                                     >
                                         {shop.status}
                                     </span>
-                                    <span className="text-lg font-semibold">{distance} m</span>
+                                    <span className="text-lg font-semibold">{distance}</span>
                                 </div>
                             </div>
                         );

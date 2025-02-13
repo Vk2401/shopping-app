@@ -87,31 +87,33 @@ const CheckoutScreen = () => {
   }, [products])
 
   const handleCheckout = async () => {
-    const response = await axios.post(
-      `${apiBase}/storedatasync/erp-task`,
-      {
-        storeId: storeID,
-        userId: user.id,
-        goal: "dispense",
-        details: {
-          products: products
-        }
-      },
-      {
-        headers: {
-          'accept': 'application/json',
-          'env': env,
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
+    // const response = await axios.post(
+    //   `${apiBase}/storedatasync/erp-task`,
+    //   {
+    //     storeId: storeID,
+    //     userId: user.id,
+    //     goal: "dispense",
+    //     details: {
+    //       products: products
+    //     }
+    //   },
+    //   {
+    //     headers: {
+    //       'accept': 'application/json',
+    //       'env': env,
+    //       'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // )
 
-    if (response.status == 201) {
-      localStorage.removeItem('cart');
-      localStorage.removeItem('total');
-      navigate('/PaymentSuccess');
-    }
+    // if (response.status == 201) {
+    //   localStorage.removeItem('cart');
+    //   localStorage.removeItem('total');
+    //   navigate('/PaymentSuccess');
+    // }
+
+    navigate('/payment');
   };
 
   return (

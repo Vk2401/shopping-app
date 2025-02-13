@@ -7,7 +7,7 @@ import closeIcon from '../utils/images/ios-close-circle.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
 import leftArrow from '../utils/images/leftArrow.png';
-
+import GooglePayUPI from "./PaymentComponents/GooglePayUPI.js";
 
 const PaymentScreen = () => {
     const navigate = useNavigate();
@@ -39,7 +39,8 @@ const PaymentScreen = () => {
                     <div className="flex flex-col gap-5">
                         <p className="font-semibold">Choose Payment</p>
                         <div className="flex justify-center gap-10 items-center">
-                            <img src={gPay} alt="" className="h-36 w-36 border-2 border-gray-200 rounded-lg" />
+                            {/* <img src={gPay} alt="" className="h-36 w-36 border-2 border-gray-200 rounded-lg" /> */}
+                            <GooglePayUPI />
 
                             <img src={cardImage} alt="" className="h-36 w-36 border-2 border-gray-200 rounded-lg p-5" />
                         </div>

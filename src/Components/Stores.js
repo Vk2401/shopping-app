@@ -20,10 +20,9 @@ const Stores = ()=>{
       const [shops,setShops]=useState([]);
       const [userLocation, setUserLocation] = useState(null);
       const { location, setLocation, gpsEnabled, setGpsEnabled,refreshToken,setrefreshToken,user,setUser } = useLocation();
-      const stores = [
-        { id: 1, name: "Store A", lat: 40.7128, lng: -74.0060 },
-        { id: 2, name: "Store B", lat: 34.0522, lng: -118.2437 }
-      ];
+      const [stores,seStores] = useState([]);
+      const [filteredShops, setFilteredShops] = useState([]);
+      const [searchQuery, setSearchQuery] = useState("");
 
      const customIcon = L.icon({
         iconUrl: locationIcon,
@@ -82,31 +81,37 @@ const Stores = ()=>{
       };
       
     const handleSearchChange = async (e) => {
+      const query = e.target.value.toLowerCase();
+      setSearchQuery(query);
 
+      // Filter shops based on query
+      const filtered = shops.filter(shop => 
+          shop.name.toLowerCase().includes(query)
+      );
+
+      setFilteredShops(filtered);
     }
     useEffect(()=>{
-      console.log('huigui');
-
         if(!isAuthenticated){
             navigate('/');
         }
         
         setAccessToken(sessionStorage.getItem('accessToken'));
-        // if (navigator.geolocation) {
-        //     navigator.geolocation.getCurrentPosition(
-        //       (position) => {
-        //         setUserLocation({
-        //           lat: position.coords.latitude,
-        //           lon: position.coords.longitude,
-        //         });
-        //       },
-        //       (error) => {
-        //         console.error("Error getting location:", error);
-        //       }
-        //     );
-        //   } else {
-        //     console.error("Geolocation is not supported by this browser.");
-        //   }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                setUserLocation({
+                  lat: position.coords.latitude,
+                  lon: position.coords.longitude,
+                });
+              },
+              (error) => {
+                console.error("Error getting location:", error);
+              }
+            );
+          } else {
+            console.error("Geolocation is not supported by this browser.");
+          }
     },[]);
 
 
@@ -121,9 +126,20 @@ const Stores = ()=>{
               });
            
               sortShopsByDistance(response.data.data, (sortedShops) => {
+       
+                let storesData = sortedShops.map((shop, index) => ({
+                  id: index + 1,  // Generating a sequential ID
+                  name: shop.name,
+                  lat: parseFloat(shop.location.lat),  // Converting lat to number
+                  lng: parseFloat(shop.location.lon)   // Converting lon to number
+                }));
+
+                seStores(storesData);
                 setShops(sortedShops); // Update state with sorted shops
+                setFilteredShops(sortedShops);
               });
 
+              
         }
         fetchStores();
 
@@ -136,21 +152,21 @@ const Stores = ()=>{
                 <img src={userIcon} alt="" className="absolute right-0 h-8 w-8" onClick={()=>{navigate('/settings')}}/>
                 <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
                 </div>
-
                 <div className="h-full">
-                    <MapContainer center={[40.7128, -74.0060]} zoom={5} style={{ height: "100%", width: "100%" }}>
+                    <MapContainer center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         {stores.map((store) => (
-                        <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon}>
+        
+                          <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon}>
                             <Popup>
-                            <div style={{ textAlign: "center" }}>
+                              <div style={{ textAlign: "center" }}>
                                 <img src={locationIcon} alt="Store Icon" width="30" height="30" />
                                 <br />
                                 <strong>{store.name}</strong>
                                 <br />
                                 <button
-                                onClick={() => openNavigation(store.lat, store.lng)}
-                                style={{
+                                  onClick={() => openNavigation(store.lat, store.lng)}
+                                  style={{
                                     marginTop: "8px",
                                     padding: "6px 12px",
                                     border: "none",
@@ -158,13 +174,38 @@ const Stores = ()=>{
                                     color: "#fff",
                                     borderRadius: "5px",
                                     cursor: "pointer",
-                                }}
+                                  }}
                                 >
-                                Go to Store
+                                  Go to Store
                                 </button>
-                            </div>
+                              </div>
                             </Popup>
-                        </Marker>
+                          </Marker>
+
+                        // <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon}>
+                        //     <Popup>
+                        //     <div style={{ textAlign: "center" }}>
+                        //         <img src={locationIcon} alt="Store Icon" width="30" height="30" />
+                        //         <br />
+                        //         <strong>{store.name}</strong>
+                        //         <br />
+                        //         <button
+                        //         onClick={() => openNavigation(store.lat, store.lng)}
+                        //         style={{
+                        //             marginTop: "8px",
+                        //             padding: "6px 12px",
+                        //             border: "none",
+                        //             backgroundColor: "#007bff",
+                        //             color: "#fff",
+                        //             borderRadius: "5px",
+                        //             cursor: "pointer",
+                        //         }}
+                        //         >
+                        //         Go to Store
+                        //         </button>
+                        //     </div>
+                        //     </Popup>
+                        // </Marker>
                         ))}
                     </MapContainer>
                 </div>
@@ -183,7 +224,7 @@ const Stores = ()=>{
                             type="text" 
                             placeholder="Search" 
                             onChange={handleSearchChange} 
-                            className="w-full font-semibold py-3 px-5 border-2 border-orange-400 outline-none text-left rounded-full focus:ring-2 focus:ring-orange-500 transition-all"
+                            className="w-full font-semibold py-3 px-5 border-2  border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-green-500 transition-all"
                             />
                             <img 
                             src={searchicon} 
@@ -194,8 +235,8 @@ const Stores = ()=>{
                     </div>
                 </div>
 
-                <div className="flex flex-col z-1 overflow-y-scroll h-[70%]">
-                     {shops.map((shop) => {
+                <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%]">
+                     {filteredShops.map((shop) => {
                         const shopLat = parseFloat(shop.location.lat);
                         const shopLon = parseFloat(shop.location.lon);
 
@@ -215,7 +256,7 @@ const Stores = ()=>{
                             }
 
                         return (
-                            <div key={shop.id} className="flex justify-between items-center border-b py-3">
+                            <div key={shop.id} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b">
                                 {/* Left side - Shop Name and Details */}
                                 <div className="flex gap-2 items-center">
                                 <img src={locationIcon} alt="" className="h-5 w-4" />
@@ -229,10 +270,10 @@ const Stores = ()=>{
                                 <div className="flex flex-col items-end gap-2">
                                     <span
                                         className={`rounded-md px-2 py-1 font-semibold text-white ${
-                                        shop.status === "open" ? "bg-green-500" : "bg-yellow-500"
+                                        shop.status === "open" ? "bg-buttonColor" : "bg-yellow-500"
                                         }`}
                                     >
-                                        {shop.status}
+                                        {shop.status === "open" ? "Open" : "Coming Soon"}
                                     </span>
                                     <span className="text-lg font-semibold">{distance}</span>
                                 </div>

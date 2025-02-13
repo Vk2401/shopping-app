@@ -66,10 +66,6 @@ const SettingScreen=()=>{
                                 <h1 className="font-bold text-xl text-lightBlack">Help</h1>
                             </div>
 
-                            <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300">
-                                <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full"/>
-                                <h1 className="font-bold text-xl text-lightBlack">Bank ID</h1>
-                            </div>
                         </div>
                     </div>
                 

@@ -1022,12 +1022,12 @@ const ProductScreen=()=>{
           <img src={loader} alt="" className="bg-buttonColor h-full"/>
         </div>          
       ) : (
-        <div className="px-6 font-poppins ">
-          <div className="">
-              <div className="flex items-center justify-between relative py-7">
-              <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="h-10 w-10" />
-              <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img  onClick={() => navigate('/settings')}  src={userIcon} alt="" className=" h-8 w-8" />
+        <div className="px-6 font-poppins h-full">
+          <div className="h-36 flex flex-col gap-5 py-5 px-5 justify-center fixed top-0 left-0 w-full z-10 bg-white mb-10">
+              <div className="flex items-center justify-between relative">
+                <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="h-10 w-10" />
+                <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
+                <img  onClick={() => navigate('/settings')}  src={userIcon} alt="" className=" h-8 w-8" />
               </div>
 
               <div className="flex items-center justify-center">
@@ -1047,7 +1047,7 @@ const ProductScreen=()=>{
               </div>
           </div>
 
-          <div className="flex flex-col max-h-[70vh]  overflow-y-auto py-2">
+          <div className="flex-1 flex flex-col overflow-y-auto py-2 mt-7 mb-5">
               {filteredProducts?.filter((product) => product.isVending).map((product) => (
                   <div
                   key={product._id}
@@ -1126,7 +1126,7 @@ const ProductScreen=()=>{
               
           </div>
 
-          <div className="shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor w-full px-3 flex items-center justify-between rounded-md py-5">
+          <div className="h-24 shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor px-3 flex items-center justify-between rounded-t-lg py-5 fixed bottom-0 left-0 w-full z-10">
                 <button
                     onClick={handleCheckout}
                     className="p-2 px-10 font-semibold text-lg bg-white text-black rounded-full text-center"

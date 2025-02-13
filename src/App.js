@@ -16,7 +16,7 @@ import ProtectedRoute from "./context/ProtectedRoute.js";
 import NotFoundScreen from "./Pages/NotFoundScreen.js"; 
 import SettingScreen from './Components/SettingScreen.js'
 import HistoryScreen from './Components/History.js'
-
+import Error_page from './Components/ErrorScreen.js'
 
 function App() {
   return (
@@ -34,7 +34,8 @@ function App() {
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/ReachedStore" element={<ReachedStore />} />
           <Route path="/settings" element={<SettingScreen />} />  
-          <Route path="/history" element={<HistoryScreen />} />  
+          <Route path="/history" element={<HistoryScreen />} />
+          <Route path="/error" element={<Error_page/>} />
       </Route>
 
       <Route path="*" element={<NotFoundScreen />} />

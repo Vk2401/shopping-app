@@ -74,13 +74,17 @@ const Welcome_Screen = () => {
   };
 
   const fetchStores = async () => {
-    // const response = await axios.get(`${apiBase}/custom/shops/getshops?limit=10&page=1` , {
-    //     headers: {
-    //       'Authorization': `Bearer ${accessToken}`,
-    //       'accept': 'application/json',
-    //       'env': env,
-    //     },
-    //   });
+    const tokens=JSON.parse(localStorage.getItem('authToken'));
+    const aToken=tokens.accessToke;
+    const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1` , {
+        headers: {
+          'Authorization': `Bearer ${aToken}`,
+          'accept': 'application/json',
+          'env': environment,
+        },
+      });
+
+      // const allStores=response.data.data;
 
     const allStores = [
       {
@@ -341,13 +345,14 @@ const Welcome_Screen = () => {
         "updated": "2024-12-25T04:50:03.538Z"
       }
     ]
+    
     const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, 500);
+    console.log(nearbyStores);
     if (nearbyStores.length > 0) {
       navigate('/notClose-toStore', { state: { stores: nearbyStores } });
     } else {
       navigate('/stores');
     }
-    console.log(nearbyStores.length);;
   }
   function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000; // Earth's radius in meters
@@ -458,18 +463,11 @@ const Welcome_Screen = () => {
 
           const rToken = response.data.tokens.refresh.token;
           const aToken = response.data.tokens.access.token;
-          setaccessToken(aToken);
-          setrefreshToken(rToken);
-          setUser(response.data.user);
 
-
-          sessionStorage.setItem("user", JSON.stringify(response.data.user));
-          sessionStorage.setItem('refreshToken', rToken);
-          sessionStorage.setItem('accessToken', aToken);
           login({
             accessToke: aToken,
             refreshToken: rToken
-          });
+          },response.data.user);
           fetchStores();
           navigate('/stores');
         }

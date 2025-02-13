@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import noLocation from "../utils/images/noLocation.png";
 import { useLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
@@ -6,16 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 const NolocationScreen = () => {
   const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false); // State for modal visibility
   const { isAuthenticated, logout } = useAuth();
-  
+
 
   function enableGPS() {
     // Open Android GPS settings
     window.location.href =
       "intent://settings/#Intent;scheme=android-app;action=android.settings.LOCATION_SOURCE_SETTINGS;end;";
-    
+
     // Close modal after clicking Yes
     setShowPopup(false);
 
@@ -48,14 +48,14 @@ const NolocationScreen = () => {
       alert("Geolocation is not supported by this browser.");
     }
   }
-  
-    useEffect(() => {
-      if(!isAuthenticated){
-        navigate('/');
-      }
-      
-      getCurrectLocation();
-    }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/');
+    }
+
+    getCurrectLocation();
+  }, []);
   return (
     <div className="flex flex-col justify-between h-screen font-poppins">
       {/* Header Section */}

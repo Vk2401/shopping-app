@@ -13,7 +13,7 @@ import PaymentSuccess from './Components/PaymentSuccess.js';
 import ProfileScreen from './Components/ProfileScreen.js';
 import ReachedStore from './Components/ReachedStore.js';
 import ProtectedRoute from "./context/ProtectedRoute.js";
-import NotFoundScreen from "./Pages/NotFoundScreen.js"; 
+import NotFoundScreen from "./Pages/NotFoundScreen.js";
 import SettingScreen from './Components/SettingScreen.js'
 import HistoryScreen from './Components/History.js'
 import Error_page from './Components/ErrorScreen.js'
@@ -22,20 +22,20 @@ function App() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
-          <Route path="/system-screen" element={<SystemScreen />} />
-          <Route path="/no-location" element={<NolocationScreen />} />
-          <Route path="/products" element={<ProductScreen />} />
-          <Route path="/notClose-toStore" element={<NotclosetoStore />} />
-          <Route path="/stores" element={<Stores />} />
-          <Route path="/DragCloseDrawerExample" element={<DragCloseDrawerExample />} />
-          <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
-          <Route path="/checkout" element={<CheckoutScreen />} />
-          <Route path="/payment" element={<PaymentScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="/ReachedStore" element={<ReachedStore />} />
-          <Route path="/settings" element={<SettingScreen />} />  
-          <Route path="/history" element={<HistoryScreen />} />
-          <Route path="/error" element={<Error_page/>} />
+        <Route path="/system-screen" element={<SystemScreen />} />
+        <Route path="/no-location" element={<NolocationScreen />} />
+        <Route path="/products" element={<ProductScreen />} />
+        <Route path="/notClose-toStore" element={<NotclosetoStore />} />
+        <Route path="/stores" element={<Stores />} />
+        <Route path="/DragCloseDrawerExample" element={<DragCloseDrawerExample />} />
+        <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
+        <Route path="/checkout" element={<CheckoutScreen />} />
+        <Route path="/payment" element={<PaymentScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/ReachedStore" element={<ReachedStore />} />
+        <Route path="/settings" element={<SettingScreen />} />
+        <Route path="/history" element={<HistoryScreen />} />
+        <Route path="/error" element={<Error_page />} />
       </Route>
 
       <Route path="*" element={<NotFoundScreen />} />
@@ -48,7 +48,7 @@ function App() {
 export default function AppWrapper() {
   return (
     <Router>
-        <App />
+      <App />
     </Router>
   );
 }

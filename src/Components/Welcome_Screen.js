@@ -74,17 +74,17 @@ const Welcome_Screen = () => {
   };
 
   const fetchStores = async () => {
-    const tokens=JSON.parse(localStorage.getItem('authToken'));
-    const aToken=tokens.accessToke;
-    const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1` , {
-        headers: {
-          'Authorization': `Bearer ${aToken}`,
-          'accept': 'application/json',
-          'env': environment,
-        },
-      });
+    const tokens = JSON.parse(localStorage.getItem('authToken'));
+    const aToken = tokens.accessToke;
+    const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
+      headers: {
+        'Authorization': `Bearer ${aToken}`,
+        'accept': 'application/json',
+        'env': environment,
+      },
+    });
 
-      // const allStores=response.data.data;
+    // const allStores=response.data.data;
 
     const allStores = [
       {
@@ -345,7 +345,7 @@ const Welcome_Screen = () => {
         "updated": "2024-12-25T04:50:03.538Z"
       }
     ]
-    
+
     const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, 500);
     if (nearbyStores.length > 0) {
       navigate('/notClose-toStore', { state: { stores: nearbyStores } });
@@ -465,7 +465,7 @@ const Welcome_Screen = () => {
           login({
             accessToke: aToken,
             refreshToken: rToken
-          },response.data.user);
+          }, response.data.user);
           fetchStores();
           navigate('/stores');
         }

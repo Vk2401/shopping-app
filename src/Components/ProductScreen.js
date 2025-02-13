@@ -759,7 +759,7 @@ const ProductScreen = () => {
     setSaleruleProduct((prevProduct) => ({
       ...prevProduct,
       quantity: prevProduct.quantity + 1,
-  }));
+    }));
   }
 
   const addNormalProduct = (newProduct) => {
@@ -887,7 +887,7 @@ const ProductScreen = () => {
     setSaleruleProduct((prevProduct) => ({
       ...prevProduct,
       quantity: Math.max(prevProduct.quantity - 1, 0), // Prevent negative values
-  }));
+    }));
   }
 
   const decrementProduct = (product) => {
@@ -961,6 +961,7 @@ const ProductScreen = () => {
 
   const handleSearchChange = async (e) => {
     const value = e.target.value.toLowerCase();
+    console.log(value);
 
     if (e.target.value.toLowerCase() === '') {
       const response = await axios.get(
@@ -1027,14 +1028,14 @@ const ProductScreen = () => {
   }
 
   return (
-    <div className="h-screen">
+    <div className=" h-screen">
       {loading ? (
         <div className="h-screen items-center justify-center bg-red-100">
           <img src={loader} alt="" className="bg-buttonColor h-full" />
         </div>
       ) : (
-        <div className="px-6 font-poppins h-full">
-          <div className="h-36 flex flex-col gap-5 py-5 px-5 justify-center fixed top-0 left-0 w-full z-10 bg-white mb-10">
+        <div className="font-poppins h-full px-3">
+          <div className="px-3 h-36 flex flex-col gap-5 py-5 justify-center fixed top-0 left-0 w-full z-10 bg-white mb-10">
             <div className="flex items-center justify-between relative">
               <img onClick={() => { navigate('/stores') }} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
@@ -1058,11 +1059,11 @@ const ProductScreen = () => {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col overflow-y-auto py-2 mt-7 mb-5">
+          <div className="flex-1 flex flex-col overflow-y-auto py-2 mt-9 mb-5 gap-2 w-full">
             {filteredProducts?.filter((product) => product.isVending).map((product) => (
               <div
                 key={product._id}
-                className="flex justify-between items-center w-full py-3  border-b-2 border-gray-200 outline-none"
+                className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3  border-2 border-gray-200 outline-none"
               >
                 <div className="flex items-center justify-center gap-3">
                   <div className="flex flex-col rounded-md">
@@ -1079,9 +1080,7 @@ const ProductScreen = () => {
                       {!product.isDiscount ? (
                         <div className="flex items-center">
                           <strong className="text-buttonColor font-semibold">{product.price} $</strong>
-                          {/* {product.sale && 
-                            <img onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }} 
-                             src={discountImag} alt="Sale" className="h-5 w-5 ml-2" />}   */}
+
                           {product.sale && product.salePrice == 0 && product.saleGroupRules.length > 0 && (
                             <img
                               onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }}
@@ -1099,14 +1098,7 @@ const ProductScreen = () => {
                           </strong>
                         </div>
                       )}
-                      {/* {!product.isDiscount ? (
-                          <strong className="text-buttonColor font-semibold">{product.price} $</strong> 
-                        ) : (
-                          <strong className=" font-semibold text-buttonColor">
-                            { (product.price - (product.price * product.discount) / 100).toFixed(2) }
-                             <span className="text-gray-400 ml-2 line-through decoration-red-500">{product.price} kr</span> 
-                          </strong>
-                        )} */}
+
                     </div>
                   </div>
                 </div>
@@ -1120,10 +1112,6 @@ const ProductScreen = () => {
                       Add
                     </button>
                   ) : (
-                    // {
-                    //   (const foundProduct = cart.find(item => item.productID === product.productID); )
-                    // }
-                    // Find product before JSX
 
                     <div className="flex justify-between gap-4 border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full">
                       <button onClick={() => handleDecrement(product)}>-</button>
@@ -1154,6 +1142,7 @@ const ProductScreen = () => {
           </div>
         </div>
       )}
+      {/* Sale Rule POPUP  */}
       {showPopup && (
         <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
           <div className="w-full max-h-[500px] bg-white rounded-2xl px-4 py-5 ">
@@ -1182,17 +1171,7 @@ const ProductScreen = () => {
                     {!saleruleProduct.isDiscount ? (
                       <div className="flex items-center">
                         <strong className="text-buttonColor font-semibold">{saleruleProduct.price} $</strong>
-                        {/* {saleruleProduct.sale && 
-                            <img onClick={(e) => { e.stopPropagation(); showSalePopup(saleruleProduct._id); }} 
-                             src={discountImag} alt="Sale" className="h-5 w-5 ml-2" />}   */}
-                        {/* {product.sale && product.salePrice === 0 && product.saleGroupRules.length === 0 && (
-                              <img 
-                                onClick={(e) => { e.stopPropagation(); showSalePopup(product._id); }} 
-                                src={discountImag} 
-                                alt="Sale" 
-                                className="h-5 w-5 ml-3" 
-                              />
-                            )} */}
+
                       </div>
                     ) : (
                       <div className="flex items-center">
@@ -1202,14 +1181,7 @@ const ProductScreen = () => {
                         </strong>
                       </div>
                     )}
-                    {/* {!product.isDiscount ? (
-                          <strong className="text-buttonColor font-semibold">{product.price} $</strong> 
-                        ) : (
-                          <strong className=" font-semibold text-buttonColor">
-                            { (product.price - (product.price * product.discount) / 100).toFixed(2) }
-                             <span className="text-gray-400 ml-2 line-through decoration-red-500">{product.price} kr</span> 
-                          </strong>
-                        )} */}
+
                   </div>
                 </div>
               </div>

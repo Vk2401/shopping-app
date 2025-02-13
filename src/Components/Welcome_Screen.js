@@ -347,7 +347,6 @@ const Welcome_Screen = () => {
     ]
     
     const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, 500);
-    console.log(nearbyStores);
     if (nearbyStores.length > 0) {
       navigate('/notClose-toStore', { state: { stores: nearbyStores } });
     } else {
@@ -444,7 +443,6 @@ const Welcome_Screen = () => {
       const response = true;
       if (response) {
         alert("OTP verified successfully!");
-        console.log(location);
         const { latitude, longitude } = location;
         const newLat = 13.0220500; // Example latitude
         const newLon = 80.2423200; // Example longitude

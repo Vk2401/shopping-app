@@ -85,6 +85,7 @@ const CheckoutScreen=()=>{
       useEffect(()=>{
         console.log(products);
       },[products])
+      
       const handleCheckout = async () => {
         const response =await axios.post(
           `${apiBase}/storedatasync/erp-task`,

@@ -5,6 +5,7 @@ import locationImage from '../utils/images/locatioImage.png'
 import { useLocation as useRouterLocation,useNavigate  } from 'react-router-dom';
 import { useLocation as useCustomLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
+import userIcon from '../utils/images/FontAwosemUser.png';
 
 
 const NotclosetoStore=()=>{
@@ -32,6 +33,7 @@ const NotclosetoStore=()=>{
       }
  
     const getCurrectLocation2 = () => {
+      console.log(stores);
         setStoreID(stores[0].id);
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -85,7 +87,7 @@ const NotclosetoStore=()=>{
         <div className="flex flex-col justify-between h-screen w-full font-poppins">
             <div className="bg-buttonColor py-10 relative flex flex-col items-center justify-center"
             style={{ borderBottomLeftRadius: '38%', borderBottomRightRadius: '38%' }}>
-                <img src={LanguageSwitch} alt="" className="w-10 h-10 absolute right-5"/>
+                <img src={userIcon} alt="" className="w-9 h-9 absolute right-5 bg-white rounded-full p-1" onClick={()=>{navigate('/settings')}}/>
             </div>
 
             <div className="flex flex-col items-center justify-around h-full py-10">
@@ -93,17 +95,17 @@ const NotclosetoStore=()=>{
                     <strong className="text-2xl font-bold text-black text-center">You are not close to <br /> our Store</strong>
                     <div className="flex flex-col items-center gap-5 bg-ligghtGray px-5 py-8 rounded-xl">
                         <img src={location} alt="" className="h-[110px] w-[110px]"/>
-                        <p className="text-black text-wrap text-center font-xl font-semibold">Make sure you are within <br /> 50 meters of br the store to utilize <br /> our App's features</p>
+                        <p className="text-black text-wrap text-center font-xl font-semibold">Make sure you are within <br /> 50 meters of the store to utilize <br /> our App's features</p>
                    </div>   
                 </div>
             </div>
 
-            <div className="flex flex-col gap-5 items-center px-11 h-2/3 py-10">
+            <div className="flex flex-col gap-5 items-center px-11 h-2/3 py-10 mb-5">
                 <strong className="text-black">Nearby Store</strong>
 
-                <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md">
+                <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md ">
                     <div className="flex">
-                        <img src={locationImage} alt="" className="h-10 w-10"/>
+                        <img src={locationImage} alt="" className="h-10 w-10 mr-2"  />
                         <div className="flex flex-col">
                                 <span className="text-buttonColor text-left text-xl font-semibold ">Bäckefors</span>
                                 <span className="text-left">Lasarettsvägen 1</span>

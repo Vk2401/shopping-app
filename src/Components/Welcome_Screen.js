@@ -439,6 +439,7 @@ const Welcome_Screen = () => {
       const response=true;
       if (response) {
         alert("OTP verified successfully!"); 
+        console.log(location);
         const {latitude,longitude}=location;
         const newLat = 13.0220500; // Example latitude
         const newLon = 80.2423200; // Example longitude
@@ -470,7 +471,7 @@ const Welcome_Screen = () => {
             refreshToken:rToken
           });
           fetchStores();
-          // navigate('/stores');
+          navigate('/stores');
         }
 
       } else {
@@ -482,29 +483,22 @@ const Welcome_Screen = () => {
     }
   };
 
-
-  useEffect(() => {
+  useEffect(()=>{
     getCurrectLocation();
-  }, []);
-
-  useEffect(() => {
-    if (gpsEnabled === false) {
-      navigate('/no-location'); // Redirect if GPS is disabled
-    }
-  }, [gpsEnabled]);
+  });
 
   return (
-    <div className="flex flex-col h-screen font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
-      <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6">
+    <div className="flex flex-col h-screen justify-center font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
+      <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6 mt-10">
         <strong className="text-white text-3xl font-bold">Welcome!</strong>
         <img src={loginUser} alt="" className="h-[200px] w-[200px]" />
         <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
-      <div className="h-1/2 w-full flex flex-col items-center gaxp-1">
+      <div className="h-1/2 w-full flex flex-col items-center justify- gap-x-1 mt-5">
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit}  className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg w-[90%] max-w-md">
           <div className="flex flex-col gap-3 w-full">
-            <label htmlFor="phone" className="font-semibold text-lg text-gray-700">Phone Number</label>
+            <label htmlFor="phone" className="font-semibold text-lg text-gray-700 ml-2">Phone Number</label>
             <input
               type="number"
               name="pnumber"

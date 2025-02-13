@@ -6,7 +6,8 @@ import { useAuth } from "../context/AuthContext.js";
 import loader from '../utils/images/loader.gif';
 import axios from "axios";
 import leftArrow from '../utils/images/leftArrow.png';
-import { useLocation as useRouterLocation,useNavigate  } from 'react-router-dom';
+import { useNavigate  } from 'react-router-dom';
+import { useLocation } from '../context/locationContext.js';
 import productDefaultimg from '../utils/images/grocery.png';
 import discountImag from '../utils/images/discount.png';
 import closeImage from '../utils/images/ios-close-circle.png';
@@ -20,7 +21,7 @@ const ProductScreen=()=>{
   const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
   const [loading, setLoading] = useState(true); // Loader state
   const {apiBase,env,refreshTokenFunction}=useInfo();
-  const [Products,setProducts]=useState();
+  const [Products,setProducts]=useState(null);
   const [accessToken,setAccessToken]=useState('');
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +30,8 @@ const ProductScreen=()=>{
   const [totalPrice, setTotalPrice] = useState(0);
   const [saleruleProduct,setSaleruleProduct]=useState([]);
   const [saleRule,setSalerule]=useState([]);
-
+  const { location, setLocation, gpsEnabled, setGpsEnabled,setaccessToken,setrefreshToken,setUser } = useLocation();
+  
   const [saleRuleProduct, setSaleRuleProduct] = useState(
     {
       productType: '',
@@ -63,18 +65,21 @@ const ProductScreen=()=>{
   ]);
   
   useEffect(() => {
+    
     if(!isAuthenticated){
       console.log('lok');
       navigate("/");
     }
     else{
+    getCurrectLocation();
+
     const addedProducts=JSON.parse(localStorage.getItem("cart"))|| [];
     const tokens=JSON.parse(localStorage.getItem('authToken')) ;
 
     setTotalCount(addedProducts.length);
 
     let addedTotal=0;
-    addedProducts.forEach(product=>{
+      addedProducts.forEach(product=>{
       addedTotal=addedTotal+product.price;
     })
     setTotalPrice(addedTotal);
@@ -91,7 +96,6 @@ const ProductScreen=()=>{
               },
             }
           ); 
-          console.log(response.data);
          
         //   const response=[
         //     {
@@ -531,6 +535,22 @@ const ProductScreen=()=>{
     }
   }, [])
 
+  const getCurrectLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setGpsEnabled(true);
+        setLocation({latitude,longitude});
+        // GPS is enabled
+      },
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          alert('Please enable location access');
+          setGpsEnabled(false); // GPS denied
+        }
+      }
+    );
+  };
 
   const addnewSaleruleProduct=(cartProducts,Product)=>{
     let flag=0;

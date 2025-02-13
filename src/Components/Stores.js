@@ -7,7 +7,6 @@ import axios from "axios";
 import { useLocation } from '../context/locationContext.js';
 import { useInfo } from '../context/infoContext.js';
 import searchicon from '../utils/images/search.png';
-import leftArrow from '../utils/images/leftArrow.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 import userIcon from '../utils/images/FontAwosemUser.png';
@@ -82,32 +81,32 @@ const Stores = ()=>{
         }
       };
       
-
     const handleSearchChange = async (e) => {
 
     }
     useEffect(()=>{
+      console.log('huigui');
 
         if(!isAuthenticated){
             navigate('/');
         }
         
         setAccessToken(sessionStorage.getItem('accessToken'));
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                setUserLocation({
-                  lat: position.coords.latitude,
-                  lon: position.coords.longitude,
-                });
-              },
-              (error) => {
-                console.error("Error getting location:", error);
-              }
-            );
-          } else {
-            console.error("Geolocation is not supported by this browser.");
-          }
+        // if (navigator.geolocation) {
+        //     navigator.geolocation.getCurrentPosition(
+        //       (position) => {
+        //         setUserLocation({
+        //           lat: position.coords.latitude,
+        //           lon: position.coords.longitude,
+        //         });
+        //       },
+        //       (error) => {
+        //         console.error("Error getting location:", error);
+        //       }
+        //     );
+        //   } else {
+        //     console.error("Geolocation is not supported by this browser.");
+        //   }
     },[]);
 
 
@@ -134,7 +133,7 @@ const Stores = ()=>{
         <div className="h-screen font-poppins">
             <div className="flex flex-col px-7 h-1/2">
                 <div className="flex items-center justify-center relative py-7">
-                <img src={userIcon} alt="" className="absolute left-0 h-8 w-8" onClick={()=>{navigate('/settings')}}/>
+                <img src={userIcon} alt="" className="absolute right-0 h-8 w-8" onClick={()=>{navigate('/settings')}}/>
                 <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
                 </div>
 

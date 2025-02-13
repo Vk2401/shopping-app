@@ -1022,7 +1022,7 @@ const ProductScreen=()=>{
           <img src={loader} alt="" className="bg-buttonColor h-full"/>
         </div>          
       ) : (
-        <div className="px-6 font-poppins">
+        <div className="px-6 font-poppins ">
           <div className="">
               <div className="flex items-center justify-between relative py-7">
               <img onClick={()=>{navigate('/stores')}} src={leftArrow} alt="" className="h-10 w-10" />
@@ -1047,7 +1047,7 @@ const ProductScreen=()=>{
               </div>
           </div>
 
-          <div className="flex flex-col h-[625px] overflow-y-auto py-2">
+          <div className="flex flex-col max-h-[70vh]  overflow-y-auto py-2">
               {filteredProducts?.filter((product) => product.isVending).map((product) => (
                   <div
                   key={product._id}

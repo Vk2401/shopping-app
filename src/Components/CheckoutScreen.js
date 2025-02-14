@@ -25,8 +25,11 @@ const CheckoutScreen = () => {
     if (!isAuthenticated) {
       navigate('/');
     }
-
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+    let localUSER=JSON.parse(localStorage.getItem("user")) || [];
+    console.log(localUSER);
+    setUser(localUSER);
+
     if (cartProduct.length == 0) {
       navigate('/products');
     }
@@ -83,33 +86,37 @@ const CheckoutScreen = () => {
 
  
   const handleCheckout = async () => {
-    // const response = await axios.post(
-    //   `${apiBase}/storedatasync/erp-task`,
-    //   {
-    //     storeId: storeID,
-    //     userId: user.id,
-    //     goal: "dispense",
-    //     details: {
-    //       products: products
-    //     }
-    //   },
-    //   {
-    //     headers: {
-    //       'accept': 'application/json',
-    //       'env': env,
-    //       'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }
-    // )
+     let localUSER=JSON.parse(localStorage.getItem("user")) || [];
+     let tokens=JSON.parse(localStorage.getItem("authToken")) || [];
+     let aToken=tokens.accessToke;
+  
+    const response = await axios.post(
+      `${apiBase}/storedatasync/erp-task`,
+      {
+        storeId: storeID,
+        userId: localUSER.id,
+        goal: "dispense",
+        details: {
+          products: products
+        }
+      },
+      {
+        headers: {
+          'accept': 'application/json',
+          'env': env,
+          'Authorization': `Bearer ${aToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    console.log(response);
+    if (response.status == 201) {
+      localStorage.removeItem('cart');
+      localStorage.removeItem('total');
+      navigate('/PaymentSuccess');
+    }
 
-    // if (response.status == 201) {
-    //   localStorage.removeItem('cart');
-    //   localStorage.removeItem('total');
-    //   navigate('/PaymentSuccess');
-    // }
-
-    navigate('/payment');
+    // navigate('/payment');
   };
 
   return (
@@ -228,9 +235,6 @@ const CheckoutScreen = () => {
                         alt={product.title}
                         className="w-14 h-16 object-cover"
                       />
-                      {
-                        console.log(product)
-                      }
                       <div className="flex flex-col">
                         <span className="font-bold text-black">{product.title}</span>
                         <span className="text-lightBlack">Qty: {product.saleAppliedCount * product.saleRulecount}</span>

@@ -934,7 +934,6 @@ const ProductScreen = () => {
 
   const handleAddClick = (product) => {
     product.quantity=0;
-    console.log(product);
     if (product.isDiscount) {
       addDiscountProduct(product);
     }
@@ -969,7 +968,6 @@ const ProductScreen = () => {
 
   const handleSearchChange = async (e) => {
     const value = e.target.value.toLowerCase();
-    console.log(value);
 
     if (e.target.value.toLowerCase() === '') {
       const response = await axios.get(

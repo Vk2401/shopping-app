@@ -36,11 +36,9 @@ const NotclosetoStore = () => {
 
     if (Array.isArray(stores)) {
       setStoreID(stores[0].id);
-  } else if (typeof stores === "object" && stores !== null) {
-    console.log(stores);
+    } else if (typeof stores === "object" && stores !== null) {
       setStoreID(stores.id);
-  }
-
+    }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -49,14 +47,14 @@ const NotclosetoStore = () => {
           return distance % 1 === 0 ? distance : distance >= 100 ? Math.round(distance) : Number(distance.toFixed(3));
         };
 
-        let distance ;
+        let distance;
         if (Array.isArray(stores)) {
           setStoreID(stores[0].id);
-           distance = haversineDistance(latitude, longitude, stores[0].location.lat, stores[0].location.lon);
-      } else if (typeof stores === "object" && stores !== null) {
+          distance = haversineDistance(latitude, longitude, stores[0].location.lat, stores[0].location.lon);
+        } else if (typeof stores === "object" && stores !== null) {
           setStoreID(stores.id);
-           distance = haversineDistance(latitude, longitude, stores.location.lat, stores.location.lon);
-      }
+          distance = haversineDistance(latitude, longitude, stores.location.lat, stores.location.lon);
+        }
 
         setDistance(formattedDistance(distance));
 

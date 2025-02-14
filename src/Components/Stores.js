@@ -161,14 +161,14 @@ const Stores = () => {
           <img src={userIcon} alt="" className="absolute right-0 h-8 w-8" onClick={() => { navigate('/settings') }} />
           <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
         </div>
-        <div className="h-full">
-          <MapContainer center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
+        <div className="h-full ">
+          <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {stores.map((store) => (
 
-              <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon}>
+              <Marker  key={store.id} position={[store.lat, store.lng]} icon={customIcon} >
                 <Popup>
-                  <div style={{ textAlign: "center" }}>
+                  <div  style={{ textAlign: "center" } }>
                     <img src={locationIcon} alt="Store Icon" width="30" height="30" />
                     <br />
                     <strong>{store.name}</strong>
@@ -223,7 +223,7 @@ const Stores = () => {
       <div className="h-1/2 p-5 z-3 relative">
         <div className="flex flex-col w-full gap-4 relative fiexed z-2 h-[25%]">
           <div className="flex justify-between items-center">
-            <strong>Select a store</strong>
+            <strong className="text-xl font-bold">Select a store</strong>
             <img src="" alt="" />
           </div>
 

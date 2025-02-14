@@ -4,7 +4,6 @@ import bgImage from '../utils/images/desktop-bg.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../context/locationContext.js';
-import { useInfo } from '../context/infoContext.js';
 import { useAuth } from "../context/AuthContext.js";
 
 const Welcome_Screen = () => {
@@ -29,7 +28,7 @@ const Welcome_Screen = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
- 
+
         const { latitude, longitude } = position.coords;
         setGpsEnabled(true);
         setLocation({ latitude, longitude });
@@ -84,7 +83,7 @@ const Welcome_Screen = () => {
       },
     });
 
-    const allStores=response.data.data;
+    const allStores = response.data.data;
 
     // const allStores = [
     //   {
@@ -347,30 +346,7 @@ const Welcome_Screen = () => {
     // ]
 
     const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, 15000);
-    if (nearbyStores.length > 0) {
-      if(nearbyStores.length>1){
-        navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
-      }else{
-        navigate('/notClose-toStore', { state: { stores: nearbyStores } });
-      }
-    } else {
-      navigate('/stores');
-    }
-  }
-  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
-    const R = 6371000; // Earth's radius in meters
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in meters
-
-    return distance;
+    return nearbyStores;
   }
 
   const handleChange = async (e) => {
@@ -427,8 +403,6 @@ const Welcome_Screen = () => {
     // }
   };
 
-
-
   const handleOTPSubmit = async (e) => {
     e.preventDefault();
     const enteredOTP = otpValues.join("");
@@ -449,7 +423,6 @@ const Welcome_Screen = () => {
       const response = true;
 
       if (response) {
-        fetchStores();
         const response = await axios.post(`${apiUrl}/auth/customer-login`, loginData, {
           headers: {
             'accept': 'application/json',
@@ -465,8 +438,16 @@ const Welcome_Screen = () => {
           refreshToken: rToken
         }, response.data.user);
 
-        navigate('/stores');
-
+        let nearbyStores = await fetchStores();
+        if (nearbyStores.length > 0) {
+          if (nearbyStores.length > 1) {
+            navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
+          } else {
+            navigate('/notClose-toStore', { state: { stores: nearbyStores } });
+          }
+        } else {
+          navigate('/stores');
+        }
 
       } else {
         setErr("Invalid OTP. Please try again.");

@@ -1048,7 +1048,7 @@ const ProductScreen = () => {
                   type="text"
                   placeholder="Search"
                   onChange={handleSearchChange}
-                  className="w-full font-semibold py-3 px-5 border-2 border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-orange-500 transition-all"
+                  className="w-full font-semibold py-3 px-5 border-2 border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-buttonColor transition-all"
                 />
                 <img
                   src={searchicon}

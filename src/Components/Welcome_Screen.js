@@ -10,7 +10,7 @@ import { useAuth } from "../context/AuthContext.js";
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
-  const { login } = useAuth();
+  const { login,isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState('');
   const [err, setErr] = useState('');
@@ -18,8 +18,6 @@ const Welcome_Screen = () => {
   const [serverOTP, setServerOTP] = useState("");
   const [showOTPField, setShowOTPField] = useState(false);
   const { location, setLocation, gpsEnabled, setGpsEnabled, setaccessToken, setrefreshToken, setUser } = useLocation();
-  const { apiBase, env } = useInfo();
-  const [error, setError] = useState(null);
   const loginData = {
     "login_type": "bankid",
     "login_id": "199609052387",
@@ -28,10 +26,15 @@ const Welcome_Screen = () => {
   };
 
   const getCurrectLocation = () => {
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log(position.coords);
         const { latitude, longitude } = position.coords;
         setGpsEnabled(true);
+        console.log(latitude);
+        console.log(longitude);
+
         setLocation({ latitude, longitude });
         // GPS is enabled
       },
@@ -480,8 +483,9 @@ const Welcome_Screen = () => {
   };
 
   useEffect(() => {
+    console.log(isAuthenticated);
     getCurrectLocation();
-  });
+  },[]);
 
   return (
     <div className="flex flex-col h-screen justify-center font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>

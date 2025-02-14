@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LanguageSwitch from '../utils/images/LanguageSwitch.png'
-import location from '../utils/images/location.png'
+import storeImage from '../utils/images/location.png'
 import locationImage from '../utils/images/locatioImage.png'
 import { useLocation as useRouterLocation, useNavigate } from 'react-router-dom';
 import { useLocation as useCustomLocation } from '../context/locationContext.js';
@@ -99,17 +99,17 @@ const NotclosetoStore = () => {
         <img src={userIcon} alt="" className="w-9 h-9 absolute right-5 bg-white rounded-full p-1" onClick={() => { navigate('/settings') }} />
       </div>
 
-      <div className="flex flex-col items-center justify-around h-full py-10">
+      <div className="flex flex-col items-center justify-around flex-1 py-10">
         <div className="flex flex-col gap-7">
           <strong className="text-2xl font-bold text-black text-center">You are not close to <br /> our Store</strong>
           <div className="flex flex-col items-center gap-5 bg-ligghtGray px-5 py-8 rounded-xl">
-            <img src={location} alt="" className="h-[110px] w-[110px]" />
+            <img src={storeImage} alt="" className="h-[110px] w-[110px]" />
             <p className="text-black text-wrap text-center font-xl font-semibold">Make sure you are within <br /> 50 meters of the store to utilize <br /> our App's features</p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 items-center px-11 h-2/3 py-10 mb-5">
+      <div className="flex flex-col gap-5 items-center px-11  py-10 mb-5">
         <strong className="text-black">Nearby Store</strong>
 
         <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md ">

@@ -13,8 +13,10 @@ import closeImage from '../utils/images/ios-close-circle.png';
 import tickMark from '../utils/images/tick.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
+import { div } from "framer-motion/client";
 
 const ProductScreen = () => {
+  const [noProduct,setNoproduct]=useState(false);
   const { isAuthenticated, logout } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
@@ -66,7 +68,6 @@ const ProductScreen = () => {
   useEffect(() => {
 
     if (!isAuthenticated) {
-      console.log('lok');
       navigate("/");
     }
     else {
@@ -74,7 +75,6 @@ const ProductScreen = () => {
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       const tokens = JSON.parse(localStorage.getItem('authToken'));
-
       setTotalCount(addedProducts.length);
 
       let addedTotal = 0;
@@ -82,14 +82,14 @@ const ProductScreen = () => {
         addedTotal = addedTotal + product.price;
       })
       setTotalPrice(addedTotal);
-
+ 
       const fetchProducts = async () => {
         try {
           const response = await axios.get(
             `${apiBase}/custom/vms/getProducts/${storeID}`,
             {
               headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Authorization': `Bearer ${tokens.accessToke}`,
                 'accept': '*/*',
                 'env': env,
               },
@@ -997,7 +997,7 @@ const ProductScreen = () => {
     if (totalPrice > 0) {
       navigate(`/checkout?storeID=${storeID}`);
     } else {
-      window.alert('Please add products to the cart');
+      setNoproduct(true);
     }
 
   };
@@ -1021,7 +1021,7 @@ const ProductScreen = () => {
       }
     ]
     const foundProduct = filteredProducts.find(product => product._id === productID);
-    console.log(foundProduct.saleGroupRules);
+ 
     setSaleruleProduct(foundProduct);
     setSalerule(foundProduct.saleGroupRules);
     setShowPopup(true);
@@ -1031,7 +1031,7 @@ const ProductScreen = () => {
     <div className=" h-screen">
       {loading ? (
         <div className="h-screen items-center justify-center bg-red-100">
-          <img src={loader} alt="" className="bg-buttonColor h-full" />
+           <img src={loader} alt="" className="bg-buttonColor h-full" />
         </div>
       ) : (
         <div className="font-poppins h-full px-3">
@@ -1059,7 +1059,8 @@ const ProductScreen = () => {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col overflow-y-auto py-2 mt-9 mb-5 gap-2 w-full">
+          <div className="flex-1 flex flex-col overflow-y-auto mb-5 gap-2 w-full pb-28 pt-36">
+ 
             {filteredProducts?.filter((product) => product.isVending).map((product) => (
               <div
                 key={product._id}
@@ -1224,6 +1225,16 @@ const ProductScreen = () => {
               }
 
             </div>
+          </div>
+        </div>
+      )}
+
+      {noProduct &&(
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
+          <div className="w-96 h-48 bg-white rounded-xl flex flex-col items-center justify-center gap-2">
+            <img src={basketImage} alt="" className="h-14 w-14"/>
+            <strong className="text-black font-semibold text-lg">Please add product</strong>
+            <button onClick={()=>{setNoproduct(false)}} className="px-14 py-3 rounded-full bg-buttonColor text-white font-semibold text-xl text-center">Okey</button>
           </div>
         </div>
       )}

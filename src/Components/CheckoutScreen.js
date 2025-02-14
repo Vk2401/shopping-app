@@ -82,10 +82,7 @@ const CheckoutScreen = () => {
     setUser(JSON.parse(sessionStorage.getItem("user")));
   }, []);
 
-  useEffect(() => {
-    console.log(products);
-  }, [products])
-
+ 
   const handleCheckout = async () => {
     // const response = await axios.post(
     //   `${apiBase}/storedatasync/erp-task`,
@@ -118,13 +115,13 @@ const CheckoutScreen = () => {
 
   return (
     <div className="h-screen flex flex-col px-6 font-poppins relative">
-      <div className="flex items-center justify-between  h-10 py-8">
-        <img onClick={() => navigate('/products')} src={leftArrow} alt="" className="h-7 w-7" />
+      <div className="flex items-center justify-between h-16 py-8fixed top-0 left-0 w-full z-10 bg-white">
+        <img onClick={() => navigate('/products')} src={leftArrow} alt="" className="h-10 w-10" />
         <h1 className="text-lightBlack font-bold text-xl">Checkout</h1>
-        <img onClick={() => navigate('/settings')} src={userIcon} alt="" className=" h-7 w-7" />
+        <img onClick={() => navigate('/settings')} src={userIcon} alt="" className=" h-8 w-8" />
       </div>
-
-      <div className="mt-5">
+ 
+      <div className="mt-5 flex-1 flex flex-col overflow-y-auto w-full pb-20">
 
         {cartProducts?.map((product) =>
           product.productType != "saleRule" ? (
@@ -151,8 +148,9 @@ const CheckoutScreen = () => {
               </div>
 
               <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                <span>{product.productCount}</span> 
                 <span>x</span>
-                <span>{product.productCount}</span>
+                <span>{product.price / product.productCount}</span>
               </div>
             </div>
           ) :
@@ -173,7 +171,7 @@ const CheckoutScreen = () => {
 
                     <div className="flex flex-col">
                       <span className="font-bold text-black">{product.title}</span>
-                      <span className="text-lightBlack">Qty: {product.productCount}</span>
+                      <span className="text-lightBlack">Qty: {product.totalCount}</span>
                       <span className="text-buttonColor font-semibold text-lg">
                         ${product.notSaleRulePrice}
                       </span>
@@ -181,8 +179,9 @@ const CheckoutScreen = () => {
                   </div>
 
                   <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                    <span>{product.totalCount}</span>
                     <span>x</span>
-                    <span>{product.productCount}</span>
+                    <span>{product.notSaleRulePrice/product.totalCount}</span>
                   </div>
                 </div>
               )}
@@ -202,7 +201,7 @@ const CheckoutScreen = () => {
 
                     <div className="flex flex-col">
                       <span className="font-bold text-black">{product.title}</span>
-                      <span className="text-lightBlack">Qty: {product.productCount}</span>
+                      <span className="text-lightBlack">Qty: {product.totalCount}</span>
                       <span className="text-buttonColor font-semibold text-lg">
                         ${product.salePrice}
                       </span>
@@ -210,8 +209,9 @@ const CheckoutScreen = () => {
                   </div>
 
                   <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                    <span>{product.saleAppliedCount}</span>
                     <span>x</span>
-                    <span>{product.productCount}</span>
+                    <span>{product.salePrice/product.saleAppliedCount}</span>
                   </div>
                 </div>
               )}
@@ -229,10 +229,12 @@ const CheckoutScreen = () => {
                         alt={product.title}
                         className="w-14 h-16 object-cover"
                       />
-
+                      {
+                        console.log(product)
+                      }
                       <div className="flex flex-col">
                         <span className="font-bold text-black">{product.title}</span>
-                        <span className="text-lightBlack">Qty: {product.productCount}</span>
+                        <span className="text-lightBlack">Qty: {product.saleAppliedCount * product.saleRulecount}</span>
                         <span className="text-buttonColor font-semibold text-lg">
                           ${product.salePrice}
                         </span>
@@ -240,8 +242,9 @@ const CheckoutScreen = () => {
                     </div>
 
                     <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                      <span>{product.salePrice/product.saleAppliedCount}</span>
                       <span>x</span>
-                      <span>{(product.saleAppliedCount * product.saleRulecount)}</span>
+                      <span>{(product.saleAppliedCount)}</span>
                     </div>
                   </div>
                   <div
@@ -257,7 +260,7 @@ const CheckoutScreen = () => {
 
                       <div className="flex flex-col">
                         <span className="font-bold text-black">{product.title}</span>
-                        <span className="text-lightBlack">Qty: {product.productCount}</span>
+                        <span className="text-lightBlack">Qty: {product.saleRuleNotAppliedCount}</span>
                         <span className="text-buttonColor font-semibold text-lg">
                           ${product.notSaleRulePrice}
                         </span>
@@ -265,6 +268,7 @@ const CheckoutScreen = () => {
                     </div>
 
                     <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                      <span>{product.notSaleRulePrice/product.saleRuleNotAppliedCount}</span>
                       <span>x</span>
                       <span>{product.saleRuleNotAppliedCount}</span>
                     </div>
@@ -275,7 +279,8 @@ const CheckoutScreen = () => {
         )}
 
       </div>
-      <div className="flex justify-center w-full items-center absolute bottom-10  right-0">
+
+      <div className="flex justify-center items-center fixed bottom-0 left-0 w-full z-10 py-5 bg-white">
         <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} Rs</button>
       </div>
     </div>

@@ -57,6 +57,8 @@ const Stores = () => {
         (position) => {
           const userLat = position.coords.latitude;
           const userLon = position.coords.longitude;
+          console.log(userLat);
+          console.log(userLon);
 
           const sortedShops = shops
             .map((shop) => ({
@@ -90,6 +92,14 @@ const Stores = () => {
     );
 
     setFilteredShops(filtered);
+  }
+
+  const openonMap=(shopID)=>{
+   
+    const shop=filteredShops.filter((shop)=>shop.id===shopID)
+ 
+    const { lat, lon } = shop[0].location;
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
   }
   useEffect(() => {
     if (!isAuthenticated) {
@@ -212,7 +222,7 @@ const Stores = () => {
       </div>
 
       <div className="h-1/2 p-5 z-3 relative">
-        <div className="flex flex-col w-full gap-4 relative top-0 fiexed z-2 h-[30%]">
+        <div className="flex flex-col w-full gap-4 relative fiexed z-2 h-[25%]">
           <div className="flex justify-between items-center">
             <strong>Select a store</strong>
             <img src="" alt="" />
@@ -256,7 +266,7 @@ const Stores = () => {
             }
 
             return (
-              <div key={shop.id} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b">
+              <div key={shop.id} onClick={()=>{ openonMap(shop.id)}} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b">
                 {/* Left side - Shop Name and Details */}
                 <div className="flex gap-2 items-center">
                   <img src={locationIcon} alt="" className="h-5 w-4" />

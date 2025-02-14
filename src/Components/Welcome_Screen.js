@@ -483,7 +483,6 @@ const Welcome_Screen = () => {
   };
 
   useEffect(() => {
-    console.log(isAuthenticated);
     getCurrectLocation();
   },[]);
 

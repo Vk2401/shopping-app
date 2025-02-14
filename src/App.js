@@ -17,9 +17,21 @@ import NotFoundScreen from "./Pages/NotFoundScreen.js";
 import SettingScreen from './Components/SettingScreen.js'
 import HistoryScreen from './Components/History.js'
 import Error_page from './Components/ErrorScreen.js'
+import React, { useEffect, useState } from "react";
 
 function App() {
-  return (
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return !isMobile ? <SystemScreen /> :
+  (
     <Routes>
       <Route element={<ProtectedRoute />}>
         <Route path="/system-screen" element={<SystemScreen />} />
@@ -42,7 +54,8 @@ function App() {
 
       <Route path="/" element={<Welcome_Screen />} />
     </Routes>
-  );
+  );;
+
 }
 
 export default function AppWrapper() {

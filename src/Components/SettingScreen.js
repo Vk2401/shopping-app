@@ -15,6 +15,8 @@ const SettingScreen = () => {
     const handleLogout = (text) => {
         if (text == 'yes') {
             localStorage.removeItem('cart');
+            localStorage.removeItem('total');
+            localStorage.removeItem('authToken');
             logout();
             navigate('/');
         }

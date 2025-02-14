@@ -83,11 +83,7 @@ const NotclosetoStore = () => {
     );
   };
 
-  const openGoogleMaps = (currentLat, currentLon, storeLat, storeLon) => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/${currentLat},${currentLon}/${storeLat},${storeLon}`;
-    window.open(googleMapsUrl, "_blank"); // Open in a new tab
-  };
-
+ 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
@@ -107,13 +103,13 @@ const NotclosetoStore = () => {
   }, [isAuthenticated, stores]); // Include dependencies to re-run when `stores` changes
 
   return (
-    <div className="flex flex-col justify-between h-screen w-full font-poppins">
+    <div className="flex flex-col h-screen w-full font-poppins">
       <div className="bg-buttonColor py-10 relative flex flex-col items-center justify-center"
         style={{ borderBottomLeftRadius: '38%', borderBottomRightRadius: '38%' }}>
         <img src={userIcon} alt="" className="w-9 h-9 absolute right-5 bg-white rounded-full p-1" onClick={() => { navigate('/settings') }} />
       </div>
 
-      <div className="flex flex-col items-center justify-around flex-1 py-10">
+      <div className="flex flex-col items-center justify-around flex-1">
         <div className="flex flex-col gap-7">
           <strong className="text-2xl font-bold text-black text-center">You are not close to <br /> our Store</strong>
           <div className="flex flex-col items-center gap-5 bg-ligghtGray px-5 py-8 rounded-xl">
@@ -123,8 +119,8 @@ const NotclosetoStore = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 items-center px-11  py-10 mb-5">
-        <strong className="text-black">Nearby Store</strong>
+      <div className="flex flex-col gap-5 items-center px-11 py-10 mb-5">
+        <strong className="text-black text-xl">Nearby Store</strong>
 
         <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md ">
           <div className="flex">

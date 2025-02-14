@@ -5,7 +5,7 @@ import { useInfo } from '../context/infoContext.js';
 import { useAuth } from "../context/AuthContext.js";
 import loader from '../utils/images/loader.gif';
 import leftArrow from '../utils/images/leftArrow.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 import { useLocation } from '../context/locationContext.js';
 import productDefaultimg from '../utils/images/grocery.png';
 import discountImag from '../utils/images/discount.png';
@@ -14,12 +14,13 @@ import tickMark from '../utils/images/tick.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
 import { div } from "framer-motion/client";
+ 
 
 const ProductScreen = () => {
+  const { storeID } = useParams();
   const [noProduct,setNoproduct]=useState(false);
   const { isAuthenticated, logout } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
-  const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
   const [loading, setLoading] = useState(true); // Loader state
   const { apiBase, env, refreshTokenFunction } = useInfo();
   const [Products, setProducts] = useState(null);
@@ -483,6 +484,12 @@ const ProductScreen = () => {
           //     }
           // ]
 
+          response.data.forEach((prod)=>{
+            if (prod.quantity === undefined) {
+              prod.quantity = 0; // Set quantity to 0 if undefined
+            }
+          })
+
           let fetchProduct = response.data;
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -926,7 +933,8 @@ const ProductScreen = () => {
   }
 
   const handleAddClick = (product) => {
-
+    product.quantity=0;
+    console.log(product);
     if (product.isDiscount) {
       addDiscountProduct(product);
     }
@@ -1062,8 +1070,9 @@ const ProductScreen = () => {
           <div className="flex-1 flex flex-col overflow-y-auto mb-5 gap-2 w-full pb-28 pt-36">
  
             {filteredProducts?.filter((product) => product.isVending).map((product) => (
+            
               <div
-                key={product._id}
+                key={product._id}  
                 className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3  border-2 border-gray-200 outline-none"
               >
                 <div className="flex items-center justify-center gap-3">
@@ -1104,10 +1113,10 @@ const ProductScreen = () => {
                   </div>
                 </div>
 
-                <div className="text-black font-bold text-lg">
-                  {product.quantity == 0 ? (
+                <div className="text-black font-bold text-lg"> 
+                  {product.quantity == 0 || product.quantity == undefined ? (
                     <button
-                      onClick={() => handleAddClick(product)}
+                    onClick={() => handleAddClick({ ...product, quantity: product.quantity ?? 0 })}
                       className=" border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full"
                     >
                       Add

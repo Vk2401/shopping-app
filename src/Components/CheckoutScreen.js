@@ -76,7 +76,6 @@ const CheckoutScreen = () => {
     };
 
     fetchProduct();
-
     // Set other states
     setTotal(localStorage.getItem("total"));
     setUser(JSON.parse(sessionStorage.getItem("user")));
@@ -116,7 +115,7 @@ const CheckoutScreen = () => {
   return (
     <div className="h-screen flex flex-col px-6 font-poppins relative">
       <div className="flex items-center justify-between h-16 py-8fixed top-0 left-0 w-full z-10 bg-white">
-        <img onClick={() => navigate('/products')} src={leftArrow} alt="" className="h-10 w-10" />
+        <img onClick={() => navigate(`/products/${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
         <h1 className="text-lightBlack font-bold text-xl">Checkout</h1>
         <img onClick={() => navigate('/settings')} src={userIcon} alt="" className=" h-8 w-8" />
       </div>

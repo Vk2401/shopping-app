@@ -24,7 +24,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/system-screen" element={<SystemScreen />} />
         <Route path="/no-location" element={<NolocationScreen />} />
-        <Route path="/products" element={<ProductScreen />} />
+        <Route path="/products/:storeID" element={<ProductScreen />} />
         <Route path="/notClose-toStore" element={<NotclosetoStore />} />
         <Route path="/stores" element={<Stores />} />
         <Route path="/DragCloseDrawerExample" element={<DragCloseDrawerExample />} />

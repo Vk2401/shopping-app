@@ -57,8 +57,7 @@ const Stores = () => {
         (position) => {
           const userLat = position.coords.latitude;
           const userLon = position.coords.longitude;
-          console.log(userLat);
-          console.log(userLon);
+
 
           const sortedShops = shops
             .map((shop) => ({

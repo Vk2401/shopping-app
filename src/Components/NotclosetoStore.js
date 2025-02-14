@@ -33,7 +33,15 @@ const NotclosetoStore = () => {
   }
 
   const getCurrectLocation2 = () => {
-    setStoreID(stores[0].id);
+
+    if (Array.isArray(stores)) {
+      setStoreID(stores[0].id);
+  } else if (typeof stores === "object" && stores !== null) {
+    console.log(stores);
+      setStoreID(stores.id);
+  }
+
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -41,7 +49,15 @@ const NotclosetoStore = () => {
           return distance % 1 === 0 ? distance : distance >= 100 ? Math.round(distance) : Number(distance.toFixed(3));
         };
 
-        const distance = haversineDistance(latitude, longitude, stores[0].location.lat, stores[0].location.lon);
+        let distance ;
+        if (Array.isArray(stores)) {
+          setStoreID(stores[0].id);
+           distance = haversineDistance(latitude, longitude, stores[0].location.lat, stores[0].location.lon);
+      } else if (typeof stores === "object" && stores !== null) {
+          setStoreID(stores.id);
+           distance = haversineDistance(latitude, longitude, stores.location.lat, stores.location.lon);
+      }
+
         setDistance(formattedDistance(distance));
 
       },
@@ -125,7 +141,7 @@ const NotclosetoStore = () => {
         </div>
 
         <button className="bg-buttonColor text-white text-center text-lg font-semibold rounded-full w-[250px] py-3"
-          onClick={() => navigate('/products', { state: { storeID } })}>Get Product</button>
+          onClick={() => navigate(`/products/${storeID}`)}>Get Product</button>
         <button className="bg-ligghtGray text-black text-center text-lg font-semibold rounded-full w-[250px] py-3"
           onClick={() => navigate('/stores')}>Find Other Stores</button>
       </div>

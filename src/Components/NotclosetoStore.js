@@ -119,7 +119,7 @@ const NotclosetoStore = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 items-center px-11 py-10 mb-5">
+      <div className="flex flex-col gap-5 items-center px-11 pb-10 mb-14">
         <strong className="text-black text-xl">Nearby Store</strong>
 
         <div className="flex bg-ligghtGray justify-between items-center w-full py-2 px-2 rounded-md ">

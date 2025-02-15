@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
+import { nav } from "framer-motion/client";
 
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -441,9 +442,11 @@ const Welcome_Screen = () => {
         let nearbyStores = await fetchStores();
         if (nearbyStores.length > 0) {
           if (nearbyStores.length > 1) {
-            navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
+            // navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
+            navigate(`/products/${nearbyStores[0].id}`);
           } else {
-            navigate('/notClose-toStore', { state: { stores: nearbyStores } });
+            navigate(`/products/${nearbyStores.id}`);
+            // navigate('/notClose-toStore', { state: { stores: nearbyStores } });
           }
         } else {
           navigate('/stores');
@@ -459,6 +462,10 @@ const Welcome_Screen = () => {
   };
 
   useEffect(() => {
+    if(isAuthenticated)
+      {
+        navigate(-1);
+      }
     getCurrectLocation();
   }, []);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRouter } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import locationIcon from '../utils/images/location-sharp.png'
 import L from 'leaflet';
@@ -8,10 +8,15 @@ import { useLocation } from '../context/locationContext.js';
 import { useInfo } from '../context/infoContext.js';
 import searchicon from '../utils/images/search.png';
 import { useAuth } from "../context/AuthContext.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation as useLocation2  } from "react-router-dom";
 import userIcon from '../utils/images/FontAwosemUser.png';
+import leftArrow from '../utils/images/leftArrow.png';
 
 const Stores = () => {
+  const location2 = useLocation2();
+  const params = new URLSearchParams(location2.search);
+  const storeID = params.get("storeID");
+  console.log(storeID);
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const { apiBase, env } = useInfo();
@@ -159,7 +164,8 @@ const Stores = () => {
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-center relative py-7">
           <img src={userIcon} alt="" className="absolute right-0 h-8 w-8" onClick={() => { navigate('/settings') }} />
-          <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
+            <h1 className="text-lightBlack font-bold text-xl"></h1>
+          <img src={leftArrow} alt="" className="absolute left-0 h-8 w-8" onClick={() => { navigate(`/products/${storeID}`) }} />
         </div>
         <div className="h-full ">
           <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>

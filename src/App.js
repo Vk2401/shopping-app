@@ -31,30 +31,29 @@ function App() {
   }, []);
 
   return !isMobile ? <SystemScreen /> :
-  (
-    <Routes>
-      <Route element={<ProtectedRoute />}>
-        <Route path="/system-screen" element={<SystemScreen />} />
-        <Route path="/no-location" element={<NolocationScreen />} />
-        <Route path="/products/:storeID" element={<ProductScreen />} />
-        <Route path="/notClose-toStore" element={<NotclosetoStore />} />
-        <Route path="/stores" element={<Stores />} />
-        <Route path="/DragCloseDrawerExample" element={<DragCloseDrawerExample />} />
-        <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
-        <Route path="/checkout" element={<CheckoutScreen />} />
-        <Route path="/payment" element={<PaymentScreen />} />
-        <Route path="/profile" element={<ProfileScreen />} />
-        <Route path="/ReachedStore" element={<ReachedStore />} />
-        <Route path="/settings" element={<SettingScreen />} />
-        <Route path="/history" element={<HistoryScreen />} />
-        <Route path="/error" element={<Error_page />} />
-      </Route>
+    (
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/system-screen" element={<SystemScreen />} />
+          <Route path="/no-location" element={<NolocationScreen />} />
+          <Route path="/products/:storeID" element={<ProductScreen />} />
+          <Route path="/notClose-toStore" element={<NotclosetoStore />} />
+          <Route path="/stores" element={<Stores />} />
+          <Route path="/DragCloseDrawerExample" element={<DragCloseDrawerExample />} />
+          <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
+          <Route path="/checkout" element={<CheckoutScreen />} />
+          <Route path="/payment" element={<PaymentScreen />} />
+          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/ReachedStore" element={<ReachedStore />} />
+          <Route path="/settings" element={<SettingScreen />} />
+          <Route path="/history" element={<HistoryScreen />} />
+          <Route path="/error" element={<Error_page />} />
+        </Route>
 
-      <Route path="*" element={<NotFoundScreen />} />
-
-      <Route path="/" element={<Welcome_Screen />} />
-    </Routes>
-  );;
+        <Route path="*" element={<NotFoundScreen />} />
+        <Route path="/" element={<Welcome_Screen />} />
+      </Routes>
+    );;
 
 }
 

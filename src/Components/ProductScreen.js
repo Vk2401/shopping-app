@@ -5,7 +5,7 @@ import { useInfo } from '../context/infoContext.js';
 import { useAuth } from "../context/AuthContext.js";
 import loader from '../utils/images/loader.gif';
 import leftArrow from '../utils/images/leftArrow.png';
-import { useNavigate,useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLocation } from '../context/locationContext.js';
 import productDefaultimg from '../utils/images/grocery.png';
 import discountImag from '../utils/images/discount.png';
@@ -14,11 +14,11 @@ import tickMark from '../utils/images/tick.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
 import { div } from "framer-motion/client";
- 
+
 
 const ProductScreen = () => {
   const { storeID } = useParams();
-  const [noProduct,setNoproduct]=useState(false);
+  const [noProduct, setNoproduct] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
@@ -32,6 +32,7 @@ const ProductScreen = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [saleruleProduct, setSaleruleProduct] = useState([]);
   const [saleRule, setSalerule] = useState([]);
+  const [isProductfetched, setisProductfetched] = useState(false);
   const { location, setLocation, gpsEnabled, setGpsEnabled, setaccessToken, setrefreshToken, setUser } = useLocation();
 
   // const [saleRuleProduct, setSaleRuleProduct] = useState(
@@ -78,12 +79,13 @@ const ProductScreen = () => {
       const tokens = JSON.parse(localStorage.getItem('authToken'));
       setTotalCount(addedProducts.length);
 
+
       let addedTotal = 0;
       addedProducts.forEach(product => {
         addedTotal = addedTotal + product.price;
       })
       setTotalPrice(addedTotal);
- 
+
       const fetchProducts = async () => {
         try {
           const response = await axios.get(
@@ -484,13 +486,17 @@ const ProductScreen = () => {
           //     }
           // ]
 
-          response.data.forEach((prod)=>{
+          response.data.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
             }
           })
 
           let fetchProduct = response.data;
+          if (fetchProduct.length == 0) {
+            setisProductfetched(true);
+            console.log('NO Products ');
+          }
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
           if (cart.length > 0) {
@@ -933,7 +939,7 @@ const ProductScreen = () => {
   }
 
   const handleAddClick = (product) => {
-    product.quantity=0;
+    product.quantity = 0;
     if (product.isDiscount) {
       addDiscountProduct(product);
     }
@@ -1011,7 +1017,6 @@ const ProductScreen = () => {
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
   );
-
   const showSalePopup = (productID) => {
 
     const saleGroupRules = [
@@ -1027,7 +1032,7 @@ const ProductScreen = () => {
       }
     ]
     const foundProduct = filteredProducts.find(product => product._id === productID);
- 
+
     setSaleruleProduct(foundProduct);
     setSalerule(foundProduct.saleGroupRules);
     setShowPopup(true);
@@ -1035,15 +1040,27 @@ const ProductScreen = () => {
 
   return (
     <div className=" h-screen">
-      {loading ? (
-        <div className="h-screen items-center justify-center bg-red-100">
-           <img src={loader} alt="" className="bg-buttonColor h-full" />
+      {isProductfetched ? (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
+          <div className="w-96 h-48 bg-white rounded-xl flex flex-col items-center justify-center gap-2">
+            <strong className="text-black font-semibold text-lg">No Products in this Shop</strong>
+            <button
+              onClick={() => navigate('/stores')}
+              className="px-14 py-3 rounded-full bg-buttonColor text-white font-semibold text-xl text-center"
+            >
+              Okay
+            </button>
+          </div>
+        </div>
+      ) : loading ? (
+        <div className="h-screen flex items-center justify-center bg-red-100">
+          <img src={loader} alt="" className="bg-buttonColor h-full" />
         </div>
       ) : (
         <div className="font-poppins h-full px-3">
           <div className="px-3 h-36 flex flex-col gap-5 py-5 justify-center fixed top-0 left-0 w-full z-10 bg-white mb-10">
             <div className="flex items-center justify-between relative">
-              <img onClick={() => { navigate('/stores') }} src={leftArrow} alt="" className="h-10 w-10" />
+              <img onClick={() => navigate(`/stores?storeID=${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
               <img onClick={() => navigate('/settings')} src={userIcon} alt="" className=" h-8 w-8" />
             </div>
@@ -1066,11 +1083,11 @@ const ProductScreen = () => {
           </div>
 
           <div className="flex-1 flex flex-col overflow-y-auto mb-5 gap-2 w-full pb-28 pt-36">
- 
+
             {filteredProducts?.filter((product) => product.isVending).map((product) => (
-            
+
               <div
-                key={product._id}  
+                key={product._id}
                 className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3  border-2 border-gray-200 outline-none"
               >
                 <div className="flex items-center justify-center gap-3">
@@ -1111,10 +1128,10 @@ const ProductScreen = () => {
                   </div>
                 </div>
 
-                <div className="text-black font-bold text-lg"> 
+                <div className="text-black font-bold text-lg">
                   {product.quantity == 0 || product.quantity == undefined ? (
                     <button
-                    onClick={() => handleAddClick({ ...product, quantity: product.quantity ?? 0 })}
+                      onClick={() => handleAddClick({ ...product, quantity: product.quantity ?? 0 })}
                       className=" border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full"
                     >
                       Add
@@ -1150,7 +1167,7 @@ const ProductScreen = () => {
           </div>
         </div>
       )}
-      {/* Sale Rule POPUP  */}
+
       {showPopup && (
         <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
           <div className="w-full max-h-[500px] bg-white rounded-2xl px-4 py-5 ">
@@ -1179,7 +1196,6 @@ const ProductScreen = () => {
                     {!saleruleProduct.isDiscount ? (
                       <div className="flex items-center">
                         <strong className="text-buttonColor font-semibold">{saleruleProduct.price} $</strong>
-
                       </div>
                     ) : (
                       <div className="flex items-center">
@@ -1189,7 +1205,6 @@ const ProductScreen = () => {
                         </strong>
                       </div>
                     )}
-
                   </div>
                 </div>
               </div>
@@ -1216,7 +1231,7 @@ const ProductScreen = () => {
               {saleRule
                 .filter(rule => rule.status === 'Active') // Filter only active rules
                 .map((rule, index) => {
-                  const isActive = saleruleProduct.quantity === rule.count; // Check condition
+                  const isActive = saleruleProduct.quantity >= rule.count; // Check condition
 
                   return (
                     <div
@@ -1236,15 +1251,16 @@ const ProductScreen = () => {
         </div>
       )}
 
-      {noProduct &&(
+      {noProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
           <div className="w-96 h-48 bg-white rounded-xl flex flex-col items-center justify-center gap-2">
-            <img src={basketImage} alt="" className="h-14 w-14"/>
+            <img src={basketImage} alt="" className="h-14 w-14" />
             <strong className="text-black font-semibold text-lg">Please add product</strong>
-            <button onClick={()=>{setNoproduct(false)}} className="px-14 py-3 rounded-full bg-buttonColor text-white font-semibold text-xl text-center">Okey</button>
+            <button onClick={() => { setNoproduct(false) }} className="px-14 py-3 rounded-full bg-buttonColor text-white font-semibold text-xl text-center">Okey</button>
           </div>
         </div>
       )}
+
     </div>
   );
 }

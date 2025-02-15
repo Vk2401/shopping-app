@@ -6,12 +6,10 @@ import editIcon from '../utils/images/editIcon.png';
 import rightArrow from '../utils/images/rightArrow.png';
 import leftArrow from '../utils/images/leftArrow.png';
 import { useAuth } from "../context/AuthContext.js";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ProfileScreen = () => {
-  const location2 = useLocation();
-  const params = new URLSearchParams(location2.search);
-  const storeID = params.get("storeID");
+
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
@@ -26,7 +24,7 @@ const ProfileScreen = () => {
   return (
     <div className="px-6 font-poppins h-screen">
       <div className="flex items-center justify-between h-16">
-        <img src={leftArrow} alt="" className="h-8 w-8" onClick={() => { navigate(`/settings?storeID=${storeID}`) }} />
+        <img src={leftArrow} alt="" className="h-8 w-8" onClick={() => { navigate(`/settings`) }} />
         <h1 className="text-black font-bold text-xl">Profile</h1>
         <img src={''} alt="" />
       </div>

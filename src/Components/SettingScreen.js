@@ -4,13 +4,10 @@ import FontAwosemUser from '../utils/images/FontAwosemUser.png';
 import Userpic from '../utils/images/Userpic.png';
 import { div } from "framer-motion/client";
 import door from '../utils/images/no-door.png';
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
 
 const SettingScreen = () => {
-    const location2 = useLocation();
-    const params = new URLSearchParams(location2.search);
-    const storeID = params.get("storeID");
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
@@ -21,6 +18,8 @@ const SettingScreen = () => {
             localStorage.removeItem('cart');
             localStorage.removeItem('total');
             localStorage.removeItem('authToken');
+            localStorage.removeItem('storeID');
+
             logout();
             navigate('/');
         }
@@ -36,7 +35,7 @@ const SettingScreen = () => {
         <div>
             <div className="flex flex-col px-6 h-screen font-poppins">
                 <div className="flex items-center justify-center relative py-8">
-                    <img src={arrow} alt="" onClick={() => { navigate(`/products/${storeID}`) }} className="absolute h-10 w-10 left-0" />
+                    <img src={arrow} alt="" onClick={() => { navigate(`/products`) }} className="absolute h-10 w-10 left-0" />
                     <strong className="font-bold text-2xl">Settings</strong>
                 </div>
 
@@ -48,7 +47,7 @@ const SettingScreen = () => {
                         </div>
 
                         <div className="flex flex-col gap-5 mt-10">
-                            <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate(`/profile?storeID=${storeID}`) }}>
+                            <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate(`/profile`) }}>
                                 <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">Profile</h1>
                             </div>

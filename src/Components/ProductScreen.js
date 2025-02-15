@@ -19,7 +19,7 @@ import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 
 
 const ProductScreen = () => {
-  const { storeID } = useParams();
+  const [storeID,setStoreid]=useState('');
   const [noProduct, setNoproduct] = useState(false);
   const { isAuthenticated } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
@@ -78,6 +78,8 @@ const ProductScreen = () => {
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       const tokens = JSON.parse(localStorage.getItem('authToken'));
+      const storeID=localStorage.getItem('storeID');
+      setStoreid(storeID);
       setTotalCount(addedProducts.length);
 
 
@@ -89,6 +91,7 @@ const ProductScreen = () => {
 
       const fetchProducts = async () => {
         try {
+
           const response = await axios.get(
             `${apiBase}/custom/vms/getProducts/${storeID}`,
             {
@@ -1451,9 +1454,9 @@ const ProductScreen = () => {
         <div className="font-poppins h-full px-3">
           <div className=" px-3 h-40 flex flex-col fixed top-0 left-0 w-full z-10 bg-white">
             <div className="flex items-center justify-between relative h-1/2">
-              <img onClick={() => navigate(`/stores?storeID=${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
+              <img onClick={() => navigate(`/stores`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img onClick={() => navigate(`/settings?storeID=${storeID}`)} src={userIcon} alt="" className="h-8 w-8" />
+              <img onClick={() => navigate(`/settings`)} src={userIcon} alt="" className="h-8 w-8" />
             </div>
 
             <div className="flex items-center justify-center h-1/2">

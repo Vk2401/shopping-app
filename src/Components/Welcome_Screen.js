@@ -444,9 +444,11 @@ const Welcome_Screen = () => {
         if (nearbyStores.length > 0) {
           if (nearbyStores.length > 1) {
             // navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
-            navigate(`/products/${nearbyStores[0].id}`);
+            localStorage.setItem('storeID',nearbyStores[0].id);
+            navigate(`/products`);
           } else {
-            navigate(`/products/${nearbyStores.id}`);
+            localStorage.setItem('storeID',nearbyStores.id);
+            navigate(`/products`);
             // navigate('/notClose-toStore', { state: { stores: nearbyStores } });
           }
         } else {

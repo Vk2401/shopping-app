@@ -1449,14 +1449,14 @@ const ProductScreen = () => {
         </div>
       ) : (
         <div className="font-poppins h-full px-3">
-          <div className="px-3 h-36 flex flex-col gap-5 py-5 justify-center fixed top-0 left-0 w-full z-10 bg-white mb-10">
-            <div className="flex items-center justify-between relative">
+          <div className=" px-3 h-40 flex flex-col fixed top-0 left-0 w-full z-10 bg-white">
+            <div className="flex items-center justify-between relative h-1/2">
               <img onClick={() => navigate(`/stores?storeID=${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
               <img onClick={() => navigate(`/settings?storeID=${storeID}`)} src={userIcon} alt="" className="h-8 w-8" />
             </div>
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center h-1/2">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -1474,8 +1474,8 @@ const ProductScreen = () => {
           </div>
 
           {isProductfetched ? (
-            <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2 pb-28 pt-36">
-              <img src={noProductImage} alt="" />
+            <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2">
+              <img src={noProductImage} alt="" className="h-52 w-52"/>
               <button onClick={()=>{navigate(`/stores?storeID=${storeID}`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (

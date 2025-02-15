@@ -161,12 +161,12 @@ const Stores = () => {
   return (
     <div className="h-screen font-poppins">
       <div className="flex flex-col px-7 h-1/2">
-        <div className="flex items-center justify-center relative py-7">
-          <img src={userIcon} alt="" className="absolute right-0 h-8 w-8" onClick={() => { navigate('/settings') }} />
+        <div className="flex items-center justify-between h-20">
+          <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => { navigate(`/products/${storeID}`) }} />
             <h1 className="text-lightBlack font-bold text-xl"></h1>
-          <img src={leftArrow} alt="" className="absolute left-0 h-8 w-8" onClick={() => { navigate(`/products/${storeID}`) }} />
+          <img src={userIcon} alt="" className="h-9 w-9" onClick={() => { navigate(`/settings?storeID=${storeID}`) }} />
         </div>
-        <div className="h-full ">
+        <div className="flex-1 ">
           <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {stores.map((store) => (

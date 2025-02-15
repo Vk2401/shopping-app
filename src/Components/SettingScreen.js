@@ -48,7 +48,7 @@ const SettingScreen = () => {
                         </div>
 
                         <div className="flex flex-col gap-5 mt-10">
-                            <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate('/profile') }}>
+                            <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate(`/profile?storeID=${storeID}`) }}>
                                 <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">Profile</h1>
                             </div>

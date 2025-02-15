@@ -10,7 +10,6 @@ const NolocationScreen = () => {
   const [showPopup, setShowPopup] = useState(false); // State for modal visibility
   const { isAuthenticated, logout } = useAuth();
 
-
   function enableGPS() {
     // Open Android GPS settings
     window.location.href =
@@ -54,7 +53,7 @@ const NolocationScreen = () => {
       navigate('/');
     }
 
-    getCurrectLocation();
+    // getCurrectLocation();
   }, []);
   return (
     <div className="flex flex-col justify-between h-screen font-poppins">
@@ -65,7 +64,7 @@ const NolocationScreen = () => {
       ></div>
 
       {/* Content Section */}
-      <div className="flex flex-col h-full items-center justify-center px-6 pt-10 gap-6">
+      <div className="flex flex-col h-full items-center justify-center px-6 pt-10">
         <div className="flex flex-col items-center flex-1 w-full gap-4 text-center">
           <img src={noLocation} alt="No Location" className="w-[250px] h-[300px]" />
 
@@ -76,7 +75,7 @@ const NolocationScreen = () => {
         </div>
 
         {/* Button Section */}
-        <div className="flex items-center justify-center w-full pb-10">
+        <div className="flex items-center justify-center w-full pb-20">
           <button
             className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
             onClick={getCurrectLocation}

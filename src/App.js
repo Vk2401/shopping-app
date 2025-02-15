@@ -18,17 +18,49 @@ import SettingScreen from './Components/SettingScreen.js'
 import HistoryScreen from './Components/History.js'
 import Error_page from './Components/ErrorScreen.js'
 import React, { useEffect, useState } from "react";
+import Nointernet from './Components/Nointernet.js'
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+  const [isOnline, setIsOnline] = useState(navigator.onLine); // Track internet status
+  const [isLocationEnabled, setIsLocationEnabled] = useState(true);
+
+  const checkLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        () => setIsLocationEnabled(true), // Location enabled
+        () => setIsLocationEnabled(false) // Location disabled
+      );
+    } else {
+      setIsLocationEnabled(false);
+    }
+  };
+
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1024);
     };
 
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    checkLocation(); 
+
+     return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
+
+  if (!isOnline) return <Nointernet />;
+
+  if (!isLocationEnabled) return <NolocationScreen onRetry={checkLocation} />;
+
 
   return !isMobile ? <SystemScreen /> :
     (
@@ -52,6 +84,8 @@ function App() {
 
         <Route path="*" element={<NotFoundScreen />} />
         <Route path="/" element={<Welcome_Screen />} />
+
+
       </Routes>
     );;
 

@@ -4,13 +4,17 @@ import FontAwosemUser from '../utils/images/FontAwosemUser.png';
 import Userpic from '../utils/images/Userpic.png';
 import { div } from "framer-motion/client";
 import door from '../utils/images/no-door.png';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
 
 const SettingScreen = () => {
+    const location2 = useLocation();
+    const params = new URLSearchParams(location2.search);
+    const storeID = params.get("storeID");
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
+    
 
     const handleLogout = (text) => {
         if (text == 'yes') {
@@ -32,7 +36,7 @@ const SettingScreen = () => {
         <div>
             <div className="flex flex-col px-6 h-screen font-poppins">
                 <div className="flex items-center justify-center relative py-8">
-                    <img src={arrow} alt="" onClick={() => { navigate('/products') }} className="absolute h-10 w-10 left-0" />
+                    <img src={arrow} alt="" onClick={() => { navigate(`/products/${storeID}`) }} className="absolute h-10 w-10 left-0" />
                     <strong className="font-bold text-2xl">Settings</strong>
                 </div>
 

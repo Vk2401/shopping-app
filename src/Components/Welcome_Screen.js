@@ -10,6 +10,7 @@ import { nav } from "framer-motion/client";
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
+  const Distance=process.env.REACT_APP_DISTANCE
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState('');
@@ -346,7 +347,7 @@ const Welcome_Screen = () => {
     //   }
     // ]
 
-    const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, 15000);
+    const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, Distance);
     return nearbyStores;
   }
 

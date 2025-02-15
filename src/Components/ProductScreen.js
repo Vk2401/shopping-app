@@ -14,13 +14,14 @@ import tickMark from '../utils/images/tick.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
 import { div, filter } from "framer-motion/client";
-import empty from '../utils/images/empty.png';
+import empty from '../utils/images/ProductsNotFoundpng.png';
+import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 
 
 const ProductScreen = () => {
   const { storeID } = useParams();
   const [noProduct, setNoproduct] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
   const { apiBase, env, refreshTokenFunction } = useInfo();
@@ -28,7 +29,6 @@ const ProductScreen = () => {
   const [accessToken, setAccessToken] = useState('');
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [productCounts, setProductCounts] = useState({});
   const [totalCount, setTotalCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [saleruleProduct, setSaleruleProduct] = useState([]);
@@ -975,7 +975,7 @@ const ProductScreen = () => {
 
   const handleSearchChange = async (e) => {
     const value = e.target.value.toLowerCase();
-    
+
   //   const response=[
   //     {
   //         "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
@@ -1453,7 +1453,7 @@ const ProductScreen = () => {
             <div className="flex items-center justify-between relative">
               <img onClick={() => navigate(`/stores?storeID=${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img onClick={() => navigate('/settings')} src={userIcon} alt="" className="h-8 w-8" />
+              <img onClick={() => navigate(`/settings?storeID=${storeID}`)} src={userIcon} alt="" className="h-8 w-8" />
             </div>
 
             <div className="flex items-center justify-center">
@@ -1475,7 +1475,7 @@ const ProductScreen = () => {
 
           {isProductfetched ? (
             <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2 pb-28 pt-36">
-              <h1 className="font-bold text-xl text-blck">No products available</h1>
+              <img src={noProductImage} alt="" />
               <button onClick={()=>{navigate(`/stores?storeID=${storeID}`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (

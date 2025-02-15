@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import searchicon from '../utils/images/search.png';
 import basketImage from '../utils/images/basket.png';
-import { useInfo } from '../context/infoContext.js';
 import { useAuth } from "../context/AuthContext.js";
+import { useInfo } from "../context/infoContext.js";
 import loader from '../utils/images/loader.gif';
 import leftArrow from '../utils/images/leftArrow.png';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -19,12 +19,15 @@ import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 
 
 const ProductScreen = () => {
+  const apiUrl = process.env.REACT_APP_API_URL
+  const environment = process.env.REACT_APP_ENVIRONMENT
+  const Distance=process.env.REACT_APP_DISTANCE
   const [storeID,setStoreid]=useState('');
   const [noProduct, setNoproduct] = useState(false);
   const { isAuthenticated } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
-  const { apiBase, env, refreshTokenFunction } = useInfo();
+  const {refreshTokenFunction } = useInfo();
   const [Products, setProducts] = useState(null);
   const [accessToken, setAccessToken] = useState('');
   const navigate = useNavigate();
@@ -93,12 +96,12 @@ const ProductScreen = () => {
         try {
 
           const response = await axios.get(
-            `${apiBase}/custom/vms/getProducts/${storeID}`,
+            `${apiUrl}/custom/vms/getProducts/${storeID}`,
             {
               headers: {
                 'Authorization': `Bearer ${tokens.accessToke}`,
                 'accept': '*/*',
-                'env': env,
+                'env': environment,
               },
             }
           );
@@ -1380,15 +1383,15 @@ const ProductScreen = () => {
 
     if (e.target.value.toLowerCase() === '') {
       const response = await axios.get(
-        `${apiBase}/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
+        `${apiUrl}/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'accept': '*/*',
-            'env': env,
+            'env': environment,
           },
         }
-      );
+      );  
       setProducts(response.data);
     }
     else {

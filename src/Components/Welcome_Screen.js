@@ -467,7 +467,7 @@ const Welcome_Screen = () => {
   useEffect(() => {
     if(isAuthenticated)
       {
-        navigate(-1);
+        navigate('products');
       }
     getCurrectLocation();
   }, []);

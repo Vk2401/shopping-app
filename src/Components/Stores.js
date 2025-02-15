@@ -16,7 +16,6 @@ const Stores = () => {
   const location2 = useLocation2();
   const params = new URLSearchParams(location2.search);
   const storeID = params.get("storeID");
-  console.log(storeID);
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const { apiBase, env } = useInfo();

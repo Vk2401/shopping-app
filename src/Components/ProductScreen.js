@@ -562,6 +562,7 @@ const ProductScreen = () => {
             setCurrence(correnc.data.value.currency)
           }
         }
+        localStorage.setItem('currence',currence);
       }
 
       fetchCurrence();

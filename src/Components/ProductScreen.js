@@ -33,6 +33,8 @@ const ProductScreen = () => {
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
   const [currence,setCurrence]=useState('SEK');
+  const [saleRUle,setSaleRULE]=useState('');
+  let tempARR=[];
   // const [saleRuleProduct, setSaleRuleProduct] = useState(
   //   {
   //     productType: '',
@@ -64,6 +66,25 @@ const ProductScreen = () => {
       price: 0
     }
   ]);
+
+  const findActiveRule=(saleRules)=>{
+   
+    saleRules.forEach((rule)=>{
+
+      if(rule.status === 'Active' && saleruleProduct.quantity >= rule.count){
+        const roundedUp = saleruleProduct.quantity / rule.count;
+
+        const temp = {
+          ruleCOUNT: rule.count,
+          ans: roundedUp,
+        };
+        tempARR.push(temp);
+     
+      }
+    })
+
+    tempARR.sort((a, b) => a.ans.toString().localeCompare(b.ans.toString()));
+  }
 
   useEffect(() => {
 
@@ -527,7 +548,6 @@ const ProductScreen = () => {
             })
 
             setTotalPrice(total);
-            console.log(fetchProduct);
             setProducts(fetchProduct);
 
           } else {
@@ -750,6 +770,8 @@ const ProductScreen = () => {
             }
             ruleAppliedArr.push(saleobj);
           }
+
+         
         });
 
 
@@ -757,10 +779,23 @@ const ProductScreen = () => {
           matchingProduct.totalCount = matchingProduct.totalCount + 1;
           matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount++;
           matchingProduct.notSaleRulePrice += newProduct.price;
+ 
         }
         else {
           ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
           matchingProduct = ruleAppliedArr[0];
+
+          if(matchingProduct.saleRuleNotAppliedCount>0 ){
+
+            rules.forEach((rule2)=>{
+              if(rule2.status === "Active" && rule2.count <= matchingProduct.saleRuleNotAppliedCount){
+                matchingProduct.secondLevalRuleCount= matchingProduct.saleRuleNotAppliedCount
+                matchingProduct.SalePrice=rule2.price;
+              }
+            })
+
+          }
+
         }
 
         cartProduct = cartProduct.map(product =>
@@ -843,11 +878,13 @@ const ProductScreen = () => {
 
   const decrementSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+
     let quantityBecome = newProduct.quantity - 1;
     let ruleAppliedArr = [];
 
     if (quantityBecome != 0) {
       let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
+ 
       const rules = newProduct.saleGroupRules;
       const count = matchingProduct.totalCount - 1;
 
@@ -868,7 +905,10 @@ const ProductScreen = () => {
             salePrice: appliedPrice,
             notSaleRulePrice: notAppliedPrice,
             saleRulecount: rule.count,
-            issaleApplied: true
+            issaleApplied: true,
+            secondLevalRuleCount: matchingProduct.secondLevalRuleCount,
+            SalePrice: matchingProduct.SalePrice
+        
           }
           ruleAppliedArr.push(saleobj);
         }
@@ -878,6 +918,7 @@ const ProductScreen = () => {
         matchingProduct.totalCount = matchingProduct.totalCount - 1;
         matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount - 1;
         matchingProduct.notSaleRulePrice -= newProduct.price;
+   
       }
       else if (ruleAppliedArr.length == 0 && matchingProduct.issaleApplied) {
         matchingProduct.totalCount = matchingProduct.totalCount - 1;
@@ -890,8 +931,29 @@ const ProductScreen = () => {
         matchingProduct.issaleApplied = false;
       }
       else {
+
         ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
         matchingProduct = ruleAppliedArr[0];
+
+        const hasSecondLevalRuleCount = matchingProduct.hasOwnProperty('secondLevalRuleCount');
+      
+        if(hasSecondLevalRuleCount){
+          matchingProduct.secondLevalRuleCount--;
+
+          if(matchingProduct.secondLevalRuleCount>0){
+
+            rules.forEach((rule2)=>{
+              if(rule2.status === "Active" && rule2.count <= matchingProduct.secondLevalRuleCount){
+             
+                matchingProduct.secondLevalRuleCount--;
+              }else{
+                matchingProduct.secondLevalRuleCount=0;
+                matchingProduct.SalePrice=0;
+              }
+            })
+          }
+        }
+        
       }
 
       cartProduct = cartProduct.map(product =>
@@ -1461,7 +1523,7 @@ const ProductScreen = () => {
 
   return (
     <div className=" h-screen">
-      {console.log(currence)}
+
       {loading ? (
         <div className="h-screen flex items-center justify-center bg-red-100">
           <img src={loader} alt="" className="bg-buttonColor h-full" />
@@ -1664,10 +1726,10 @@ const ProductScreen = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {saleRule
+              {/* {saleRule
                 .filter(rule => rule.status === 'Active') // Filter only active rules
                 .map((rule, index) => {
-                  const isActive = saleruleProduct.quantity >= rule.count; // Check condition
+                  const isActive = saleruleProduct.quantity >= rule.count && saleruleProduct.quantity !=rule.count; // Check condition
 
                   return (
                     <div
@@ -1680,7 +1742,38 @@ const ProductScreen = () => {
                     </div>
                   );
                 })
-              }
+              } */}
+
+              {findActiveRule(saleRule)}
+
+            {saleRule
+              .filter(rule => rule.status === 'Active') // Filter only active rules
+              .map((rule, index) => {
+            
+                // Check if saleruleProduct.quantity matches any other rule.count (excluding current rule)
+                const isQuantityInOtherRules = saleRule.some(
+                  otherRule => otherRule.count === saleruleProduct.quantity && otherRule !== rule 
+                );
+             
+                // Condition: quantity must be >= rule.count AND must not match any other rule.count
+                //  const isActive =saleruleProduct.quantity  >= rule.count && !isQuantityInOtherRules ;
+                let isActive=false;
+                if(tempARR.length>0){
+                   isActive = tempARR[0].ruleCOUNT == rule.count;
+                }
+                
+                return (
+                  <div
+                    key={index}
+                    className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
+                    ${isActive ? 'bg-buttonColor text-white' : 'text-gray-400'}`} // Apply conditional styles
+                  >
+                    <p className="text-lg">BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span></p>
+                    <img src={tickMark} alt="" className={`h-7 w-7 rounded-full absolute right-2 ${isActive ? 'block' : 'hidden'}`} />
+                  </div>
+                );
+              })
+            }
 
             </div>
           </div>

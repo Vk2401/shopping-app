@@ -4,30 +4,23 @@ import locationIcon from '../utils/images/location-sharp.png'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from "axios";
-import { useLocation } from '../context/locationContext.js';
-import { useInfo } from '../context/infoContext.js';
 import searchicon from '../utils/images/search.png';
 import { useAuth } from "../context/AuthContext.js";
-import { useNavigate, useLocation as useLocation2  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import userIcon from '../utils/images/FontAwosemUser.png';
 import leftArrow from '../utils/images/leftArrow.png';
 
 const Stores = () => {
-  const location2 = useLocation2();
-  const params = new URLSearchParams(location2.search);
-  const storeID = params.get("storeID");
-  const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
-  const { apiBase, env } = useInfo();
-  const [accessToken, setAccessToken] = useState();
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [shops, setShops] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
-  const { location, setLocation, gpsEnabled, setGpsEnabled, refreshToken, setrefreshToken, user, setUser } = useLocation();
-  const [stores, seStores] = useState([]);
-  const [filteredShops, setFilteredShops] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
+  const navigate = useNavigate();
+  const [shops, setShops] = useState([]);
+  const [stores, seStores] = useState([]);
+  const { isAuthenticated } = useAuth();
+  const [accessToken, setAccessToken] = useState();
+  const [userLocation, setUserLocation] = useState(null);
+  const [filteredShops, setFilteredShops] = useState([]);
+  const apiUrl = process.env.REACT_APP_API_URL
+  const environment = process.env.REACT_APP_ENVIRONMENT
   const customIcon = L.icon({
     iconUrl: locationIcon,
     iconSize: [25, 28], // Adjust size as needed
@@ -87,7 +80,6 @@ const Stores = () => {
 
   const handleSearchChange = async (e) => {
     const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
 
     // Filter shops based on query
     const filtered = shops.filter(shop =>
@@ -130,11 +122,11 @@ const Stores = () => {
 
   useEffect(() => {
     const fetchStores = async () => {
-      const response = await axios.get(`${apiBase}/custom/shops/getshops?limit=10&page=1`, {
+      const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'accept': 'application/json',
-          'env': env,
+          'env': environment,
         },
       });
 

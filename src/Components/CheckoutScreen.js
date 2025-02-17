@@ -1,25 +1,24 @@
 import { div } from "framer-motion/client";
 import react, { useEffect, useState } from "react";
-import { useAsyncError, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import leftArrow from '../utils/images/leftArrow.png';
 import axios from 'axios';
-import { useInfo } from '../context/infoContext.js';
 import productDefaultimg from '../utils/images/grocery.png';
-import userIcon from '../utils/images/FontAwosemUser.png';
 import { useAuth } from "../context/AuthContext.js";
+import userIcon from '../utils/images/FontAwosemUser.png';
 
 const CheckoutScreen = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const storeID = params.get("storeID");
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
-  const [cartProducts, setCartProducts] = useState([]);
   const [user, setUser] = useState({});
   const [products, setProducts] = useState([]);
-  const { apiBase, env, refreshTokenFunction } = useInfo();
   const [loading, setLoading] = useState(true); // Loading state
+  const apiUrl = process.env.REACT_APP_API_URL
+  const Distance=process.env.REACT_APP_DISTANCE
+  const environment = process.env.REACT_APP_ENVIRONMENT
+  const [cartProducts,setCartProducts]=useState([]);
+  const [storeID,setStoreID]=useState('');
 
   useEffect(() => {
 
@@ -27,6 +26,7 @@ const CheckoutScreen = () => {
       navigate('/');
     }
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+    let store=sessionStorage.getItem('storeID');
     let localUSER=JSON.parse(localStorage.getItem("user")) || [];
    
     setUser(localUSER);
@@ -34,15 +34,17 @@ const CheckoutScreen = () => {
     if (cartProduct.length == 0) {
       navigate('/products');
     }
+    setCartProducts(cartProduct);
+    setStoreID(store);
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${apiBase}/custom/vms/getProducts/${storeID}`,
+          `${apiUrl}/custom/vms/getProducts/${storeID}`,
           {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
               accept: "*/*",
-              env: env,
+              env: environment,
             },
           }
         );
@@ -94,7 +96,7 @@ const CheckoutScreen = () => {
      let aToken=tokens.accessToke;
   
     const response = await axios.post(
-      `${apiBase}/storedatasync/erp-task`,
+      `${apiUrl}/storedatasync/erp-task`,
       {
         storeId: storeID,
         userId: localUSER.id,
@@ -106,7 +108,7 @@ const CheckoutScreen = () => {
       {
         headers: {
           'accept': 'application/json',
-          'env': env,
+          'env': environment,
           'Authorization': `Bearer ${aToken}`,
           'Content-Type': 'application/json'
         }

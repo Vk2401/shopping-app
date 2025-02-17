@@ -1,5 +1,3 @@
-import { div } from "framer-motion/client";
-import react, { useEffect } from "react";
 import visaImage from '../utils/images/visa.png';
 import cardImage from '../utils/images/card.png';
 import gPay from '../utils/images/Google-Pay-hero.webp'

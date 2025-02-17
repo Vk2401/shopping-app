@@ -3,9 +3,8 @@ import loginUser from '../utils/images/loginUser.png';
 import bgImage from '../utils/images/desktop-bg.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import { useLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
-import { nav } from "framer-motion/client";
+
 
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -18,7 +17,6 @@ const Welcome_Screen = () => {
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState("");
   const [showOTPField, setShowOTPField] = useState(false);
-  const { location, setLocation, gpsEnabled, setGpsEnabled, setaccessToken, setrefreshToken, setUser } = useLocation();
   const loginData = {
     "login_type": "bankid",
     "login_id": "199609052387",
@@ -26,19 +24,26 @@ const Welcome_Screen = () => {
     "device_type": "android"
   };
 
+  const [currentLocation, setCurrentLocation] = useState({
+    currentLatitude: '',
+    currentLongitude: '',
+  });
+
   const getCurrectLocation = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
 
         const { latitude, longitude } = position.coords;
-        setGpsEnabled(true);
-        setLocation({ latitude, longitude });
+        setCurrentLocation({
+          currentLatitude: latitude,
+          currentLongitude: longitude,
+        });
+
         // GPS is enabled
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
-          setGpsEnabled(false); // GPS denied
         }
       }
     );
@@ -77,6 +82,8 @@ const Welcome_Screen = () => {
   const fetchStores = async () => {
     const tokens = JSON.parse(localStorage.getItem('authToken'));
     const aToken = tokens.accessToke;
+    let currentLatitude='';
+    let currentLongitude='';
     const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
@@ -347,7 +354,7 @@ const Welcome_Screen = () => {
     //   }
     // ]
 
-    const nearbyStores = await findNearbyStores(location.latitude, location.longitude, allStores, Distance);
+    const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
     return nearbyStores;
   }
 
@@ -365,7 +372,11 @@ const Welcome_Screen = () => {
 
     const { value } = e.target;
 
-    if (value.length > 1) return;
+    if (value.length > 1) {
+      console.log(typeof(value));
+   
+      return;
+    }
 
     const newOtpValues = [...otpValues];
     newOtpValues[index] = value;

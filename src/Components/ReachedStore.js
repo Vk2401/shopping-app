@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import locationReached from '../utils/images/locationReached.gif';
 import backArrow from '../\/utils/images/arrow-circle-left_solid.png';
 import { useAuth } from "../context/AuthContext.js";
-import { useNavigate } from "react-router-dom";
 
 const ReachedStore = () => {
     const navigate = useEffect();

@@ -19,7 +19,7 @@ const SettingScreen = () => {
             localStorage.removeItem('total');
             localStorage.removeItem('authToken');
             localStorage.removeItem('storeID');
-
+            
             logout();
             navigate('/');
         }

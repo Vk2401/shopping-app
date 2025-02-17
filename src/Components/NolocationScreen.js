@@ -1,29 +1,12 @@
 import React, { useState, useEffect } from "react";
 import noLocation from "../utils/images/noLocation.png";
-import { useLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 
 const NolocationScreen = () => {
-  const { location, setLocation, gpsEnabled, setGpsEnabled } = useLocation();
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false); // State for modal visibility
   const { isAuthenticated, logout } = useAuth();
-
-  function enableGPS() {
-    // Open Android GPS settings
-    window.location.href =
-      "intent://settings/#Intent;scheme=android-app;action=android.settings.LOCATION_SOURCE_SETTINGS;end;";
-
-    // Close modal after clicking Yes
-    setShowPopup(false);
-
-    // Retry location after 5 seconds (to give time for user to enable GPS)
-    setTimeout(() => {
-      console.log('l0k');
-      getCurrectLocation();
-    }, 5000);
-  }
 
   function getCurrectLocation() {
     if ("geolocation" in navigator) {
@@ -31,11 +14,8 @@ const NolocationScreen = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           console.log("Location enabled!", latitude, longitude);
-          setGpsEnabled(true);
         },
         (err) => {
-          console.log("Error:", err);
-          console.log('yes');
           if (err.code === err.PERMISSION_DENIED) {
             setShowPopup(true); // Show custom modal
           } else if (err.code === err.POSITION_UNAVAILABLE) {
@@ -80,7 +60,6 @@ const NolocationScreen = () => {
             className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
             onClick={getCurrectLocation}
           >
-            {gpsEnabled ? "Location Enabled" : "Enable Location"}
           </button>
         </div>
       </div>
@@ -92,10 +71,7 @@ const NolocationScreen = () => {
             <h2 className="text-lg font-bold mb-4">Enable GPS</h2>
             <p className="text-gray-600 mb-4">GPS is turned off. Would you like to enable it?</p>
             <div className="flex justify-center gap-4">
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                onClick={enableGPS}
-              >
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md">
                 Yes, Enable
               </button>
               <button

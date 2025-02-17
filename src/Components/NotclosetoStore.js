@@ -3,7 +3,6 @@ import LanguageSwitch from '../utils/images/LanguageSwitch.png'
 import storeImage from '../utils/images/location.png'
 import locationImage from '../utils/images/locatioImage.png'
 import { useLocation as useRouterLocation, useNavigate } from 'react-router-dom';
-import { useLocation as useCustomLocation } from '../context/locationContext.js';
 import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../utils/images/FontAwosemUser.png';
 
@@ -12,7 +11,6 @@ const NotclosetoStore = () => {
   const navigate = useNavigate();
   const [distance, setDistance] = useState('');
   const [storeID, setStoreID] = useState('');
-  const { location, setLocation, setGpsEnabled } = useCustomLocation();
   const { isAuthenticated } = useAuth();
   const location2 = useRouterLocation();
   const { stores } = location2.state || { stores: [] };
@@ -61,7 +59,6 @@ const NotclosetoStore = () => {
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
-          setGpsEnabled(false); // GPS denied
         }
       }
     );
@@ -71,13 +68,10 @@ const NotclosetoStore = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setGpsEnabled(true);
-        setLocation({ latitude, longitude });
         // GPS is enabled
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
-          setGpsEnabled(false); // GPS denied
         }
       }
     );

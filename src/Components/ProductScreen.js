@@ -2,18 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import searchicon from '../utils/images/search.png';
 import basketImage from '../utils/images/basket.png';
 import { useAuth } from "../context/AuthContext.js";
-import { useInfo } from "../context/infoContext.js";
 import loader from '../utils/images/loader.gif';
 import leftArrow from '../utils/images/leftArrow.png';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useLocation } from '../context/locationContext.js';
+import { useNavigate } from 'react-router-dom';
 import productDefaultimg from '../utils/images/grocery.png';
 import discountImag from '../utils/images/discount.png';
 import closeImage from '../utils/images/ios-close-circle.png';
 import tickMark from '../utils/images/tick.png';
 import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
-import { div, filter } from "framer-motion/client";
 import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 
@@ -21,13 +18,11 @@ import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
-  const Distance=process.env.REACT_APP_DISTANCE
   const [storeID,setStoreid]=useState('');
   const [noProduct, setNoproduct] = useState(false);
   const { isAuthenticated } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
-  const {refreshTokenFunction } = useInfo();
   const [Products, setProducts] = useState(null);
   const [accessToken, setAccessToken] = useState('');
   const navigate = useNavigate();
@@ -37,8 +32,6 @@ const ProductScreen = () => {
   const [saleruleProduct, setSaleruleProduct] = useState([]);
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
-  const { location, setLocation, gpsEnabled, setGpsEnabled, setaccessToken, setrefreshToken, setUser } = useLocation();
-
   // const [saleRuleProduct, setSaleRuleProduct] = useState(
   //   {
   //     productType: '',
@@ -541,7 +534,6 @@ const ProductScreen = () => {
 
         } catch (error) {
           if (error.status == 401) {
-            refreshTokenFunction();
           }
           console.error('Error fetching products:', error);
         }
@@ -558,14 +550,11 @@ const ProductScreen = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setGpsEnabled(true);
-        setLocation({ latitude, longitude });
         // GPS is enabled
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
           alert('Please enable location access');
-          setGpsEnabled(false); // GPS denied
         }
       }
     );
@@ -1396,12 +1385,12 @@ const ProductScreen = () => {
     }
     else {
       const response = await axios.get(
-        `https://devapi-tanlux.storetech.ai/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
+        `${apiUrl}/custom/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'accept': '*/*',
-            'env': 'demo',
+            'env': environment,
           },
         }
       );
@@ -1482,7 +1471,7 @@ const ProductScreen = () => {
           {isProductfetched ? (
             <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2">
               <img src={noProductImage} alt="" className="h-52 w-52"/>
-              <button onClick={()=>{navigate(`/stores?storeID=${storeID}`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
+              <button onClick={()=>{navigate(`/stores`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
             <div className="h-full flex flex-col justify-center items-center">

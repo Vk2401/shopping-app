@@ -5,7 +5,6 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
 
-
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
@@ -82,8 +81,6 @@ const Welcome_Screen = () => {
   const fetchStores = async () => {
     const tokens = JSON.parse(localStorage.getItem('authToken'));
     const aToken = tokens.accessToke;
-    let currentLatitude='';
-    let currentLongitude='';
     const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
@@ -93,6 +90,7 @@ const Welcome_Screen = () => {
     });
 
     const allStores = response.data.data;
+    console.log(allStores);
 
     // const allStores = [
     //   {
@@ -369,12 +367,9 @@ const Welcome_Screen = () => {
   };
 
   const handleOTPChange = (e, index) => {
-
     const { value } = e.target;
 
     if (value.length > 1) {
-      console.log(typeof(value));
-   
       return;
     }
 
@@ -419,6 +414,7 @@ const Welcome_Screen = () => {
   const handleOTPSubmit = async (e) => {
     e.preventDefault();
     const enteredOTP = otpValues.join("");
+  
 
     if (enteredOTP.length !== 5) {
       setErr("Please enter the complete OTP");
@@ -491,8 +487,8 @@ const Welcome_Screen = () => {
         <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
-      <div className="h-1/2 w-full flex flex-col items-center justify- gap-x-1 mt-5">
-        <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg w-[90%] max-w-md">
+      <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 overflow-y-auto">
+        <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg">
           <div className="flex flex-col gap-3 w-full">
             <label htmlFor="phone" className="font-semibold text-lg text-gray-700 ml-2">Phone Number</label>
             <input
@@ -508,20 +504,26 @@ const Welcome_Screen = () => {
               <div>
                 <label htmlFor="otp" className="font-semibold text-lg text-gray-700">Enter OTP</label>
                 <div className="flex gap-2">
-                  {[...Array(5)].map((_, index) => (
-                    <input
-                      key={index}
-                      type="number"
-                      name={`otp${index}`}
-                      id={`otp-${index}`} // Add ID for focus
-                      maxLength={1}
-                      className="w-[50px] h-[50px] border border-gray-300 outline-none py-3 px-4 text-center rounded-md focus:ring-2 focus:ring-buttonColor transition-all"
-                      placeholder="-"
-                      value={otpValues[index]}
-                      onChange={(e) => handleOTPChange(e, index)}
-                    />
-                  ))}
-                </div>
+                {[...Array(5)].map((_, index) => (
+                  <input
+                    key={index}
+                    type="text" // Use text to control input behavior
+                    name={`otp${index}`}
+                    id={`otp-${index}`} // Add ID for focus
+                    maxLength={1}
+                    className="w-[50px] h-[50px] border border-gray-300 outline-none py-3 px-4 text-center rounded-md focus:ring-2 focus:ring-buttonColor transition-all"
+                    placeholder="-"
+                    value={otpValues[index]}
+                    onChange={(e) => handleOTPChange(e, index)}
+                    onKeyDown={(e) => {
+                      if (!/^[0-9]$/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab") {
+                        e.preventDefault(); // Prevent entering invalid characters
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+
               </div>
             )}
           </div>

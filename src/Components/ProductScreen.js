@@ -74,10 +74,10 @@ const ProductScreen = () => {
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       const tokens = JSON.parse(localStorage.getItem('authToken'));
-      const storeID=localStorage.getItem('storeID');
+      // const storeID=localStorage.getItem('storeID');
+      const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
       setTotalCount(addedProducts.length);
-
 
       let addedTotal = 0;
       addedProducts.forEach(product => {
@@ -1474,9 +1474,9 @@ const ProductScreen = () => {
               <button onClick={()=>{navigate(`/stores`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
-            <div className="h-full flex flex-col justify-center items-center">
+            <div className="h-full flex flex-col items-center">
              {filteredProducts?.length > 0 ? (
-              <div className="flex flex-col overflow-y-auto mb-5 gap-2 w-full py-10">
+              <div className="flex flex-col overflow-y-auto mb-5 gap-2 w-full py-16">
                 {filteredProducts?.filter((product) => product.isVending).map((product) => (
                   <div key={product._id}
                     className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"

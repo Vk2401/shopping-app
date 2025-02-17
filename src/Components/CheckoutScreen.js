@@ -21,13 +21,15 @@ const CheckoutScreen = () => {
   const [storeID,setStoreID]=useState('');
 
   useEffect(() => {
-
     if (!isAuthenticated) {
       navigate('/');
     }
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
-    let store=sessionStorage.getItem('storeID');
+    const tokens = JSON.parse(localStorage.getItem('authToken'));
     let localUSER=JSON.parse(localStorage.getItem("user")) || [];
+    let store=sessionStorage.getItem('storeID');
+    store ='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    setStoreID(store);
    
     setUser(localUSER);
 
@@ -35,21 +37,23 @@ const CheckoutScreen = () => {
       navigate('/products');
     }
     setCartProducts(cartProduct);
-    setStoreID(store);
+
     const fetchProduct = async () => {
       try {
+        console.log(storeID);
         const response = await axios.get(
           `${apiUrl}/custom/vms/getProducts/${storeID}`,
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-              accept: "*/*",
-              env: environment,
+              'Authorization': `Bearer ${tokens.accessToke}`,
+              'accept': '*/*',
+              'env': environment,
             },
           }
         );
 
         let fetchedProduct = response.data;
+        console.log(fetchedProduct);
 
         // Update cartProduct with fetched product details
         cartProduct = cartProduct.map((cartItem) => {
@@ -87,13 +91,15 @@ const CheckoutScreen = () => {
     // Set other states
     setTotal(localStorage.getItem("total"));
     setUser(JSON.parse(sessionStorage.getItem("user")));
-  }, []);
+  }, [storeID]);
 
  
   const handleCheckout = async () => {
      let localUSER=JSON.parse(localStorage.getItem("user")) || [];
      let tokens=JSON.parse(localStorage.getItem("authToken")) || [];
      let aToken=tokens.accessToke;
+     console.log(products);
+     console.log(aToken);
   
     const response = await axios.post(
       `${apiUrl}/storedatasync/erp-task`,

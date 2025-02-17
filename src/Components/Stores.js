@@ -241,7 +241,7 @@ const Stores = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%]">
+        <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%] mt-5">
           {filteredShops.map((shop) => {
             const shopLat = parseFloat(shop.location.lat);
             const shopLon = parseFloat(shop.location.lon);
@@ -262,7 +262,7 @@ const Stores = () => {
             }
 
             return (
-              <div key={shop.id} onClick={()=>{ openonMap(shop.id)}} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b">
+              <div key={shop.id} onClick={()=>{ openonMap(shop.id)}} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                 {/* Left side - Shop Name and Details */}
                 <div className="flex gap-2 items-center">
                   <img src={locationIcon} alt="" className="h-5 w-4" />

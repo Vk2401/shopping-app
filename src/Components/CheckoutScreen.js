@@ -19,11 +19,13 @@ const CheckoutScreen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts,setCartProducts]=useState([]);
   const [storeID,setStoreID]=useState('');
+   const [currence,setCurrence]=useState('SEK');
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
     }
+    setCurrence(localStorage.getItem('currence'));
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     const tokens = JSON.parse(localStorage.getItem('authToken'));
     let localUSER=JSON.parse(localStorage.getItem("user")) || [];
@@ -40,9 +42,8 @@ const CheckoutScreen = () => {
 
     const fetchProduct = async () => {
       try {
-        console.log(storeID);
         const response = await axios.get(
-          `${apiUrl}/custom/vms/getProducts/${storeID}`,
+          `${apiUrl}/vms/getProducts/${storeID}`,
           {
             headers: {
               'Authorization': `Bearer ${tokens.accessToke}`,
@@ -92,7 +93,6 @@ const CheckoutScreen = () => {
     setTotal(localStorage.getItem("total"));
     setUser(JSON.parse(sessionStorage.getItem("user")));
   }, [storeID]);
-
  
   const handleCheckout = async () => {
      let localUSER=JSON.parse(localStorage.getItem("user")) || [];
@@ -132,8 +132,8 @@ const CheckoutScreen = () => {
 
   return (
     <div className="h-screen flex flex-col px-6 font-poppins relative">
-      <div className="flex items-center justify-between h-20 py-8fixed top-0 left-0 w-full z-10 bg-white">
-        <img onClick={() => navigate(`/products/${storeID}`)} src={leftArrow} alt="" className="h-10 w-10" />
+      <div className="flex items-center justify-between h-20 py-8 first-line:fixed top-0 left-0 w-full z-10 bg-white">
+        <img onClick={() => navigate(`/products`)} src={leftArrow} alt="" className="h-10 w-10" />
         <h1 className="text-lightBlack font-bold text-xl">Checkout</h1>
         <img onClick={() => navigate('/settings')} src={userIcon} alt="" className=" h-8 w-8" />
       </div>
@@ -145,29 +145,109 @@ const CheckoutScreen = () => {
       ) : (
         
         <div className="mt-5 flex-1 flex flex-col overflow-y-auto w-full pb-20">
-          {cartProducts?.map((product) => (
-            <div key={product.productID} className="flex justify-between items-center border-2 border-gray-300 rounded-lg px-4 py-2 mb-4">
-              <div className="flex items-center gap-2">
-                <img
-                  src={product.picture || productDefaultimg}
-                  alt={product.title}
-                  className="w-14 h-16 object-cover"
-                />
-                <div className="flex flex-col">
-                  <span className="font-bold text-black">{product.title}</span>
-                  <span className="text-lightBlack">Qty: {product.productCount}</span>
-                  <span className="text-buttonColor font-semibold text-lg">
-                    ${product.price}
-                  </span>
+          
+          {cartProducts
+            ?.filter((product) => product.productType !== "saleRule") // Filter out products with productType === "saleRule"
+            .map((product) => (
+              <div
+                key={product.productID}
+                className="flex justify-between items-center border-2 border-gray-300 rounded-lg px-4 py-2 mb-4"
+              >
+                <div className="flex items-center gap-2">
+                  <img
+                    src={product.picture || productDefaultimg} // Use default image if no picture exists
+                    alt={product.title}
+                    className="w-14 h-16 object-cover"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-bold text-black">{product.title}</span>
+                    <span className="text-lightBlack">Qty: {product.productCount}</span>
+                    <span className="text-buttonColor font-semibold text-lg">
+                      {product.price+' '+currence}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                  <span>{product.productCount}</span>
+                  <span>x</span>
+                  <span>{product.price / product.productCount}</span>
                 </div>
               </div>
-              <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
-                <span>{product.productCount}</span>
-                <span>x</span>
-                <span>{product.price / product.productCount}</span>
+            ))}
+
+
+        {cartProducts?.map((product) => (
+          <div key={product.productID}>
+            {product.issaleApplied === false && (
+              <div className="flex justify-between items-center border-2 border-yellow-300 rounded-lg px-4 py-2 mb-4">
+                <div className="flex items-center gap-2">
+                  <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
+                  <div className="flex flex-col">
+                    <span className="font-bold text-black">{product.title}</span>
+                    <span className="text-lightBlack">Qty: {product.totalCount}</span>
+                    <span className="text-buttonColor font-semibold text-lg">{product.notSaleRulePrice +' '+currence}</span>
+                  </div>
+                </div>
+                <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                  <span>{product.totalCount}</span>
+                  <span>x</span>
+                  <span>{product.notSaleRulePrice / product.totalCount}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            )}
+            {product.issaleApplied === true && product.totalCount % product.saleRulecount === 0 && (
+              <div className="flex justify-between items-center  border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
+                <div className="flex items-center gap-2">
+                  <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
+                  <div className="flex flex-col">
+                    <span className="font-bold text-black">{product.title}</span>
+                    <span className="text-lightBlack">Qty: {product.totalCount}</span>
+                    <span className="text-buttonColor font-semibold text-lg">{product.salePrice+' '+currence}</span>
+                  </div>
+                </div>
+                <div className="flex font-semibold items-center  justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                  <span>{product.saleAppliedCount}</span>
+                  <span>x</span>
+                  <span>{product.salePrice / product.saleAppliedCount}</span>
+                </div>
+              </div>
+            )}
+            {product.issaleApplied === true && product.totalCount % product.saleRulecount !== 0 && (
+              <div>
+                <div className="flex justify-between items-center  border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-black">{product.title}</span>
+                      <span className="text-lightBlack">Qty: {product.saleAppliedCount * product.saleRulecount}</span>
+                      <span className="text-buttonColor font-semibold text-lg">{product.salePrice+' '+currence}</span>
+                    </div>
+                  </div>
+                  <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                    <span>{product.salePrice / product.saleAppliedCount}</span>
+                    <span>x</span>
+                    <span>{product.saleAppliedCount}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-2 border-red-300 rounded-lg px-4 py-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-black">{product.title}</span>
+                      <span className="text-lightBlack">Qty: {product.saleRuleNotAppliedCount}</span>
+                      <span className="text-buttonColor font-semibold text-lg">{product.notSaleRulePrice}</span>
+                    </div>
+                  </div>
+                  <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                    <span>{product.notSaleRulePrice / product.saleRuleNotAppliedCount}</span>
+                    <span>x</span>
+                    <span>{product.saleRuleNotAppliedCount}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
 
         <div className="flex justify-center items-center fixed bottom-0 left-0 w-full z-10 pb-5 bg-white">
          <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} Rs</button>

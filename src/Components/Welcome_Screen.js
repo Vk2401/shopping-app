@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext.js";
 
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
+  const authAPIURL=process.env.REACT_APP_AUTH_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
   const Distance=process.env.REACT_APP_DISTANCE
   const { login, isAuthenticated } = useAuth();
@@ -81,7 +82,7 @@ const Welcome_Screen = () => {
   const fetchStores = async () => {
     const tokens = JSON.parse(localStorage.getItem('authToken'));
     const aToken = tokens.accessToke;
-    const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
+    const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
         'accept': 'application/json',
@@ -429,10 +430,11 @@ const Welcome_Screen = () => {
       // const response={
       //   data:'suc'
       // };
+      
       const response = true;
 
       if (response) {
-        const response = await axios.post(`${apiUrl}/auth/customer-login`, loginData, {
+        const response = await axios.post(`${authAPIURL}/auth/customer-login`, loginData, {
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',

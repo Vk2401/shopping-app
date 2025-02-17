@@ -122,7 +122,7 @@ const Stores = () => {
 
   useEffect(() => {
     const fetchStores = async () => {
-      const response = await axios.get(`${apiUrl}/custom/shops/getshops?limit=10&page=1`, {
+      const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'accept': 'application/json',

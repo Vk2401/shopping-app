@@ -271,15 +271,20 @@ const ProductScreen = () => {
                   "soldItems": 0,
                   "saleGroupRules": [
                       {
-                          "count": 4,
+                          "count": 3,
                           "price": 7,
                           "status": "Active"
                       },
                       {
-                          "count": 6,
+                          "count": 5,
                           "price": 9,
                           "status": "Active"
-                      }
+                      },
+                      {
+                        "count": 2,
+                        "price": 3,
+                        "status": "Active"
+                    }
                   ],
                   "updateVersion": 0,
                   "ageRestriction": "",
@@ -610,34 +615,44 @@ const ProductScreen = () => {
 
     rules.forEach((rule) => {
       if (rule.status == 'Active' && rule.count == 1) {
-        let srOBJ = {
-          productType: 'saleRule',
-          productID: Product._id,
+        let srOBJ={
+          productID:  Product._id,
+          productType: "saleRule",
           totalCount: 1,
-          saleAppliedCount: 1,
-          saleRuleNotAppliedCount: 0,
-          salePrice: rule.price,
-          notSaleRulePrice: 0,
-          saleRulecount: rule.count,
-          issaleApplied: true
-        }
+          Rules: {
+              rule: {
+                  saleAppliedCount: 1,
+                  salePrice: rule.price,
+                  saleRuleNotAppliedCount: 0,
+                  notSaleRulePrice: 0,
+                  saleRulecount: rule.count,
+                  totalCount: 1
+              }
+          }
+      }
 
         cartProducts.push(srOBJ);
         flag = 1;
       }
     })
     if (flag == 0) {
-      let srOBJ = {
-        productType: 'saleRule',
-        productID: Product._id,
+
+      let srOBJ={
+        productID:  Product._id,
+        productType: "saleRule",
         totalCount: 1,
-        saleAppliedCount: 0,
-        saleRuleNotAppliedCount: 1,
-        salePrice: 0,
-        notSaleRulePrice: Product.price,
-        saleRulecount: 0,
-        issaleApplied: false
-      }
+        Rules: {
+            rule: {
+                saleAppliedCount: 0,
+                salePrice:0,
+                saleRuleNotAppliedCount: 1,
+                notSaleRulePrice:  Product.price,
+                saleRulecount: 0,
+                totalCount: 1
+            }
+        }
+    }
+      console.log(srOBJ);
       cartProducts.push(srOBJ);
     }
   }
@@ -652,7 +667,17 @@ const ProductScreen = () => {
 
     cartProducts.forEach((pro) => {
       if (pro.productType == 'saleRule') {
-        totalPrice += (pro.notSaleRulePrice + pro.salePrice)
+        const values=pro.Rules;
+
+        Object.values(values).forEach(value => {
+          totalPrice += value.salePrice;
+          
+          // Check if saleRuleNotAppliedCount is not zero
+          if (value.saleRuleNotAppliedCount !== 0) {
+            totalPrice += value.saleRuleNotAppliedCount * value.notSaleRulePrice;
+          }
+        });
+        
       }
       else {
         totalPrice += pro.price;
@@ -737,6 +762,92 @@ const ProductScreen = () => {
 
   }
 
+
+  // const findSaleRuleforSomeProduct=(productQuatity,product)=>{
+
+  //   let rules = product.saleGroupRules;
+  //   rules.sort((a, b) => b.count - a.count);
+  //   let count = productQuatity;
+
+  //   rules.forEach((rule) => {
+    
+  //     if (rule.status === "Active" && rule.count <= count) {
+  //       let remainder = count % rule.count;
+  //       let appliedCount = Math.floor(count / rule.count);
+  //       let notAppliedPrice = remainder * newProduct.price;
+  //       let appliedPrice = appliedCount * rule.price;
+
+  //       let saleobj =
+  //       {
+  //         productType: 'saleRule',
+  //         productID: newProduct._id,
+  //         totalCount: totalProduct,
+  //         saleAppliedCount: appliedCount,
+  //         saleRuleNotAppliedCount: remainder,
+  //         salePrice: appliedPrice,
+  //         notSaleRulePrice: notAppliedPrice,
+  //         saleRulecount: rule.count,
+  //         issaleApplied: true
+  //       }
+
+  //       ruleAppliedArr.push(saleobj);
+  //       count=remainder;
+  //     }
+  //   });
+
+  //   if (ruleAppliedArr.length == 0) {
+  //     product.totalCount = product.totalCount + 1;
+  //     product.saleRuleNotAppliedCount = product.saleRuleNotAppliedCount++;
+  //     product.notSaleRulePrice += product.price;
+  //   }
+  //   else {
+
+  //     const updatedArr = ruleAppliedArr.map((item, index, arr) => {
+  //       let newItem;
+  //       if(ruleAppliedArr.length==1){
+  //          newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount)+ item.saleRuleNotAppliedCount};
+  //       }else{
+  //          newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
+  //       }
+       
+  //       if (arr[index + 1] && arr[index + 1].issaleApplied) {
+  //         newItem.notSaleRulePrice = 0;
+  //         newItem.saleRuleNotAppliedCount = 0; // Updated this property
+  //       }
+  //       return newItem;
+  //     });
+
+  //     const transformedData = updatedArr.reduce((acc, item, index) => {
+  //       if (!acc.productID) {
+  //         acc.productID = item.productID;
+  //         acc.productType = item.productType;
+  //         acc.totalCount = 0;
+  //         acc.Rules = {};
+  //       }
+      
+  //       acc.totalCount += item.totalCount; // Summing up totalCount from all items
+      
+  //       acc.Rules[`rule ${index + 1}`] = {
+  //         saleAppliedCount: item.saleAppliedCount,
+  //         salePrice: item.salePrice,
+  //         saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
+  //         notSaleRulePrice: item.notSaleRulePrice,
+  //         saleRulecount: item.saleRulecount, // Added saleRulecount
+  //         totalCount: item.totalCount // Each rule's specific totalCount
+  //       };
+      
+  //       return acc;
+  //     }, {});
+
+  //     product =transformedData;
+  //   }
+
+  //   cartProduct = cartProduct.map(product =>
+  //     product.productID === product.productID ? product : product
+  //   );
+
+  // }
+
   const addSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     let ruleAppliedArr = [];
@@ -745,12 +856,15 @@ const ProductScreen = () => {
       let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
 
       if (matchingProduct != null) {
-        const rules = newProduct.saleGroupRules;
-        const count = matchingProduct.totalCount + 1;
+        let rules = newProduct.saleGroupRules;
+        let totalProduct=matchingProduct.totalCount + 1;
+        rules.sort((a, b) => b.count - a.count);
+        let count = matchingProduct.totalCount + 1;
+      
 
         rules.forEach((rule) => {
+    
           if (rule.status === "Active" && rule.count <= count) {
-
             let remainder = count % rule.count;
             let appliedCount = Math.floor(count / rule.count);
             let notAppliedPrice = remainder * newProduct.price;
@@ -760,7 +874,7 @@ const ProductScreen = () => {
             {
               productType: 'saleRule',
               productID: newProduct._id,
-              totalCount: count,
+              totalCount: totalProduct,
               saleAppliedCount: appliedCount,
               saleRuleNotAppliedCount: remainder,
               salePrice: appliedPrice,
@@ -768,34 +882,57 @@ const ProductScreen = () => {
               saleRulecount: rule.count,
               issaleApplied: true
             }
+
             ruleAppliedArr.push(saleobj);
+            count=remainder;
           }
-
-         
         });
-
-
+ 
         if (ruleAppliedArr.length == 0) {
           matchingProduct.totalCount = matchingProduct.totalCount + 1;
           matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount++;
           matchingProduct.notSaleRulePrice += newProduct.price;
- 
         }
         else {
-          ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
-          matchingProduct = ruleAppliedArr[0];
 
-          if(matchingProduct.saleRuleNotAppliedCount>0 ){
+          const updatedArr = ruleAppliedArr.map((item, index, arr) => {
+            let newItem;
+            if(ruleAppliedArr.length==1){
+               newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount)+ item.saleRuleNotAppliedCount};
+            }else{
+               newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
+            }
+           
+            if (arr[index + 1] && arr[index + 1].issaleApplied) {
+              newItem.notSaleRulePrice = 0;
+              newItem.saleRuleNotAppliedCount = 0; // Updated this property
+            }
+            return newItem;
+          });
 
-            rules.forEach((rule2)=>{
-              if(rule2.status === "Active" && rule2.count <= matchingProduct.saleRuleNotAppliedCount){
-                matchingProduct.secondLevalRuleCount= matchingProduct.saleRuleNotAppliedCount
-                matchingProduct.SalePrice=rule2.price;
-              }
-            })
+          const transformedData = updatedArr.reduce((acc, item, index) => {
+            if (!acc.productID) {
+              acc.productID = item.productID;
+              acc.productType = item.productType;
+              acc.totalCount = 0;
+              acc.Rules = {};
+            }
+          
+            acc.totalCount += item.totalCount; // Summing up totalCount from all items
+          
+            acc.Rules[`rule ${index + 1}`] = {
+              saleAppliedCount: item.saleAppliedCount,
+              salePrice: item.salePrice,
+              saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
+              notSaleRulePrice: item.notSaleRulePrice,
+              saleRulecount: item.saleRulecount, // Added saleRulecount
+              totalCount: item.totalCount // Each rule's specific totalCount
+            };
+          
+            return acc;
+          }, {});
 
-          }
-
+          matchingProduct =transformedData;
         }
 
         cartProduct = cartProduct.map(product =>
@@ -805,7 +942,6 @@ const ProductScreen = () => {
       else {
         addnewSaleruleProduct(cartProduct, newProduct)
       }
-
     }
     else {
       addnewSaleruleProduct(cartProduct, newProduct)
@@ -883,79 +1019,64 @@ const ProductScreen = () => {
     let ruleAppliedArr = [];
 
     if (quantityBecome != 0) {
-      let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
+      // let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
  
-      const rules = newProduct.saleGroupRules;
-      const count = matchingProduct.totalCount - 1;
+      // const rules = newProduct.saleGroupRules;
+      // const count = matchingProduct.totalCount - 1;
+      // const appliedRules=matchingProduct.Rules;
 
-      rules.forEach((rule) => {
-        if (rule.status === "Active" && rule.count <= count) {
-          let remainder = count % rule.count;
-          let appliedCount = Math.floor(count / rule.count);
-          let notAppliedPrice = remainder * newProduct.price;
-          let appliedPrice = appliedCount * rule.price;
+      // if(appliedRules.length>1){
+      //   if(appliedRules[next].saleRuleNotAppliedCount!=0){
+      //     saleRuleNotAppliedCount--;
+      //   }else{
+      //     totalCount--;
+      //     rules.forEach(rule=>{
+      //       if(rule.count<=totalCount){
 
-          let saleobj =
-          {
-            productType: 'saleRule',
-            productID: newProduct._id,
-            totalCount: count,
-            saleAppliedCount: appliedCount,
-            saleRuleNotAppliedCount: remainder,
-            salePrice: appliedPrice,
-            notSaleRulePrice: notAppliedPrice,
-            saleRulecount: rule.count,
-            issaleApplied: true,
-            secondLevalRuleCount: matchingProduct.secondLevalRuleCount,
-            SalePrice: matchingProduct.SalePrice
-        
-          }
-          ruleAppliedArr.push(saleobj);
-        }
-      });
+      //       }
+      //     })
+      //   }
+      // }
 
-      if (ruleAppliedArr.length == 0 && !matchingProduct.issaleApplied) {
-        matchingProduct.totalCount = matchingProduct.totalCount - 1;
-        matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount - 1;
-        matchingProduct.notSaleRulePrice -= newProduct.price;
+      // rules.forEach((rule) => {
+      //   if (rule.status === "Active" && rule.count <= count) {
+      //     let remainder = count % rule.count;
+      //     let appliedCount = Math.floor(count / rule.count);
+      //     let notAppliedPrice = remainder * newProduct.price;
+      //     let appliedPrice = appliedCount * rule.price;
+
+      //     let saleobj =
+      //     {
+      //       productType: 'saleRule',
+      //       productID: newProduct._id,
+      //       totalCount: count,
+      //       saleAppliedCount: appliedCount,
+      //       saleRuleNotAppliedCount: remainder,
+      //       salePrice: appliedPrice,
+      //       notSaleRulePrice: notAppliedPrice,
+      //       saleRulecount: rule.count,
+      //       issaleApplied: true
+      //     }
+      //     ruleAppliedArr.push(saleobj);
+      //   }
+      // });
+
+      // if (ruleAppliedArr.length == 0 && !matchingProduct.issaleApplied) {
+      //   matchingProduct.totalCount = matchingProduct.totalCount - 1;
+      //   matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount - 1;
+      //   matchingProduct.notSaleRulePrice -= newProduct.price;
    
-      }
-      else if (ruleAppliedArr.length == 0 && matchingProduct.issaleApplied) {
-        matchingProduct.totalCount = matchingProduct.totalCount - 1;
-        matchingProduct.saleRuleNotAppliedCount = matchingProduct.totalCount;
-        matchingProduct.notSaleRulePrice -= newProduct.price;
-        matchingProduct.saleAppliedCount = 0;
-        matchingProduct.salePrice = 0;
-        matchingProduct.notSaleRulePrice = matchingProduct.totalCount * newProduct.price
-        matchingProduct.saleRulecount = 0;
-        matchingProduct.issaleApplied = false;
-      }
-      else {
-
-        ruleAppliedArr.sort((a, b) => a.saleAppliedCount - b.saleAppliedCount);
-        matchingProduct = ruleAppliedArr[0];
-
-        const hasSecondLevalRuleCount = matchingProduct.hasOwnProperty('secondLevalRuleCount');
-      
-        if(hasSecondLevalRuleCount){
-          matchingProduct.secondLevalRuleCount--;
-
-          if(matchingProduct.secondLevalRuleCount>0){
-
-            rules.forEach((rule2)=>{
-              if(rule2.status === "Active" && rule2.count <= matchingProduct.secondLevalRuleCount){
-             
-                matchingProduct.secondLevalRuleCount--;
-              }else{
-                matchingProduct.secondLevalRuleCount=0;
-                matchingProduct.SalePrice=0;
-              }
-            })
-          }
-        }
-        
-      }
-
+      // }
+      // else if (ruleAppliedArr.length == 0 && matchingProduct.issaleApplied) {
+      //   matchingProduct.totalCount = matchingProduct.totalCount - 1;
+      //   matchingProduct.saleRuleNotAppliedCount = matchingProduct.totalCount;
+      //   matchingProduct.notSaleRulePrice -= newProduct.price;
+      //   matchingProduct.saleAppliedCount = 0;
+      //   matchingProduct.salePrice = 0;
+      //   matchingProduct.notSaleRulePrice = matchingProduct.totalCount * newProduct.price
+      //   matchingProduct.saleRulecount = 0;
+      //   matchingProduct.issaleApplied = false;
+      // }
       cartProduct = cartProduct.map(product =>
         product.productID === matchingProduct.productID ? matchingProduct : product
       );
@@ -964,7 +1085,7 @@ const ProductScreen = () => {
     else {
       cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
     }
-
+    
     findTotal(cartProduct, '+');
     let total = findTotal(cartProduct, '-');
     setTotalPrice(total);

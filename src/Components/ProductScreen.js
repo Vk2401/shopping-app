@@ -18,7 +18,7 @@ import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
-  const [storeID,setStoreid]=useState('');
+  const [storeID, setStoreid] = useState('');
   const [noProduct, setNoproduct] = useState(false);
   const { isAuthenticated } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
@@ -32,9 +32,9 @@ const ProductScreen = () => {
   const [saleruleProduct, setSaleruleProduct] = useState([]);
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
-  const [currence,setCurrence]=useState('SEK');
-  const [saleRUle,setSaleRULE]=useState('');
-  let tempARR=[];
+  const [currence, setCurrence] = useState('SEK');
+  const [saleRUle, setSaleRULE] = useState('');
+  let tempARR = [];
   // const [saleRuleProduct, setSaleRuleProduct] = useState(
   //   {
   //     productType: '',
@@ -67,11 +67,11 @@ const ProductScreen = () => {
     }
   ]);
 
-  const findActiveRule=(saleRules)=>{
-   
-    saleRules.forEach((rule)=>{
+  const findActiveRule = (saleRules) => {
 
-      if(rule.status === 'Active' && saleruleProduct.quantity >= rule.count){
+    saleRules.forEach((rule) => {
+
+      if (rule.status === 'Active' && saleruleProduct.quantity >= rule.count) {
         const roundedUp = saleruleProduct.quantity / rule.count;
 
         const temp = {
@@ -79,7 +79,7 @@ const ProductScreen = () => {
           ans: roundedUp,
         };
         tempARR.push(temp);
-     
+
       }
     })
 
@@ -97,7 +97,7 @@ const ProductScreen = () => {
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       const tokens = JSON.parse(localStorage.getItem('authToken'));
       // const storeID=localStorage.getItem('storeID');
-      const storeID='ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+      const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
       setTotalCount(addedProducts.length);
 
@@ -121,398 +121,403 @@ const ProductScreen = () => {
           //   }
           // );
 
-            const response=[
-              {
-                  "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "123455",
-                  "sale": false,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 5,
-                  "unitOfMeasure": "ml",
-                  "salePrice": 0,
-                  "availableItems": 7,
-                  "category": "Lotion",
-                  "units": "tagged",
+          const response = [
+            {
+              "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "123455",
+              "sale": false,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 5,
+              "unitOfMeasure": "ml",
+              "salePrice": 0,
+              "availableItems": 7,
+              "category": "Lotion",
+              "units": "tagged",
+              "price": 10,
+              "comparison_weight": 1,
+              "stock": {
+                "total_value": 50,
+                "average": 5,
+                "last_restocked": 1736586947012,
+                "value": 0,
+                "total_stock": 0,
+                "isStock": true,
+                "minStock": 0
+              },
+              "title": "Tanning Lotion",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 0,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": true,
+              "isBagActive": false,
+              "sku": "4453",
+              "deposit": 5,
+              "teaser": "",
+              "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/ic_at_dawn.png",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": false,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "Tanning Lotion",
+              "searchText": "tanning lotion#123455#4453",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:03.072Z",
+              "updated": "2025-02-10T06:27:03.072Z"
+            },
+            {
+              "_id": "01JJ14X3K87WTF0XKNFYQGEAB9",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "5654656",
+              "sale": false,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 1,
+              "unitOfMeasure": "ml",
+              "salePrice": 2.94,
+              "availableItems": 14,
+              "category": "UNCATEGORY",
+              "units": "tagged",
+              "price": 3,
+              "comparison_weight": 0,
+              "stock": {
+                "total_value": 56,
+                "average": 1,
+                "last_restocked": 1738157875939,
+                "value": 29,
+                "total_stock": 29,
+                "isStock": true,
+                "minStock": 0
+              },
+              "title": "Aqualogica sun screen",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 2,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": true,
+              "isBagActive": true,
+              "sku": "798989",
+              "deposit": 25.8,
+              "teaser": "",
+              "picture": "",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": false,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "prakash",
+              "searchText": "aqualogica sun screen#5654656#798989",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:02.985Z",
+              "updated": "2025-02-10T06:27:02.985Z"
+            },
+            {
+              "_id": "01JHAA6XD0RZTVAET6FREZ5J7H",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "9988893",
+              "sale": true,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 5,
+              "unitOfMeasure": "ml",
+              "salePrice": 0,
+              "availableItems": 9,
+              "category": "Lotion",
+              "units": "tagged",
+              "price": 20,
+              "comparison_weight": 1,
+              "stock": {
+                "total_value": 50,
+                "average": 5,
+                "last_restocked": 1736587283140,
+                "value": 5,
+                "total_stock": 1,
+                "isStock": true,
+                "minStock": 0
+              },
+              "title": "Bed Lotoin Two",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [
+                {
+                  "count": 8,
                   "price": 10,
-                  "comparison_weight": 1,
-                  "stock": {
-                      "total_value": 50,
-                      "average": 5,
-                      "last_restocked": 1736586947012,
-                      "value": 0,
-                      "total_stock": 0,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "Tanning Lotion",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 0,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": true,
-                  "isBagActive": false,
-                  "sku": "4453",
-                  "deposit": 5,
-                  "teaser": "",
-                  "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/ic_at_dawn.png",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": false,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "Tanning Lotion",
-                  "searchText": "tanning lotion#123455#4453",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:03.072Z",
-                  "updated": "2025-02-10T06:27:03.072Z"
+                  "status": "Active"
+                },
+                {
+                      "count": 2,
+                      "price": 7,
+                      "status": "Active"
+                },
+                {
+                      "count": 4,
+                      "price": 9,
+                      "status": "Active"
+                },
+                {
+                    "count": 1,
+                    "price": 3,
+                    "status": "Active"
+                }
+              ],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 0,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": false,
+              "isBagActive": false,
+              "sku": "212",
+              "deposit": 1,
+              "teaser": "",
+              "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": false,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "",
+              "searchText": "bed lotoin two#9988893#212",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:03.011Z",
+              "updated": "2025-02-10T06:27:03.011Z"
+            },
+            {
+              "_id": "01JJ153HGAXQWP7RGTS61TZBAX",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "8779",
+              "sale": true,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 0,
+              "unitOfMeasure": "ml",
+              "salePrice": 0,
+              "availableItems": 9,
+              "category": "Lotion",
+              "units": "tagged",
+              "price": 1,
+              "comparison_weight": 0,
+              "stock": {
+                "total_value": 0,
+                "average": 0,
+                "value": 0,
+                "total_stock": 22,
+                "isStock": true,
+                "minStock": 0
               },
-              {
-                  "_id": "01JJ14X3K87WTF0XKNFYQGEAB9",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "5654656",
-                  "sale": false,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 1,
-                  "unitOfMeasure": "ml",
-                  "salePrice": 2.94,
-                  "availableItems": 14,
-                  "category": "UNCATEGORY",
-                  "units": "tagged",
+              "title": "De tan lotion",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [
+                {
+                  "count": 1,
                   "price": 3,
-                  "comparison_weight": 0,
-                  "stock": {
-                      "total_value": 56,
-                      "average": 1,
-                      "last_restocked": 1738157875939,
-                      "value": 29,
-                      "total_stock": 29,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "Aqualogica sun screen",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 2,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": true,
-                  "isBagActive": true,
-                  "sku": "798989",
-                  "deposit": 25.8,
-                  "teaser": "",
-                  "picture": "",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": false,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "prakash",
-                  "searchText": "aqualogica sun screen#5654656#798989",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:02.985Z",
-                  "updated": "2025-02-10T06:27:02.985Z"
+                  "status": "Active"
+                }, ,
+                {
+                  "count": 5,
+                  "price": 10,
+                  "status": "Active"
+                },
+                {
+                  "count": 8,
+                  "price": 15,
+                  "status": "Active"
+                }
+              ],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 0,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": false,
+              "isBagActive": false,
+              "sku": "76887",
+              "deposit": 0,
+              "teaser": "",
+              "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": false,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "",
+              "searchText": "de tan lotion#8779#76887",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:03.038Z",
+              "updated": "2025-02-10T06:27:03.038Z"
+            },
+            {
+              "_id": "01JJ1B0ZBVYZ0GM8WK197NB11X",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "7667676",
+              "sale": false,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 0,
+              "unitOfMeasure": "ml",
+              "salePrice": 0,
+              "availableItems": 9,
+              "category": "Shower gel",
+              "units": "tagged",
+              "price": 2,
+              "comparison_weight": 0,
+              "stock": {
+                "total_value": 0,
+                "average": 0,
+                "value": 0,
+                "total_stock": 0,
+                "isStock": true,
+                "minStock": 0
               },
-              {
-                  "_id": "01JHAA6XD0RZTVAET6FREZ5J7H",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "9988893",
-                  "sale": true,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 5,
-                  "unitOfMeasure": "ml",
-                  "salePrice": 0,
-                  "availableItems": 9,
-                  "category": "Lotion",
-                  "units": "tagged",
-                  "price": 20,
-                  "comparison_weight": 1,
-                  "stock": {
-                      "total_value": 50,
-                      "average": 5,
-                      "last_restocked": 1736587283140,
-                      "value": 5,
-                      "total_stock": 1,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "Bed Lotoin Two",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [
-                      {
-                          "count": 3,
-                          "price": 7,
-                          "status": "Active"
-                      },
-                      {
-                          "count": 5,
-                          "price": 9,
-                          "status": "Active"
-                      },
-                      {
-                        "count": 2,
-                        "price": 3,
-                        "status": "Active"
-                    }
-                  ],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 0,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": false,
-                  "isBagActive": false,
-                  "sku": "212",
-                  "deposit": 1,
-                  "teaser": "",
-                  "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": false,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "",
-                  "searchText": "bed lotoin two#9988893#212",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:03.011Z",
-                  "updated": "2025-02-10T06:27:03.011Z"
+              "title": "De Tan gel",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 5,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": false,
+              "isBagActive": false,
+              "sku": "78798",
+              "deposit": 0,
+              "teaser": "",
+              "picture": "",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": true,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "",
+              "searchText": "de tan gel#7667676#78798",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:03.023Z",
+              "updated": "2025-02-10T06:27:03.023Z"
+            },
+            {
+              "_id": "01JJC1Z3D2CDJWWWKA5005NNEM",
+              "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+              "stripeCode": "1231231231211",
+              "sale": false,
+              "importedAt": 0,
+              "tax": 0,
+              "purchasePrice": 5,
+              "unitOfMeasure": "kg",
+              "salePrice": 0,
+              "availableItems": 10,
+              "category": "Sun screen",
+              "units": "tagged",
+              "price": 30,
+              "comparison_weight": 2,
+              "stock": {
+                "total_value": 150,
+                "average": 5,
+                "value": 115,
+                "total_stock": 23,
+                "isStock": true,
+                "minStock": 0
               },
-              {
-                  "_id": "01JJ153HGAXQWP7RGTS61TZBAX",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "8779",
-                  "sale": true,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 0,
-                  "unitOfMeasure": "ml",
-                  "salePrice": 0,
-                  "availableItems": 9,
-                  "category": "Lotion",
-                  "units": "tagged",
-                  "price": 1,
-                  "comparison_weight": 0,
-                  "stock": {
-                      "total_value": 0,
-                      "average": 0,
-                      "value": 0,
-                      "total_stock": 22,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "De tan lotion",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [
-                      {
-                          "count": 1,
-                          "price": 3,
-                          "status": "Active"
-                      },,
-                      {
-                          "count": 5,
-                          "price": 10,
-                          "status": "Active"
-                      },
-                      {
-                          "count": 8,
-                          "price": 15,
-                          "status": "Active"
-                      }
-                  ],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 0,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": false,
-                  "isBagActive": false,
-                  "sku": "76887",
-                  "deposit": 0,
-                  "teaser": "",
-                  "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": false,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "",
-                  "searchText": "de tan lotion#8779#76887",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:03.038Z",
-                  "updated": "2025-02-10T06:27:03.038Z"
-              },
-              {
-                  "_id": "01JJ1B0ZBVYZ0GM8WK197NB11X",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "7667676",
-                  "sale": false,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 0,
-                  "unitOfMeasure": "ml",
-                  "salePrice": 0,
-                  "availableItems": 9,
-                  "category": "Shower gel",
-                  "units": "tagged",
-                  "price": 2,
-                  "comparison_weight": 0,
-                  "stock": {
-                      "total_value": 0,
-                      "average": 0,
-                      "value": 0,
-                      "total_stock": 0,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "De Tan gel",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 5,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": false,
-                  "isBagActive": false,
-                  "sku": "78798",
-                  "deposit": 0,
-                  "teaser": "",
-                  "picture": "",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": true,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "",
-                  "searchText": "de tan gel#7667676#78798",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:03.023Z",
-                  "updated": "2025-02-10T06:27:03.023Z"
-              },
-              {
-                  "_id": "01JJC1Z3D2CDJWWWKA5005NNEM",
-                  "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-                  "stripeCode": "1231231231211",
-                  "sale": false,
-                  "importedAt": 0,
-                  "tax": 0,
-                  "purchasePrice": 5,
-                  "unitOfMeasure": "kg",
-                  "salePrice": 0,
-                  "availableItems": 10,
-                  "category": "Sun screen",
-                  "units": "tagged",
-                  "price": 30,
-                  "comparison_weight": 2,
-                  "stock": {
-                      "total_value": 150,
-                      "average": 5,
-                      "value": 115,
-                      "total_stock": 23,
-                      "isStock": true,
-                      "minStock": 0
-                  },
-                  "title": "sun screen 1",
-                  "wasted": 0,
-                  "soldItems": 0,
-                  "saleGroupRules": [],
-                  "updateVersion": 0,
-                  "ageRestriction": "",
-                  "quantity": 0,
-                  "isVending": true,
-                  "discount": 3,
-                  "priceDiff": 0,
-                  "originalPrice": 0,
-                  "noDepoPrice": 0,
-                  "promote": false,
-                  "isBagActive": false,
-                  "sku": "11212",
-                  "deposit": 5,
-                  "teaser": "",
-                  "picture": "",
-                  "isGS1": false,
-                  "expirationDate": "",
-                  "lastDeliveryDate": "",
-                  "isDiscount": true,
-                  "vendingDatas": [],
-                  "softDelete": false,
-                  "environment": "demo",
-                  "noneBarcode": false,
-                  "receiptName": "",
-                  "searchText": "sun screen 1#1231231231211#11212",
-                  "meta": {},
-                  "group": "general",
-                  "negative_stock": true,
-                  "isFridge": false,
-                  "productType": "vending",
-                  "created": "2025-02-10T06:27:03.069Z",
-                  "updated": "2025-02-10T06:27:03.069Z"
-              }
+              "title": "sun screen 1",
+              "wasted": 0,
+              "soldItems": 0,
+              "saleGroupRules": [],
+              "updateVersion": 0,
+              "ageRestriction": "",
+              "quantity": 0,
+              "isVending": true,
+              "discount": 3,
+              "priceDiff": 0,
+              "originalPrice": 0,
+              "noDepoPrice": 0,
+              "promote": false,
+              "isBagActive": false,
+              "sku": "11212",
+              "deposit": 5,
+              "teaser": "",
+              "picture": "",
+              "isGS1": false,
+              "expirationDate": "",
+              "lastDeliveryDate": "",
+              "isDiscount": true,
+              "vendingDatas": [],
+              "softDelete": false,
+              "environment": "demo",
+              "noneBarcode": false,
+              "receiptName": "",
+              "searchText": "sun screen 1#1231231231211#11212",
+              "meta": {},
+              "group": "general",
+              "negative_stock": true,
+              "isFridge": false,
+              "productType": "vending",
+              "created": "2025-02-10T06:27:03.069Z",
+              "updated": "2025-02-10T06:27:03.069Z"
+            }
           ]
- 
+
           response.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
@@ -569,9 +574,9 @@ const ProductScreen = () => {
         }
       };
 
-      const fetchCurrence=async()=>{
-  
-        const correnc=await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
+      const fetchCurrence = async () => {
+
+        const correnc = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
           {
             headers: {
               'Authorization': `Bearer ${tokens.accessToke}`,
@@ -581,13 +586,13 @@ const ProductScreen = () => {
           }
         );
         const currencyExists = correnc.data.value.hasOwnProperty('currency');
- 
-        if(currencyExists){
-          if(correnc.data.value!==''){
+
+        if (currencyExists) {
+          if (correnc.data.value !== '') {
             setCurrence(correnc.data.value.currency)
           }
         }
-        localStorage.setItem('currence',currence);
+        localStorage.setItem('currence', currence);
       }
 
       fetchCurrence();
@@ -615,21 +620,21 @@ const ProductScreen = () => {
 
     rules.forEach((rule) => {
       if (rule.status == 'Active' && rule.count == 1) {
-        let srOBJ={
-          productID:  Product._id,
+        let srOBJ = {
+          productID: Product._id,
           productType: "saleRule",
           totalCount: 1,
           Rules: {
-              rule: {
-                  saleAppliedCount: 1,
-                  salePrice: rule.price,
-                  saleRuleNotAppliedCount: 0,
-                  notSaleRulePrice: 0,
-                  saleRulecount: rule.count,
-                  totalCount: 1
-              }
+            rule: {
+              saleAppliedCount: 1,
+              salePrice: rule.price,
+              saleRuleNotAppliedCount: 0,
+              notSaleRulePrice: 0,
+              saleRulecount: rule.count,
+              totalCount: 1
+            }
           }
-      }
+        }
 
         cartProducts.push(srOBJ);
         flag = 1;
@@ -637,21 +642,21 @@ const ProductScreen = () => {
     })
     if (flag == 0) {
 
-      let srOBJ={
-        productID:  Product._id,
+      let srOBJ = {
+        productID: Product._id,
         productType: "saleRule",
         totalCount: 1,
         Rules: {
-            rule: {
-                saleAppliedCount: 0,
-                salePrice:0,
-                saleRuleNotAppliedCount: 1,
-                notSaleRulePrice:  Product.price,
-                saleRulecount: 0,
-                totalCount: 1
-            }
+          rule: {
+            saleAppliedCount: 0,
+            salePrice: 0,
+            saleRuleNotAppliedCount: 1,
+            notSaleRulePrice: Product.price,
+            saleRulecount: 0,
+            totalCount: 1
+          }
         }
-    }
+      }
       console.log(srOBJ);
       cartProducts.push(srOBJ);
     }
@@ -667,17 +672,17 @@ const ProductScreen = () => {
 
     cartProducts.forEach((pro) => {
       if (pro.productType == 'saleRule') {
-        const values=pro.Rules;
+        const values = pro.Rules;
 
         Object.values(values).forEach(value => {
           totalPrice += value.salePrice;
-          
+
           // Check if saleRuleNotAppliedCount is not zero
           if (value.saleRuleNotAppliedCount !== 0) {
             totalPrice += value.saleRuleNotAppliedCount * value.notSaleRulePrice;
           }
         });
-        
+
       }
       else {
         totalPrice += pro.price;
@@ -762,112 +767,121 @@ const ProductScreen = () => {
 
   }
 
+  const findSaleRuleforSomeProduct = (productQuatity, product) => {
+    let ruleAppliedArr = [];
+    let rules = product.saleGroupRules;
+    rules.sort((a, b) => b.count - a.count);
+    let count = productQuatity - 1;
 
-  // const findSaleRuleforSomeProduct=(productQuatity,product)=>{
+    if(rules.length==1){
+      return false;
+    }
+    rules.forEach((rule) => {
 
-  //   let rules = product.saleGroupRules;
-  //   rules.sort((a, b) => b.count - a.count);
-  //   let count = productQuatity;
+      if (rule.status === "Active" && rule.count <= count) {
+        let remainder = count % rule.count;
+        let appliedCount = Math.floor(count / rule.count);
+        let notAppliedPrice = remainder * product.price;
+        let appliedPrice = appliedCount * rule.price;
 
-  //   rules.forEach((rule) => {
-    
-  //     if (rule.status === "Active" && rule.count <= count) {
-  //       let remainder = count % rule.count;
-  //       let appliedCount = Math.floor(count / rule.count);
-  //       let notAppliedPrice = remainder * newProduct.price;
-  //       let appliedPrice = appliedCount * rule.price;
+        let saleobj =
+        {
+          productType: 'saleRule',
+          productID: product._id,
+          totalCount: appliedCount + remainder,
+          saleAppliedCount: appliedCount,
+          saleRuleNotAppliedCount: remainder,
+          salePrice: appliedPrice,
+          notSaleRulePrice: notAppliedPrice,
+          saleRulecount: rule.count,
+          issaleApplied: true
+        }
 
-  //       let saleobj =
-  //       {
-  //         productType: 'saleRule',
-  //         productID: newProduct._id,
-  //         totalCount: totalProduct,
-  //         saleAppliedCount: appliedCount,
-  //         saleRuleNotAppliedCount: remainder,
-  //         salePrice: appliedPrice,
-  //         notSaleRulePrice: notAppliedPrice,
-  //         saleRulecount: rule.count,
-  //         issaleApplied: true
-  //       }
+        ruleAppliedArr.push(saleobj);
+        count = remainder;
+      }
+    });
 
-  //       ruleAppliedArr.push(saleobj);
-  //       count=remainder;
-  //     }
-  //   });
+    if (ruleAppliedArr.length == 0) {
+     
+      let saleobj =
+      {
+        productType: 'saleRule',
+        productID: product._id,
+        totalCount: 0,
+        saleAppliedCount: 0,
+        saleRuleNotAppliedCount: 0,
+        salePrice: 0,
+        notSaleRulePrice: 0,
+        saleRulecount: 0,
+        issaleApplied: false
+      }
+      return saleobj;
+    }
+    else {
 
-  //   if (ruleAppliedArr.length == 0) {
-  //     product.totalCount = product.totalCount + 1;
-  //     product.saleRuleNotAppliedCount = product.saleRuleNotAppliedCount++;
-  //     product.notSaleRulePrice += product.price;
-  //   }
-  //   else {
+      const updatedArr = ruleAppliedArr.map((item, index, arr) => {
+        let newItem;
+        if (ruleAppliedArr.length == 1) {
+          newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount) + item.saleRuleNotAppliedCount };
+        } else {
+          newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
+        }
 
-  //     const updatedArr = ruleAppliedArr.map((item, index, arr) => {
-  //       let newItem;
-  //       if(ruleAppliedArr.length==1){
-  //          newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount)+ item.saleRuleNotAppliedCount};
-  //       }else{
-  //          newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
-  //       }
-       
-  //       if (arr[index + 1] && arr[index + 1].issaleApplied) {
-  //         newItem.notSaleRulePrice = 0;
-  //         newItem.saleRuleNotAppliedCount = 0; // Updated this property
-  //       }
-  //       return newItem;
-  //     });
+        if (arr[index + 1] && arr[index + 1].issaleApplied) {
+          newItem.notSaleRulePrice = 0;
+          newItem.saleRuleNotAppliedCount = 0; // Updated this property
+        }
+        return newItem;
+      });
 
-  //     const transformedData = updatedArr.reduce((acc, item, index) => {
-  //       if (!acc.productID) {
-  //         acc.productID = item.productID;
-  //         acc.productType = item.productType;
-  //         acc.totalCount = 0;
-  //         acc.Rules = {};
-  //       }
-      
-  //       acc.totalCount += item.totalCount; // Summing up totalCount from all items
-      
-  //       acc.Rules[`rule ${index + 1}`] = {
-  //         saleAppliedCount: item.saleAppliedCount,
-  //         salePrice: item.salePrice,
-  //         saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
-  //         notSaleRulePrice: item.notSaleRulePrice,
-  //         saleRulecount: item.saleRulecount, // Added saleRulecount
-  //         totalCount: item.totalCount // Each rule's specific totalCount
-  //       };
-      
-  //       return acc;
-  //     }, {});
+      const transformedData = updatedArr.reduce((acc, item, index) => {
+        if (!acc.productID) {
+          acc.productID = item.productID;
+          acc.productType = item.productType;
+          acc.totalCount = 0;
+          acc.Rules = {};
+        }
 
-  //     product =transformedData;
-  //   }
+        acc.totalCount += item.totalCount; // Summing up totalCount from all items
 
-  //   cartProduct = cartProduct.map(product =>
-  //     product.productID === product.productID ? product : product
-  //   );
+        acc.Rules[`rule ${index + 1}`] = {
+          saleAppliedCount: item.saleAppliedCount,
+          salePrice: item.salePrice,
+          saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
+          notSaleRulePrice: item.notSaleRulePrice,
+          saleRulecount: item.saleRulecount, // Added saleRulecount
+          totalCount: item.totalCount // Each rule's specific totalCount
+        };
 
-  // }
+        return acc;
+      }, {});
+
+      return transformedData;
+    }
+
+  }
 
   const addSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     let ruleAppliedArr = [];
 
     if (cartProduct.length > 0) {
+
       let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
 
       if (matchingProduct != null) {
         let rules = newProduct.saleGroupRules;
-        let totalProduct=matchingProduct.totalCount + 1;
+        let totalProduct = matchingProduct.totalCount + 1;
         rules.sort((a, b) => b.count - a.count);
         let count = matchingProduct.totalCount + 1;
-      
 
         rules.forEach((rule) => {
-    
+
           if (rule.status === "Active" && rule.count <= count) {
             let remainder = count % rule.count;
             let appliedCount = Math.floor(count / rule.count);
-            let notAppliedPrice = remainder * newProduct.price;
+            let notAppliedPrice = newProduct.price;
             let appliedPrice = appliedCount * rule.price;
 
             let saleobj =
@@ -884,25 +898,32 @@ const ProductScreen = () => {
             }
 
             ruleAppliedArr.push(saleobj);
-            count=remainder;
+            count = remainder;
           }
         });
- 
+
         if (ruleAppliedArr.length == 0) {
-          matchingProduct.totalCount = matchingProduct.totalCount + 1;
-          matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount++;
-          matchingProduct.notSaleRulePrice += newProduct.price;
+          let product = matchingProduct;  
+
+          // Increment values
+          product.totalCount += 1;
+          let rule = product.Rules["rule"]; // Access the rule object
+          rule.saleRuleNotAppliedCount += 1;
+          rule.notSaleRulePrice = newProduct.price
+          rule.totalCount += 1;
         }
         else {
-
-          const updatedArr = ruleAppliedArr.map((item, index, arr) => {
+            const updatedArr = ruleAppliedArr.map((item, index, arr) => {
             let newItem;
-            if(ruleAppliedArr.length==1){
-               newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount)+ item.saleRuleNotAppliedCount};
-            }else{
-               newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
+          
+            if (ruleAppliedArr.length == 1) {
+              console.log(ruleAppliedArr);
+              newItem = { ...item, totalCount: item.totalCount};
+              //newItem = { ...item, totalCount: (item.saleRulecount * item.totalCount) + item.saleRuleNotAppliedCount };
+            } else {
+              newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
             }
-           
+
             if (arr[index + 1] && arr[index + 1].issaleApplied) {
               newItem.notSaleRulePrice = 0;
               newItem.saleRuleNotAppliedCount = 0; // Updated this property
@@ -917,22 +938,21 @@ const ProductScreen = () => {
               acc.totalCount = 0;
               acc.Rules = {};
             }
-          
+
             acc.totalCount += item.totalCount; // Summing up totalCount from all items
-          
+
             acc.Rules[`rule ${index + 1}`] = {
               saleAppliedCount: item.saleAppliedCount,
               salePrice: item.salePrice,
               saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
               notSaleRulePrice: item.notSaleRulePrice,
               saleRulecount: item.saleRulecount, // Added saleRulecount
-              totalCount: item.totalCount // Each rule's specific totalCount
+              totalCount: item.saleRulecount + item.saleRuleNotAppliedCount // Each rule's specific totalCount
             };
-          
+
             return acc;
           }, {});
-
-          matchingProduct =transformedData;
+          matchingProduct = transformedData;
         }
 
         cartProduct = cartProduct.map(product =>
@@ -1014,78 +1034,170 @@ const ProductScreen = () => {
 
   const decrementSaleRuleProduct = (newProduct) => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log(cartProduct);
 
     let quantityBecome = newProduct.quantity - 1;
-    let ruleAppliedArr = [];
 
     if (quantityBecome != 0) {
-      // let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
+      let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
+      console.log(matchingProduct);
+      const appliedRules = matchingProduct.Rules;
+      const objectCount = Object.keys(appliedRules).length;
+
+      if (objectCount <= 1) {
+
+        matchingProduct.totalCount -= 1;
+        let rule = matchingProduct.Rules["rule"];
+        if (rule == undefined) {
+          rule = matchingProduct.Rules["rule 1"]
+        }
+  
+        let result = findSaleRuleforSomeProduct(rule.totalCount, newProduct);
+      
+        if(!result){
+         
+          // Access the "Rules" object
+          let rules = matchingProduct.Rules;
+
+          // Get the first rule key dynamically
+          let firstRuleKey = Object.keys(rules)[0];
+
+          // Get the rule object
+          let rule = rules[firstRuleKey];
+
+          // Check condition and update values
+          if (rule.saleRuleNotAppliedCount > 0) {
+              rule.saleRuleNotAppliedCount -= 1;  // Increment saleRuleNotAppliedCount by 1
+              rule.totalCount -=1;
+          } else {
+              rule.saleAppliedCount -= 1;  // Reduce saleAppliedCount by 1
+              rule.saleRuleNotAppliedCount = rule.saleRulecount - 1;  // Set saleRuleNotAppliedCount to saleRulecount - 1
+          }
+
+        }else{
+          
+         let returnedType = identifyResponseType(result);
+          if (returnedType == 'Type 1') {
+         console.log(appliedRules);
+            let rules = appliedRules.Rules; // Get the "Rules" object
+            let firstRuleKey = Object.keys(rules)[0]; // Get the first rule key (e.g., "rule 1")
+            let saleAppliedCount = rules[firstRuleKey].saleAppliedCount; // Get saleAppliedCount
+            let saleRuleNotAppliedCount = rules[firstRuleKey].saleRuleNotAppliedCount;
+  
+            if(saleAppliedCount==1 && saleRuleNotAppliedCount>1){
+              // Access the "Rules" object
+              let rules = appliedRules[0].Rules;
+              // Get the first rule key dynamically (since it might be "rule 1", "rule 2", etc.)
+              let firstRuleKey = Object.keys(rules)[0];
+  
+              // Decrement saleRuleNotAppliedCount by 1, ensuring it doesn't go negative
+              if (rules[firstRuleKey].saleRuleNotAppliedCount > 0) {
+                  rules[firstRuleKey].saleRuleNotAppliedCount -= 1;
+              }
+  
+            }else{
+              let existingKeys = Object.keys(appliedRules);
+            let newRuleData = result.Rules;
+            let rulesToRemove = Object.keys(newRuleData).length;
+  
+            for (let i = 0; i < rulesToRemove; i++) {
+              if (existingKeys.length > 0) {
+                delete appliedRules[existingKeys.pop()];
+              }
+            }
+  
+            // Get the next available rule number
+            let nextRuleNumber = Object.keys(appliedRules).length + 1;
+            // Add new rules with continuous numbering
+            for (const ruleKey in newRuleData) {
+              appliedRules[`rule ${nextRuleNumber}`] = newRuleData[ruleKey];
+              nextRuleNumber++;
+            }
+            }
+    
+          } else {
+            if(rule.saleAppliedCount>1){
+  
+              if(rule.saleAppliedCount>1 && rule.saleRuleNotAppliedCount==0){
+                let newSaleRuleNotAppliedCount=rule.saleRulecount-1;
+                let newSalePrice=rule.salePrice-(rule.salePrice/rule.saleAppliedCount);
+                let newSaleAppliedCount= rule.saleAppliedCount-1;
+                let newTotalCount= rule.totalCount-1;
+                let newNotSaleRulePrice=newProduct.price;
+  
+                rule.totalCount = newTotalCount;
+                rule.saleAppliedCount = newSaleAppliedCount;  // Reset saleAppliedCount
+                rule.salePrice = newSalePrice;  // Reset salePrice
+                rule.saleRuleNotAppliedCount = newSaleRuleNotAppliedCount;
+                rule.notSaleRulePrice = newNotSaleRulePrice;
+              }else{
+                rule.saleRuleNotAppliedCount -= 1;
+              }
+            }else{
  
-      // const rules = newProduct.saleGroupRules;
-      // const count = matchingProduct.totalCount - 1;
-      // const appliedRules=matchingProduct.Rules;
+              rule.saleAppliedCount = 0;  // Reset saleAppliedCount
+              rule.salePrice = 0;  // Reset salePrice
+              rule.totalCount -= 1;
+              rule.saleRuleNotAppliedCount = rule.totalCount;
+              rule.notSaleRulePrice = newProduct.price;
+              rule.saleRulecount = 0;
+            }
+          }
+        }
+       
+      }
+      else {
+        matchingProduct.totalCount--;
+        const lastKey = Object.keys(appliedRules).pop();
+        const lastObject = appliedRules[lastKey];
 
-      // if(appliedRules.length>1){
-      //   if(appliedRules[next].saleRuleNotAppliedCount!=0){
-      //     saleRuleNotAppliedCount--;
-      //   }else{
-      //     totalCount--;
-      //     rules.forEach(rule=>{
-      //       if(rule.count<=totalCount){
+        let result = findSaleRuleforSomeProduct(lastObject.totalCount, newProduct);
+        let returnedType = identifyResponseType(result);
 
-      //       }
-      //     })
-      //   }
-      // }
+        if (returnedType == 'Type 1') {
+          let existingKeys = Object.keys(appliedRules);
+          let newRuleData = result.Rules;
 
-      // rules.forEach((rule) => {
-      //   if (rule.status === "Active" && rule.count <= count) {
-      //     let remainder = count % rule.count;
-      //     let appliedCount = Math.floor(count / rule.count);
-      //     let notAppliedPrice = remainder * newProduct.price;
-      //     let appliedPrice = appliedCount * rule.price;
+          let rulesToRemove = Object.keys(newRuleData).length;
+          for (let i = 0; i < rulesToRemove; i++) {
+            if (existingKeys.length > 0) {
+              delete appliedRules[existingKeys.pop()];
+            }
+          }
 
-      //     let saleobj =
-      //     {
-      //       productType: 'saleRule',
-      //       productID: newProduct._id,
-      //       totalCount: count,
-      //       saleAppliedCount: appliedCount,
-      //       saleRuleNotAppliedCount: remainder,
-      //       salePrice: appliedPrice,
-      //       notSaleRulePrice: notAppliedPrice,
-      //       saleRulecount: rule.count,
-      //       issaleApplied: true
-      //     }
-      //     ruleAppliedArr.push(saleobj);
-      //   }
-      // });
+          // Get the next available rule number
+          let nextRuleNumber = Object.keys(appliedRules).length + 1;
+          // Add new rules with continuous numbering
+          for (const ruleKey in newRuleData) {
+            appliedRules[`rule ${nextRuleNumber}`] = newRuleData[ruleKey];
+            nextRuleNumber++;
+          }
 
-      // if (ruleAppliedArr.length == 0 && !matchingProduct.issaleApplied) {
-      //   matchingProduct.totalCount = matchingProduct.totalCount - 1;
-      //   matchingProduct.saleRuleNotAppliedCount = matchingProduct.saleRuleNotAppliedCount - 1;
-      //   matchingProduct.notSaleRulePrice -= newProduct.price;
-   
-      // }
-      // else if (ruleAppliedArr.length == 0 && matchingProduct.issaleApplied) {
-      //   matchingProduct.totalCount = matchingProduct.totalCount - 1;
-      //   matchingProduct.saleRuleNotAppliedCount = matchingProduct.totalCount;
-      //   matchingProduct.notSaleRulePrice -= newProduct.price;
-      //   matchingProduct.saleAppliedCount = 0;
-      //   matchingProduct.salePrice = 0;
-      //   matchingProduct.notSaleRulePrice = matchingProduct.totalCount * newProduct.price
-      //   matchingProduct.saleRulecount = 0;
-      //   matchingProduct.issaleApplied = false;
-      // }
+        } else {
+          // Get all rule keys
+          let ruleKeys = Object.keys(appliedRules);
+
+          if (ruleKeys.length >= 2) {
+            let secondLastKey = ruleKeys[ruleKeys.length - 2]; // Get second-to-last key
+            let lastKey = ruleKeys[ruleKeys.length - 1]; // Get last key
+
+            // Modify the second-to-last object
+            appliedRules[secondLastKey].saleRuleNotAppliedCount = lastObject.totalCount - 1; // Change value as needed
+            appliedRules[secondLastKey].notSaleRulePrice = newProduct.price; // Change value as needed
+
+            // Remove the last object
+            delete appliedRules[lastKey];
+          }
+        }
+      }
       cartProduct = cartProduct.map(product =>
         product.productID === matchingProduct.productID ? matchingProduct : product
       );
-
     }
     else {
       cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
     }
-    
+
     findTotal(cartProduct, '+');
     let total = findTotal(cartProduct, '-');
     setTotalPrice(total);
@@ -1104,6 +1216,15 @@ const ProductScreen = () => {
       ...prevProduct,
       quantity: Math.max(prevProduct.quantity - 1, 0), // Prevent negative values
     }));
+  }
+
+  function identifyResponseType(response) {
+    console.log(response);
+    if (response.hasOwnProperty("Rules")) {
+      return "Type 1";
+    } else {
+      return "Type 2";
+    }
   }
 
   const decrementProduct = (product) => {
@@ -1178,403 +1299,403 @@ const ProductScreen = () => {
   const handleSearchChange = async (e) => {
     const value = e.target.value.toLowerCase();
 
-  //   const response=[
-  //     {
-  //         "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "123455",
-  //         "sale": false,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 5,
-  //         "unitOfMeasure": "ml",
-  //         "salePrice": 0,
-  //         "availableItems": 7,
-  //         "category": "Lotion",
-  //         "units": "tagged",
-  //         "price": 10,
-  //         "comparison_weight": 1,
-  //         "stock": {
-  //             "total_value": 50,
-  //             "average": 5,
-  //             "last_restocked": 1736586947012,
-  //             "value": 0,
-  //             "total_stock": 0,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "Tanning Lotion",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 0,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": true,
-  //         "isBagActive": false,
-  //         "sku": "4453",
-  //         "deposit": 5,
-  //         "teaser": "",
-  //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/ic_at_dawn.png",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": false,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "Tanning Lotion",
-  //         "searchText": "tanning lotion#123455#4453",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:03.072Z",
-  //         "updated": "2025-02-10T06:27:03.072Z"
-  //     },
-  //     {
-  //         "_id": "01JJ14X3K87WTF0XKNFYQGEAB9",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "5654656",
-  //         "sale": false,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 1,
-  //         "unitOfMeasure": "ml",
-  //         "salePrice": 2.94,
-  //         "availableItems": 14,
-  //         "category": "UNCATEGORY",
-  //         "units": "tagged",
-  //         "price": 3,
-  //         "comparison_weight": 0,
-  //         "stock": {
-  //             "total_value": 56,
-  //             "average": 1,
-  //             "last_restocked": 1738157875939,
-  //             "value": 29,
-  //             "total_stock": 29,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "Aqualogica sun screen",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 2,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": true,
-  //         "isBagActive": true,
-  //         "sku": "798989",
-  //         "deposit": 25.8,
-  //         "teaser": "",
-  //         "picture": "",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": false,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "prakash",
-  //         "searchText": "aqualogica sun screen#5654656#798989",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:02.985Z",
-  //         "updated": "2025-02-10T06:27:02.985Z"
-  //     },
-  //     {
-  //         "_id": "01JHAA6XD0RZTVAET6FREZ5J7H",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "9988893",
-  //         "sale": true,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 5,
-  //         "unitOfMeasure": "ml",
-  //         "salePrice": 0,
-  //         "availableItems": 9,
-  //         "category": "Lotion",
-  //         "units": "tagged",
-  //         "price": 20,
-  //         "comparison_weight": 1,
-  //         "stock": {
-  //             "total_value": 50,
-  //             "average": 5,
-  //             "last_restocked": 1736587283140,
-  //             "value": 5,
-  //             "total_stock": 1,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "Bed Lotoin Two",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [
-  //             {
-  //                 "count": 4,
-  //                 "price": 7,
-  //                 "status": "Active"
-  //             },
-  //             {
-  //                 "count": 6,
-  //                 "price": 9,
-  //                 "status": "Active"
-  //             }
-  //         ],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 0,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": false,
-  //         "isBagActive": false,
-  //         "sku": "212",
-  //         "deposit": 1,
-  //         "teaser": "",
-  //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": false,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "",
-  //         "searchText": "bed lotoin two#9988893#212",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:03.011Z",
-  //         "updated": "2025-02-10T06:27:03.011Z"
-  //     },
-  //     {
-  //         "_id": "01JJ153HGAXQWP7RGTS61TZBAX",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "8779",
-  //         "sale": true,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 0,
-  //         "unitOfMeasure": "ml",
-  //         "salePrice": 0,
-  //         "availableItems": 9,
-  //         "category": "Lotion",
-  //         "units": "tagged",
-  //         "price": 1,
-  //         "comparison_weight": 0,
-  //         "stock": {
-  //             "total_value": 0,
-  //             "average": 0,
-  //             "value": 0,
-  //             "total_stock": 22,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "De tan lotion",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [
-  //             {
-  //                 "count": 1,
-  //                 "price": 3,
-  //                 "status": "Active"
-  //             },,
-  //             {
-  //                 "count": 5,
-  //                 "price": 10,
-  //                 "status": "Active"
-  //             },
-  //             {
-  //                 "count": 8,
-  //                 "price": 15,
-  //                 "status": "Active"
-  //             }
-  //         ],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 0,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": false,
-  //         "isBagActive": false,
-  //         "sku": "76887",
-  //         "deposit": 0,
-  //         "teaser": "",
-  //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": false,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "",
-  //         "searchText": "de tan lotion#8779#76887",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:03.038Z",
-  //         "updated": "2025-02-10T06:27:03.038Z"
-  //     },
-  //     {
-  //         "_id": "01JJ1B0ZBVYZ0GM8WK197NB11X",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "7667676",
-  //         "sale": false,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 0,
-  //         "unitOfMeasure": "ml",
-  //         "salePrice": 0,
-  //         "availableItems": 9,
-  //         "category": "Shower gel",
-  //         "units": "tagged",
-  //         "price": 2,
-  //         "comparison_weight": 0,
-  //         "stock": {
-  //             "total_value": 0,
-  //             "average": 0,
-  //             "value": 0,
-  //             "total_stock": 0,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "De Tan gel",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 5,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": false,
-  //         "isBagActive": false,
-  //         "sku": "78798",
-  //         "deposit": 0,
-  //         "teaser": "",
-  //         "picture": "",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": true,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "",
-  //         "searchText": "de tan gel#7667676#78798",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:03.023Z",
-  //         "updated": "2025-02-10T06:27:03.023Z"
-  //     },
-  //     {
-  //         "_id": "01JJC1Z3D2CDJWWWKA5005NNEM",
-  //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
-  //         "stripeCode": "1231231231211",
-  //         "sale": false,
-  //         "importedAt": 0,
-  //         "tax": 0,
-  //         "purchasePrice": 5,
-  //         "unitOfMeasure": "kg",
-  //         "salePrice": 0,
-  //         "availableItems": 10,
-  //         "category": "Sun screen",
-  //         "units": "tagged",
-  //         "price": 30,
-  //         "comparison_weight": 2,
-  //         "stock": {
-  //             "total_value": 150,
-  //             "average": 5,
-  //             "value": 115,
-  //             "total_stock": 23,
-  //             "isStock": true,
-  //             "minStock": 0
-  //         },
-  //         "title": "sun screen 1",
-  //         "wasted": 0,
-  //         "soldItems": 0,
-  //         "saleGroupRules": [],
-  //         "updateVersion": 0,
-  //         "ageRestriction": "",
-  //         "quantity": 0,
-  //         "isVending": true,
-  //         "discount": 3,
-  //         "priceDiff": 0,
-  //         "originalPrice": 0,
-  //         "noDepoPrice": 0,
-  //         "promote": false,
-  //         "isBagActive": false,
-  //         "sku": "11212",
-  //         "deposit": 5,
-  //         "teaser": "",
-  //         "picture": "",
-  //         "isGS1": false,
-  //         "expirationDate": "",
-  //         "lastDeliveryDate": "",
-  //         "isDiscount": true,
-  //         "vendingDatas": [],
-  //         "softDelete": false,
-  //         "environment": "demo",
-  //         "noneBarcode": false,
-  //         "receiptName": "",
-  //         "searchText": "sun screen 1#1231231231211#11212",
-  //         "meta": {},
-  //         "group": "general",
-  //         "negative_stock": true,
-  //         "isFridge": false,
-  //         "productType": "vending",
-  //         "created": "2025-02-10T06:27:03.069Z",
-  //         "updated": "2025-02-10T06:27:03.069Z"
-  //     }
-  // ]
-  //   const value = e.target.value.toLowerCase(); // Convert input to lowercase
-  //   console.log(value);
-  //   if(value==''){
-  //     setProducts(response);
-  //     return;
-  //   }
-  //   const searchedProducts = filteredProducts.filter((pro) =>
-  //     pro.title.toLowerCase().includes(value) // Check if title includes input
-  //   );
- 
-  //   setProducts(searchedProducts);
+    //   const response=[
+    //     {
+    //         "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "123455",
+    //         "sale": false,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 5,
+    //         "unitOfMeasure": "ml",
+    //         "salePrice": 0,
+    //         "availableItems": 7,
+    //         "category": "Lotion",
+    //         "units": "tagged",
+    //         "price": 10,
+    //         "comparison_weight": 1,
+    //         "stock": {
+    //             "total_value": 50,
+    //             "average": 5,
+    //             "last_restocked": 1736586947012,
+    //             "value": 0,
+    //             "total_stock": 0,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "Tanning Lotion",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 0,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": true,
+    //         "isBagActive": false,
+    //         "sku": "4453",
+    //         "deposit": 5,
+    //         "teaser": "",
+    //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/ic_at_dawn.png",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": false,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "Tanning Lotion",
+    //         "searchText": "tanning lotion#123455#4453",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:03.072Z",
+    //         "updated": "2025-02-10T06:27:03.072Z"
+    //     },
+    //     {
+    //         "_id": "01JJ14X3K87WTF0XKNFYQGEAB9",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "5654656",
+    //         "sale": false,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 1,
+    //         "unitOfMeasure": "ml",
+    //         "salePrice": 2.94,
+    //         "availableItems": 14,
+    //         "category": "UNCATEGORY",
+    //         "units": "tagged",
+    //         "price": 3,
+    //         "comparison_weight": 0,
+    //         "stock": {
+    //             "total_value": 56,
+    //             "average": 1,
+    //             "last_restocked": 1738157875939,
+    //             "value": 29,
+    //             "total_stock": 29,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "Aqualogica sun screen",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 2,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": true,
+    //         "isBagActive": true,
+    //         "sku": "798989",
+    //         "deposit": 25.8,
+    //         "teaser": "",
+    //         "picture": "",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": false,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "prakash",
+    //         "searchText": "aqualogica sun screen#5654656#798989",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:02.985Z",
+    //         "updated": "2025-02-10T06:27:02.985Z"
+    //     },
+    //     {
+    //         "_id": "01JHAA6XD0RZTVAET6FREZ5J7H",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "9988893",
+    //         "sale": true,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 5,
+    //         "unitOfMeasure": "ml",
+    //         "salePrice": 0,
+    //         "availableItems": 9,
+    //         "category": "Lotion",
+    //         "units": "tagged",
+    //         "price": 20,
+    //         "comparison_weight": 1,
+    //         "stock": {
+    //             "total_value": 50,
+    //             "average": 5,
+    //             "last_restocked": 1736587283140,
+    //             "value": 5,
+    //             "total_stock": 1,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "Bed Lotoin Two",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [
+    //             {
+    //                 "count": 4,
+    //                 "price": 7,
+    //                 "status": "Active"
+    //             },
+    //             {
+    //                 "count": 6,
+    //                 "price": 9,
+    //                 "status": "Active"
+    //             }
+    //         ],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 0,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": false,
+    //         "isBagActive": false,
+    //         "sku": "212",
+    //         "deposit": 1,
+    //         "teaser": "",
+    //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": false,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "",
+    //         "searchText": "bed lotoin two#9988893#212",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:03.011Z",
+    //         "updated": "2025-02-10T06:27:03.011Z"
+    //     },
+    //     {
+    //         "_id": "01JJ153HGAXQWP7RGTS61TZBAX",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "8779",
+    //         "sale": true,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 0,
+    //         "unitOfMeasure": "ml",
+    //         "salePrice": 0,
+    //         "availableItems": 9,
+    //         "category": "Lotion",
+    //         "units": "tagged",
+    //         "price": 1,
+    //         "comparison_weight": 0,
+    //         "stock": {
+    //             "total_value": 0,
+    //             "average": 0,
+    //             "value": 0,
+    //             "total_stock": 22,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "De tan lotion",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [
+    //             {
+    //                 "count": 1,
+    //                 "price": 3,
+    //                 "status": "Active"
+    //             },,
+    //             {
+    //                 "count": 5,
+    //                 "price": 10,
+    //                 "status": "Active"
+    //             },
+    //             {
+    //                 "count": 8,
+    //                 "price": 15,
+    //                 "status": "Active"
+    //             }
+    //         ],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 0,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": false,
+    //         "isBagActive": false,
+    //         "sku": "76887",
+    //         "deposit": 0,
+    //         "teaser": "",
+    //         "picture": "https://tanlux.s3.eu-north-1.amazonaws.com/ab25680f-916c-4b25-98cf-02cba5d2c8fa/images/face-cream.png",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": false,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "",
+    //         "searchText": "de tan lotion#8779#76887",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:03.038Z",
+    //         "updated": "2025-02-10T06:27:03.038Z"
+    //     },
+    //     {
+    //         "_id": "01JJ1B0ZBVYZ0GM8WK197NB11X",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "7667676",
+    //         "sale": false,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 0,
+    //         "unitOfMeasure": "ml",
+    //         "salePrice": 0,
+    //         "availableItems": 9,
+    //         "category": "Shower gel",
+    //         "units": "tagged",
+    //         "price": 2,
+    //         "comparison_weight": 0,
+    //         "stock": {
+    //             "total_value": 0,
+    //             "average": 0,
+    //             "value": 0,
+    //             "total_stock": 0,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "De Tan gel",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 5,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": false,
+    //         "isBagActive": false,
+    //         "sku": "78798",
+    //         "deposit": 0,
+    //         "teaser": "",
+    //         "picture": "",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": true,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "",
+    //         "searchText": "de tan gel#7667676#78798",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:03.023Z",
+    //         "updated": "2025-02-10T06:27:03.023Z"
+    //     },
+    //     {
+    //         "_id": "01JJC1Z3D2CDJWWWKA5005NNEM",
+    //         "shopId": "ab25680f-916c-4b25-98cf-02cba5d2c8fa",
+    //         "stripeCode": "1231231231211",
+    //         "sale": false,
+    //         "importedAt": 0,
+    //         "tax": 0,
+    //         "purchasePrice": 5,
+    //         "unitOfMeasure": "kg",
+    //         "salePrice": 0,
+    //         "availableItems": 10,
+    //         "category": "Sun screen",
+    //         "units": "tagged",
+    //         "price": 30,
+    //         "comparison_weight": 2,
+    //         "stock": {
+    //             "total_value": 150,
+    //             "average": 5,
+    //             "value": 115,
+    //             "total_stock": 23,
+    //             "isStock": true,
+    //             "minStock": 0
+    //         },
+    //         "title": "sun screen 1",
+    //         "wasted": 0,
+    //         "soldItems": 0,
+    //         "saleGroupRules": [],
+    //         "updateVersion": 0,
+    //         "ageRestriction": "",
+    //         "quantity": 0,
+    //         "isVending": true,
+    //         "discount": 3,
+    //         "priceDiff": 0,
+    //         "originalPrice": 0,
+    //         "noDepoPrice": 0,
+    //         "promote": false,
+    //         "isBagActive": false,
+    //         "sku": "11212",
+    //         "deposit": 5,
+    //         "teaser": "",
+    //         "picture": "",
+    //         "isGS1": false,
+    //         "expirationDate": "",
+    //         "lastDeliveryDate": "",
+    //         "isDiscount": true,
+    //         "vendingDatas": [],
+    //         "softDelete": false,
+    //         "environment": "demo",
+    //         "noneBarcode": false,
+    //         "receiptName": "",
+    //         "searchText": "sun screen 1#1231231231211#11212",
+    //         "meta": {},
+    //         "group": "general",
+    //         "negative_stock": true,
+    //         "isFridge": false,
+    //         "productType": "vending",
+    //         "created": "2025-02-10T06:27:03.069Z",
+    //         "updated": "2025-02-10T06:27:03.069Z"
+    //     }
+    // ]
+    //   const value = e.target.value.toLowerCase(); // Convert input to lowercase
+    //   console.log(value);
+    //   if(value==''){
+    //     setProducts(response);
+    //     return;
+    //   }
+    //   const searchedProducts = filteredProducts.filter((pro) =>
+    //     pro.title.toLowerCase().includes(value) // Check if title includes input
+    //   );
+
+    //   setProducts(searchedProducts);
 
 
     if (e.target.value.toLowerCase() === '') {
@@ -1587,7 +1708,7 @@ const ProductScreen = () => {
             'env': environment,
           },
         }
-      );  
+      );
       setProducts(response.data);
     }
     else {
@@ -1619,7 +1740,7 @@ const ProductScreen = () => {
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
   );
-  
+
 
   const showSalePopup = (productID) => {
 
@@ -1677,94 +1798,94 @@ const ProductScreen = () => {
 
           {isProductfetched ? (
             <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2 ">
-              <img src={noProductImage} alt="" className="h-52 w-52"/>
-              <button onClick={()=>{navigate(`/stores`)}} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
+              <img src={noProductImage} alt="" className="h-52 w-52" />
+              <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
             <div className="h-full flex flex-col items-center">
-             {filteredProducts?.length > 0 ? (
-              <div className="flex flex-col overflow-y-auto mb-5 gap-2 w-full py-16  mt-28">
-                {filteredProducts?.filter((product) => product.isVending).map((product) => (
-                  <div key={product._id}
-                    className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"
-                  >
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="flex flex-col rounded-md">
-                        <img
-                          src={product.picture || productDefaultimg}
-                          alt={product.title}
-                          className="h-16 w-14 p-1 bg-gray-100"
-                        />
-                        {product.ageRestriction && (
-                          <span className="bg-red-700 text-white text-center rounded-b-md w-full">
-                            18+
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex flex-col">
-                          <strong>{product.title}</strong>
-                          {!product.isDiscount ? (
-                            <div className="flex items-center">
-                              <strong className="text-buttonColor font-semibold">
-                                {product.price+'  '+currence} 
-                              </strong>
-
-                              {product.sale &&
-                                product.salePrice == 0 &&
-                                product.saleGroupRules.length > 0 && (
-                                  <img
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      showSalePopup(product._id);
-                                    }}
-                                    src={discountImag}
-                                    alt="Sale"
-                                    className="h-5 w-5 ml-3"
-                                  />
-                                )}
-                            </div>
-                          ) : (
-                            <div className="flex items-center">
-                              <strong className="font-semibold text-buttonColor">
-                                {(product.price - (product.price * product.discount) / 100).toFixed(2)}
-                                <span className="text-gray-400 ml-2 line-through decoration-red-500">
-                                  {product.price+' '+currence}
-                                </span>
-                              </strong>
-                            </div>
+              {filteredProducts?.length > 0 ? (
+                <div className="flex flex-col overflow-y-auto mb-5 gap-2 w-full py-16  mt-28">
+                  {filteredProducts?.filter((product) => product.isVending).map((product) => (
+                    <div key={product._id}
+                      className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"
+                    >
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="flex flex-col rounded-md">
+                          <img
+                            src={product.picture || productDefaultimg}
+                            alt={product.title}
+                            className="h-16 w-14 p-1 bg-gray-100"
+                          />
+                          {product.ageRestriction && (
+                            <span className="bg-red-700 text-white text-center rounded-b-md w-full">
+                              18+
+                            </span>
                           )}
                         </div>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col">
+                            <strong>{product.title}</strong>
+                            {!product.isDiscount ? (
+                              <div className="flex items-center">
+                                <strong className="text-buttonColor font-semibold">
+                                  {product.price + '  ' + currence}
+                                </strong>
+
+                                {product.sale &&
+                                  product.salePrice == 0 &&
+                                  product.saleGroupRules.length > 0 && (
+                                    <img
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        showSalePopup(product._id);
+                                      }}
+                                      src={discountImag}
+                                      alt="Sale"
+                                      className="h-5 w-5 ml-3"
+                                    />
+                                  )}
+                              </div>
+                            ) : (
+                              <div className="flex items-center">
+                                <strong className="font-semibold text-buttonColor">
+                                  {(product.price - (product.price * product.discount) / 100).toFixed(2)}
+                                  <span className="text-gray-400 ml-2 line-through decoration-red-500">
+                                    {product.price + ' ' + currence}
+                                  </span>
+                                </strong>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-black font-bold text-lg">
+                        {product.quantity === 0 || product.quantity === undefined ? (
+                          <button
+                            onClick={() =>
+                              handleAddClick({ ...product, quantity: product.quantity ?? 0 })
+                            }
+                            className="border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex justify-between gap-4 border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full">
+                            <button onClick={() => handleDecrement(product)}>-</button>
+                            <span>{product.quantity}</span>
+                            <button onClick={() => handleIncrement(product)}>+</button>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    <div className="text-black font-bold text-lg">
-                      {product.quantity === 0 || product.quantity === undefined ? (
-                        <button
-                          onClick={() =>
-                            handleAddClick({ ...product, quantity: product.quantity ?? 0 })
-                          }
-                          className="border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full"
-                        >
-                          Add
-                        </button>
-                      ) : (
-                        <div className="flex justify-between gap-4 border-2 border-buttonColor outline-none py-1 px-5 text-center rounded-full">
-                          <button onClick={() => handleDecrement(product)}>-</button>
-                          <span>{product.quantity}</span>
-                          <button onClick={() => handleIncrement(product)}>+</button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : ( 
-              <div className="flex flex-col mb-5 gap-2 w-full h-full items-center justify-center">
-                <img src={empty} alt="" className="h-44 w-44 "/>
-                {/* <h1 className="text-center text-black text-lg font-semibold">Product not matched</h1> */}
-              </div>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col mb-5 gap-2 w-full h-full items-center justify-center">
+                  <img src={empty} alt="" className="h-44 w-44 " />
+                  {/* <h1 className="text-center text-black text-lg font-semibold">Product not matched</h1> */}
+                </div>
+              )}
             </div>
           )}
 
@@ -1867,34 +1988,34 @@ const ProductScreen = () => {
 
               {findActiveRule(saleRule)}
 
-            {saleRule
-              .filter(rule => rule.status === 'Active') // Filter only active rules
-              .map((rule, index) => {
-            
-                // Check if saleruleProduct.quantity matches any other rule.count (excluding current rule)
-                const isQuantityInOtherRules = saleRule.some(
-                  otherRule => otherRule.count === saleruleProduct.quantity && otherRule !== rule 
-                );
-             
-                // Condition: quantity must be >= rule.count AND must not match any other rule.count
-                //  const isActive =saleruleProduct.quantity  >= rule.count && !isQuantityInOtherRules ;
-                let isActive=false;
-                if(tempARR.length>0){
-                   isActive = tempARR[0].ruleCOUNT == rule.count;
-                }
-                
-                return (
-                  <div
-                    key={index}
-                    className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
+              {saleRule
+                .filter(rule => rule.status === 'Active') // Filter only active rules
+                .map((rule, index) => {
+
+                  // Check if saleruleProduct.quantity matches any other rule.count (excluding current rule)
+                  const isQuantityInOtherRules = saleRule.some(
+                    otherRule => otherRule.count === saleruleProduct.quantity && otherRule !== rule
+                  );
+
+                  // Condition: quantity must be >= rule.count AND must not match any other rule.count
+                  //  const isActive =saleruleProduct.quantity  >= rule.count && !isQuantityInOtherRules ;
+                  let isActive = false;
+                  if (tempARR.length > 0) {
+                    isActive = tempARR[0].ruleCOUNT == rule.count;
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
                     ${isActive ? 'bg-buttonColor text-white' : 'text-gray-400'}`} // Apply conditional styles
-                  >
-                    <p className="text-lg">BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span></p>
-                    <img src={tickMark} alt="" className={`h-7 w-7 rounded-full absolute right-2 ${isActive ? 'block' : 'hidden'}`} />
-                  </div>
-                );
-              })
-            }
+                    >
+                      <p className="text-lg">BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span></p>
+                      <img src={tickMark} alt="" className={`h-7 w-7 rounded-full absolute right-2 ${isActive ? 'block' : 'hidden'}`} />
+                    </div>
+                  );
+                })
+              }
 
             </div>
           </div>

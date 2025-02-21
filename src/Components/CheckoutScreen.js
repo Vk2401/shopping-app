@@ -14,7 +14,7 @@ const CheckoutScreen = () => {
   const [user, setUser] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
-  const apiUrl = process.env.REACT_APP_API_URL
+  const apiUrl = process.env.REACT_APP_AUTH_API_URL
   const Distance = process.env.REACT_APP_DISTANCE
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts, setCartProducts] = useState([]);
@@ -489,35 +489,35 @@ const CheckoutScreen = () => {
     let tokens = JSON.parse(localStorage.getItem("authToken")) || [];
     let aToken = tokens.accessToke;
     console.log(products);
+    
+    const response = await axios.post(
+      `${apiUrl}/storedatasync/erp-task`,
+      {
+        storeId: storeID,
+        userId: localUSER.id,
+        goal: "dispense",
+        details: {
+          products: products
+        }
+      },
+      {
+        headers: {
+          'accept': 'application/json',
+          'env': environment,
+          'Authorization': `Bearer ${aToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    console.log(response);
 
+    if (response.status == 201) {
+      localStorage.removeItem('cart');
+      localStorage.removeItem('total');
+      navigate('/PaymentSuccess');
+    }
 
-    // const response = await axios.post(
-    //   `${apiUrl}/storedatasync/erp-task`,
-    //   {
-    //     storeId: storeID,
-    //     userId: localUSER.id,
-    //     goal: "dispense",
-    //     details: {
-    //       products: products
-    //     }
-    //   },
-    //   {
-    //     headers: {
-    //       'accept': 'application/json',
-    //       'env': environment,
-    //       'Authorization': `Bearer ${aToken}`,
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }
-    // )
-
-    // if (response.status == 201) {
-    //   localStorage.removeItem('cart');
-    //   localStorage.removeItem('total');
-    //   navigate('/PaymentSuccess');
-    // }
-
-    // navigate('/payment');
+    navigate('/payment');
   };
 
   return (

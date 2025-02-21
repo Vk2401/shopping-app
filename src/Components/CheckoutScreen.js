@@ -469,6 +469,7 @@ const CheckoutScreen = () => {
         }));
 
         setProducts(proArr);
+        console.log();
 
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -488,33 +489,33 @@ const CheckoutScreen = () => {
     let tokens = JSON.parse(localStorage.getItem("authToken")) || [];
     let aToken = tokens.accessToke;
     console.log(products);
-    console.log(aToken);
 
-    const response = await axios.post(
-      `${apiUrl}/storedatasync/erp-task`,
-      {
-        storeId: storeID,
-        userId: localUSER.id,
-        goal: "dispense",
-        details: {
-          products: products
-        }
-      },
-      {
-        headers: {
-          'accept': 'application/json',
-          'env': environment,
-          'Authorization': `Bearer ${aToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
 
-    if (response.status == 201) {
-      localStorage.removeItem('cart');
-      localStorage.removeItem('total');
-      navigate('/PaymentSuccess');
-    }
+    // const response = await axios.post(
+    //   `${apiUrl}/storedatasync/erp-task`,
+    //   {
+    //     storeId: storeID,
+    //     userId: localUSER.id,
+    //     goal: "dispense",
+    //     details: {
+    //       products: products
+    //     }
+    //   },
+    //   {
+    //     headers: {
+    //       'accept': 'application/json',
+    //       'env': environment,
+    //       'Authorization': `Bearer ${aToken}`,
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // )
+
+    // if (response.status == 201) {
+    //   localStorage.removeItem('cart');
+    //   localStorage.removeItem('total');
+    //   navigate('/PaymentSuccess');
+    // }
 
     // navigate('/payment');
   };
@@ -564,80 +565,63 @@ const CheckoutScreen = () => {
               </div>
             ))}
 
+          {cartProducts
+            .filter(pro => pro.productType === 'saleRule')
+            .map((pro, index) => {
+            // Step 1: Calculate total before rendering
+            let total = pro.totalCount;
 
-          {cartProducts?.map((product) => (
+            // Reduce total count by subtracting quantities from applied sale rules
+            pro.saleRuleDetails.forEach(rule => {
+              if (rule.isSaleApplied) {
+                total -= (rule.productQuantiy * rule.saleRule.count);
+              }
+            });
 
-            <div key={product.productID}>
-              {product.issaleApplied === false && (
-                <div className="flex justify-between items-center border-2 border-yellow-300 rounded-lg px-4 py-2 mb-4">
-                  <div className="flex items-center gap-2">
-                    <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
-                    <div className="flex flex-col">
-                      <span className="font-bold text-black">{product.title}</span>
-                      <span className="text-lightBlack">Qty: {product.totalCount}</span>
-                      <span className="text-buttonColor font-semibold text-lg">{product.notSaleRulePrice + ' ' + currence}</span>
-                    </div>
-                  </div>
-                  <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
-                    <span>{product.totalCount}</span>
-                    <span>x</span>
-                    <span>{product.notSaleRulePrice / product.totalCount}</span>
-                  </div>
-                </div>
-              )}
-              {product.issaleApplied === true && product.totalCount % product.saleRulecount === 0 && (
-                <div className="flex justify-between items-center  border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
-                  <div className="flex items-center gap-2">
-                    <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
-                    <div className="flex flex-col">
-                      <span className="font-bold text-black">{product.title}</span>
-                      <span className="text-lightBlack">Qty: {product.totalCount}</span>
-                      <span className="text-buttonColor font-semibold text-lg">{product.salePrice + ' ' + currence}</span>
-                    </div>
-                  </div>
-                  <div className="flex font-semibold items-center  justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
-                    <span>{product.saleAppliedCount}</span>
-                    <span>x</span>
-                    <span>{product.salePrice / product.saleAppliedCount}</span>
-                  </div>
-                </div>
-              )}
-              {product.issaleApplied === true && product.totalCount % product.saleRulecount !== 0 && (
-                <div>
-                  <div className="flex justify-between items-center  border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
-                    <div className="flex items-center gap-2">
-                      <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
-                      <div className="flex flex-col">
-                        <span className="font-bold text-black">{product.title}</span>
-                        <span className="text-lightBlack">Qty: {product.saleAppliedCount * product.saleRulecount}</span>
-                        <span className="text-buttonColor font-semibold text-lg">{product.salePrice + ' ' + currence}</span>
+            return (
+              <div key={index} className="">
+                {/* Step 2: Render Green Divs (Applied Sale Rules) */}
+                {pro.saleRuleDetails.map((rule, ruleIndex) => (
+                  rule.isSaleApplied && (
+                    <div key={ruleIndex} className="flex justify-between items-center border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <img src={pro.picture || productDefaultimg} alt={pro.title} className="w-14 h-16 object-cover" />
+                        <div className="flex flex-col">
+                          <span className="font-bold text-black">{pro.title}</span>
+                          <span className="text-lightBlack">Qty: {rule.productQuantiy * rule.saleRule.count}</span>
+                          <span className="text-buttonColor font-semibold text-lg">{(rule.productQuantiy * rule.saleRule.price) + ' ' + currence}</span>
+                        </div>
+                      </div>
+                      <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
+                        <span>{rule.productQuantiy}</span>
+                        <span>x</span>
+                        <span>{rule.saleRule.price}</span>
                       </div>
                     </div>
-                    <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
-                      <span>{product.salePrice / product.saleAppliedCount}</span>
-                      <span>x</span>
-                      <span>{product.saleAppliedCount}</span>
-                    </div>
-                  </div>
+                  )
+                ))}
+
+                {/* Step 3: Render Red Div (Remaining Quantity) */}
+                {total > 0 && (
                   <div className="flex justify-between items-center border-2 border-red-300 rounded-lg px-4 py-2 mb-4">
                     <div className="flex items-center gap-2">
-                      <img src={product.picture || productDefaultimg} alt={product.title} className="w-14 h-16 object-cover" />
+                      <img src={pro.picture || productDefaultimg} alt={pro.title} className="w-14 h-16 object-cover" />
                       <div className="flex flex-col">
-                        <span className="font-bold text-black">{product.title}</span>
-                        <span className="text-lightBlack">Qty: {product.saleRuleNotAppliedCount}</span>
-                        <span className="text-buttonColor font-semibold text-lg">{product.notSaleRulePrice + ' ' + currence}</span>
+                        <span className="font-bold text-black">{pro.title}</span>
+                        <span className="text-lightBlack">Qty: {total}</span>
+                        <span className="text-buttonColor font-semibold text-lg">{(total * pro.productPrice) + ' ' + currence}</span>
                       </div>
                     </div>
                     <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
-                      <span>{product.notSaleRulePrice / product.saleRuleNotAppliedCount}</span>
+                      <span>{total}</span>
                       <span>x</span>
-                      <span>{product.saleRuleNotAppliedCount}</span>
+                      <span>{pro.productPrice}</span>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
 
           <div className="flex justify-center items-center fixed bottom-0 left-0 w-full z-10 pb-5 bg-white">
             <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} Rs</button>

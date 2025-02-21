@@ -14,7 +14,6 @@ import axios from "axios";
 import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 
-
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
@@ -47,7 +46,7 @@ const ProductScreen = () => {
 
 
   useEffect(() => {
-
+  
     if (!isAuthenticated) {
       navigate("/");
     }
@@ -56,16 +55,13 @@ const ProductScreen = () => {
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       const tokens = JSON.parse(localStorage.getItem('authToken'));
+      const total = localStorage.getItem('total') || 0;
+
       // const storeID=localStorage.getItem('storeID');
       const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
       setTotalCount(addedProducts.length);
-
-      let addedTotal = 0;
-      addedProducts.forEach(product => {
-        addedTotal = addedTotal + product.price;
-      })
-      setTotalPrice(addedTotal);
+      setTotalPrice(total);
 
       const fetchProducts = async () => {
         try {
@@ -506,18 +502,6 @@ const ProductScreen = () => {
               })
             })
 
-            let total = 0;
-
-            cart.forEach((pro) => {
-              if (pro.productType == 'saleRule') {
-                total += pro.salePrice + pro.notSaleRulePrice;
-              }
-              else {
-                total += pro.price;
-              }
-            })
-
-            setTotalPrice(total);
             setProducts(fetchProduct);
 
           } else {
@@ -558,6 +542,7 @@ const ProductScreen = () => {
       fetchCurrence();
       fetchProducts();
     }
+    
   }, [])
 
   const getCurrectLocation = () => {
@@ -1357,9 +1342,7 @@ const ProductScreen = () => {
 
   const showSalePopup = (productID) => {
     const foundProduct = filteredProducts.find(product => product._id === productID);
-
     setSaleruleProduct(foundProduct);
-    console.log(foundProduct.saleGroupRules);
     setSalerule(foundProduct.saleGroupRules);
     setShowPopup(true);
   }

@@ -384,3 +384,26 @@ const response=[
       "updated": "2025-02-10T06:27:03.069Z"
   }
 ]
+
+const newQuantiy;
+
+const saleRuleProduct={
+    productType:'saleRule',
+    productId:Product._id,
+    productPrice:Product.price,
+    totalPrice:Product.price,
+    totalCount:1,
+    saleRuleDetails:[
+        {
+        productQuantiy:0,
+        saleRule:{
+            "count": 5,
+            "price": 10,
+            "status": "Active"
+        },
+        isNearby:false,
+        isSaleApplied:false,
+        }
+
+],
+  }

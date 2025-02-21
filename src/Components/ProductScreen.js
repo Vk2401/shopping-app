@@ -36,13 +36,13 @@ const ProductScreen = () => {
   const [saleRUle, setSaleRULE] = useState('');
   let tempARR = [];
 
-  const saleRuleProduct={
-    productType:'saleRule',
-    productId:'',
-    productPrice:'',
-    totalPrice:'',
-    totalCount:'',
-    saleRuleDetails:'',
+  const saleRuleProduct = {
+    productType: 'saleRule',
+    productId: '',
+    productPrice: '',
+    totalPrice: '',
+    totalCount: '',
+    saleRuleDetails: '',
   }
 
   // const [saleRuleProduct, setSaleRuleProduct] = useState(
@@ -291,9 +291,9 @@ const ProductScreen = () => {
                 //       "status": "Active"
                 // },
                 {
-                      "count": 4,
-                      "price": 9,
-                      "status": "Active"
+                  "count": 4,
+                  "price": 9,
+                  "status": "Active"
                 },
                 // {
                 //     "count": 1,
@@ -624,106 +624,107 @@ const ProductScreen = () => {
     );
   };
 
-  const findSaleRules=(Product,quantity)=>{
+  const findSaleRules = (Product, quantity) => {
     let rules = Product.saleGroupRules;
-    let tempArr=[];
-    let tempQuantity=quantity;
+    rules.sort((a, b) => b.count - a.count);
+    let tempArr = [];
+    let tempQuantity = quantity;
 
-    rules.forEach(rule=>{
-      let tempObj={
-        productQuantiy:0,
-        saleRule:rule,
-        isNearby:false,
-        isSaleApplied:false,
+    rules.forEach(rule => {
+
+      let tempObj = {
+        productQuantiy: 0,
+        saleRule: rule,
+        isNearby: false,
+        isSaleApplied: false,
       }
 
-      if(rule.status=='Active' && rule.count<=tempQuantity){
-        let saleAppliedQuantiy=tempQuantity/rule.count;
-        let saleNotAppliedQuantity=tempQuantity%rule.count;
-        tempObj.productQuantiy=saleAppliedQuantiy;
-        tempObj.isSaleApplied=true;
+      if (rule.status == 'Active' && rule.count <= tempQuantity) {
 
-        saleNotAppliedQuantity=saleNotAppliedQuantity+1;
-        if(saleNotAppliedQuantity%rule.count==0){
-          tempObj.isNearby=true;
-        }
+        let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
+        let saleNotAppliedQuantity = tempQuantity % rule.count;
+        tempObj.productQuantiy = saleAppliedQuantiy;
+        tempObj.isSaleApplied = true;
 
-        tempQuantity=tempQuantity-saleAppliedQuantiy;
-
+        saleNotAppliedQuantity = saleNotAppliedQuantity + 1;
+        tempQuantity = tempQuantity - (saleAppliedQuantiy * rule.count);
       }
+
       tempArr.push(tempObj);
     })
 
     return tempArr;
   }
 
-  const findSaleRuleProductTOtal=(Product,Quantity)=>{
+  const findSaleRuleProductTOtal = (Product, Quantity) => {
     // Calculate total count and total price
     const { totalCount, totalPrice } = Product.saleRuleDetails.reduce((acc, detail) => {
       if (detail.productQuantiy !== 0) {
-          acc.totalCount += detail.productQuantiy * detail.saleRule.count;
-          acc.totalPrice += detail.productQuantiy * detail.saleRule.price;
+        acc.totalCount += detail.productQuantiy * detail.saleRule.count;
+        acc.totalPrice += detail.productQuantiy * detail.saleRule.price;
       }
       return acc;
     }, { totalCount: 0, totalPrice: 0 });
 
 
-    let a=Product.totalCount - totalCount;
-    a=a*Product.productPrice;
-    a=a+totalPrice;
+    let a = Product.totalCount - totalCount;
+    a = a * Product.productPrice;
+    a = a + totalPrice;
 
     return a;
 
   }
 
-  const addSaleRuleProduct = (Product,operation) => {
-
+  const addSaleRuleProduct = (Product, operation) => {
     let cartProducts = JSON.parse(localStorage.getItem("cart")) || [];
     let matchingProduct = cartProducts.find(product => product.productID === Product._id) ?? null;
-    let updatedCartProducts =[];
-
+    let updatedCartProducts = [];
     let newProductQuantity;
 
-    const saleRuleProduct={
-      productType:'saleRule',
-      productID:Product._id,
-      productPrice:Product.price,
-      totalPrice:Product.price,
-      totalCount:1,
-      saleRuleDetails:null,
+    const saleRuleProduct = {
+      productType: 'saleRule',
+      productID: Product._id,
+      productPrice: Product.price,
+      totalPrice: Product.price,
+      totalCount: 1,
+      saleRuleDetails: null,
     }
 
     newProductQuantity = operation === '-' ? --Product.quantity : ++Product.quantity;
 
-    if(matchingProduct==null){
-      let resultArr = findSaleRules(Product,newProductQuantity);
-      saleRuleProduct.saleRuleDetails=resultArr;
-      saleRuleProduct.totalPrice=findSaleRuleProductTOtal(saleRuleProduct,newProductQuantity);
+    if (matchingProduct == null) {
+      let resultArr = findSaleRules(Product, newProductQuantity);
+      saleRuleProduct.saleRuleDetails = resultArr;
+      saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
       updatedCartProducts.push(saleRuleProduct);
-    }else{
-       updatedCartProducts = cartProducts.filter(pro => pro.productID !== Product._id);
-       let resultArr = findSaleRules(Product,newProductQuantity);
-       saleRuleProduct.saleRuleDetails=resultArr;
-       saleRuleProduct.totalCount=newProductQuantity;
-       saleRuleProduct.totalPrice=findSaleRuleProductTOtal(saleRuleProduct,newProductQuantity);
-       updatedCartProducts.push(saleRuleProduct);
-    }
-    
-    // let total = findTotal(updatedCartProducts);
-    //   setTotalPrice(total);
-    //   localStorage.setItem('total', total);
-  
-      setProducts(prevProducts =>
-        prevProducts.map(pro =>
-          pro._id === Product._id
-            ? { ...pro, quantity: newProductQuantity } // Creates a new object (safer for React state updates)
-            : pro
-        )
-      );
-      
-    localStorage.setItem('cart',JSON.stringify(updatedCartProducts));
-  }
+    } else {
 
+      updatedCartProducts = cartProducts.filter(pro => pro.productID !== Product._id);
+
+      if(newProductQuantity!=0){
+        let resultArr = findSaleRules(Product, newProductQuantity);
+        saleRuleProduct.saleRuleDetails = resultArr;
+        saleRuleProduct.totalCount = newProductQuantity;
+        saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
+        updatedCartProducts.push(saleRuleProduct);
+      }
+    }
+
+
+    let total = findTotal(updatedCartProducts, '+');
+    setTotalPrice(total);
+
+    setProducts(prevProducts =>
+      prevProducts.map(pro =>
+        pro._id === Product._id
+          ? { ...pro, quantity: newProductQuantity } // Creates a new object (safer for React state updates)
+          : pro
+      )
+    );
+
+    localStorage.setItem('total', total);
+    localStorage.setItem('cart', JSON.stringify(updatedCartProducts));
+  }
 
   const findTotal = (cartProducts, op) => {
     let totalPrice = 0;
@@ -735,17 +736,7 @@ const ProductScreen = () => {
 
     cartProducts.forEach((pro) => {
       if (pro.productType == 'saleRule') {
-        const values = pro.Rules;
-
-        Object.values(values).forEach(value => {
-          totalPrice += value.salePrice;
-
-          // Check if saleRuleNotAppliedCount is not zero
-          if (value.saleRuleNotAppliedCount !== 0) {
-            totalPrice += value.saleRuleNotAppliedCount * value.notSaleRulePrice;
-          }
-        });
-
+        totalPrice += pro.totalPrice;
       }
       else {
         totalPrice += pro.price;
@@ -830,140 +821,6 @@ const ProductScreen = () => {
 
   }
 
-  function modifyRuleAppliedArr(ruleAppliedArr) {
-    return ruleAppliedArr.map((item, index, arr) => {
-        let newItem = { ...item };
-
-        // Apply changes to all objects except the last one
-        if (index !== arr.length - 1) {
-            newItem.notSaleRulePrice = 0;
-            newItem.totalCount = newItem.saleAppliedCount * newItem.saleRulecount;
-        } else {
-            // Last object keeps its original values
-            newItem.totalCount = newItem.saleAppliedCount * newItem.saleRulecount + newItem.saleRuleNotAppliedCount;
-        }
-
-        return newItem;
-    });
-}
-
-  function updateRules(Rules, ruleAppliedArr) {
-    // Get all rule keys
-  
-    let ruleKeys = Object.keys(Rules);
-    console.log(ruleKeys);
-
-    // Remove the last rule
-    if (ruleKeys.length > 0) {
-        delete Rules[ruleKeys.pop()];
-    }
-
-    // Find the next available rule number
-    let nextRuleNumber = Object.keys(Rules).length + 1;
-
-    // Add all objects from ruleAppliedArr to Rules
-    ruleAppliedArr.forEach((saleObj) => {
-        Rules[`rule ${nextRuleNumber}`] = saleObj;
-        nextRuleNumber++;
-    });
-
-    return Rules;
-  }
-
-  const findSaleRuleforSomeProduct = (productQuatity, product) => {
-    let ruleAppliedArr = [];
-    let rules = product.saleGroupRules;
-    rules.sort((a, b) => b.count - a.count);
-    let count = productQuatity - 1;
-
-    if(rules.length==1){
-      return false;
-    }
-    rules.forEach((rule) => {
-
-      if (rule.status === "Active" && rule.count <= count) {
-        let remainder = count % rule.count;
-        let appliedCount = Math.floor(count / rule.count);
-        let notAppliedPrice = remainder * product.price;
-        let appliedPrice = appliedCount * rule.price;
-
-        let saleobj =
-        {
-          saleAppliedCount: appliedCount,
-          salePrice: appliedPrice,
-          saleRuleNotAppliedCount: remainder,
-          notSaleRulePrice: notAppliedPrice,
-          saleRulecount: rule.count,
-          totalCount: appliedCount + remainder,
-          // issaleApplied: true
-        }
-
-        ruleAppliedArr.push(saleobj);
-        count = remainder;
-      }
-    });
-
-    if (ruleAppliedArr.length == 0) {
-     
-      let saleobj =[
-        {
-          saleAppliedCount: 0,
-          salePrice: 0,
-          saleRuleNotAppliedCount: 0,
-          notSaleRulePrice: 0,
-          saleRulecount: 0,
-          totalCount: 0,
-          // isApplied:false
-        }
-      ]
-      
-      return saleobj;
-    }
-    else {
-      
-      return modifyRuleAppliedArr(ruleAppliedArr);
-      // const updatedArr = ruleAppliedArr.map((item, index, arr) => {
-      //   let newItem;
-      //   if (ruleAppliedArr.length == 1) {
-      //     newItem = { ...item, totalCount: (item.saleRulecount * item.saleAppliedCount) + item.saleRuleNotAppliedCount };
-      //   } else {
-      //     newItem = { ...item, totalCount: item.saleRulecount * item.saleAppliedCount };
-      //   }
-
-      //   if (arr[index + 1] && arr[index + 1].issaleApplied) {
-      //     newItem.notSaleRulePrice = 0;
-      //     newItem.saleRuleNotAppliedCount = 0; // Updated this property
-      //   }
-      //   return newItem;
-      // });
-
-      // const transformedData = updatedArr.reduce((acc, item, index) => {
-      //   if (!acc.productID) {
-      //     acc.productID = item.productID;
-      //     acc.productType = item.productType;
-      //     acc.totalCount = 0;
-      //     acc.Rules = {};
-      //   }
-
-      //   acc.totalCount += item.totalCount; // Summing up totalCount from all items
-
-      //   acc.Rules[`rule ${index + 1}`] = {
-      //     saleAppliedCount: item.saleAppliedCount,
-      //     salePrice: item.salePrice,
-      //     saleRuleNotAppliedCount: item.saleRuleNotAppliedCount,
-      //     notSaleRulePrice: item.notSaleRulePrice,
-      //     saleRulecount: item.saleRulecount, // Added saleRulecount
-      //     totalCount: item.totalCount // Each rule's specific totalCount
-      //   };
-
-      //   return acc;
-      // }, {});
-
-      // return transformedData;
-    }
-
-  }
-
 
   const addNormalProduct = (newProduct) => {
     let flag = 0;
@@ -1011,281 +868,6 @@ const ProductScreen = () => {
     localStorage.setItem('cart', JSON.stringify(cartProducts));
   }
 
-  const decrementSaleRuleProduct = (newProduct) => {
-    let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
-    let quantityBecome = newProduct.quantity - 1;
-  
-
-    // if (quantityBecome != 0) {
-    //   let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
-    //   const appliedRules = matchingProduct.Rules;
-    //   const objectCount = Object.keys(appliedRules).length;
-    
-    //   if (objectCount <= 1) {
-       
-    //     matchingProduct.totalCount -= 1;
-    //     let rule = matchingProduct.Rules["rule"];
-    //     if (rule == undefined) {
-    //       rule = matchingProduct.Rules["rule 1"]
-    //     }
-  
-    //     let result = findSaleRuleforSomeProduct(rule.totalCount, newProduct);
-      
-    //     if(!result){
-         
-    //       // Access the "Rules" object
-    //       let rules = matchingProduct.Rules;
-
-    //       // Get the first rule key dynamically
-    //       let firstRuleKey = Object.keys(rules)[0];
-
-    //       // Get the rule object
-    //       let rule = rules[firstRuleKey];
-
-    //       // Check condition and update values
-    //       if (rule.saleRuleNotAppliedCount > 0) {
-    //           rule.saleRuleNotAppliedCount -= 1;  // Increment saleRuleNotAppliedCount by 1
-    //           rule.totalCount -=1;
-    //       } else {
-    //           let updatedSalePrice=rule.salePrice/rule.saleAppliedCount;
-    //           updatedSalePrice=updatedSalePrice*(rule.saleAppliedCount-1)
-    //           rule.salePrice=updatedSalePrice;
-    //           rule.saleAppliedCount -= 1;  // Reduce saleAppliedCount by 1
-    //           rule.saleRuleNotAppliedCount = rule.saleRulecount - 1;
-    //           rule.totalCount-=1;  // Set saleRuleNotAppliedCount to saleRulecount - 1
-    //       }
-
-    //     }else{
-          
-    //      let returnedType = identifyResponseType(result);
-    //       if (returnedType == 'Type 1') {
-    //         let tesmpV=appliedRules;
-    //         // let rules = appliedRules.Rules; // Get the "Rules" object
-    //         let rules = appliedRules; 
-    //         let firstRuleKey = Object.keys(rules)[0]; // Get the first rule key (e.g., "rule 1")
-    //         let saleAppliedCount = rules[firstRuleKey].saleAppliedCount; // Get saleAppliedCount
-    //         let saleRuleNotAppliedCount = rules[firstRuleKey].saleRuleNotAppliedCount;
-  
-    //         if(saleAppliedCount==1 && saleRuleNotAppliedCount>1){
-    //           // Access the "Rules" object
-    //           let rules = appliedRules[0].Rules;
-    //           // Get the first rule key dynamically (since it might be "rule 1", "rule 2", etc.)
-    //           let firstRuleKey = Object.keys(rules)[0];
-  
-    //           // Decrement saleRuleNotAppliedCount by 1, ensuring it doesn't go negative
-    //           if (rules[firstRuleKey].saleRuleNotAppliedCount > 0) {
-    //               rules[firstRuleKey].saleRuleNotAppliedCount -= 1;
-    //           }
-  
-    //         }else{
-    //           console.log('lkkm');
-    //           console.log(result);
-    //           let existingKeys = Object.keys(appliedRules);
-    //           let newRuleData = result.Rules;
-    //           let rulesToRemove = Object.keys(newRuleData).length;
-    
-    //           for (let i = 0; i < rulesToRemove; i++) {
-    //             if (existingKeys.length > 0) {
-    //               delete appliedRules[existingKeys.pop()];
-    //             }
-    //           }
-    
-    //           // Get the next available rule number
-    //           let nextRuleNumber = Object.keys(appliedRules).length + 1;
-    //           // Add new rules with continuous numbering
-    //           for (const ruleKey in newRuleData) {
-    //             appliedRules[`rule ${nextRuleNumber}`] = newRuleData[ruleKey];
-    //             nextRuleNumber++;
-    //           }
-    //         }
-    
-    //       } else {
-    //         if(rule.saleAppliedCount>1){
-  
-    //           if(rule.saleAppliedCount>1 && rule.saleRuleNotAppliedCount==0){
-    //             let newSaleRuleNotAppliedCount=rule.saleRulecount-1;
-    //             let newSalePrice=rule.salePrice-(rule.salePrice/rule.saleAppliedCount);
-    //             let newSaleAppliedCount= rule.saleAppliedCount-1;
-    //             let newTotalCount= rule.totalCount-1;
-    //             let newNotSaleRulePrice=newProduct.price;
-
-  
-    //             rule.totalCount = newTotalCount;
-    //             rule.saleAppliedCount = newSaleAppliedCount;  // Reset saleAppliedCount
-    //             rule.salePrice = newSalePrice;  // Reset salePrice
-    //             rule.saleRuleNotAppliedCount = newSaleRuleNotAppliedCount;
-    //             rule.notSaleRulePrice = newNotSaleRulePrice;
-    //           }else{
-    //             rule.saleRuleNotAppliedCount -= 1;
-    //           }
-    //         }else{
- 
-    //           rule.saleAppliedCount = 0;  // Reset saleAppliedCount
-    //           rule.salePrice = 0;  // Reset salePrice
-    //           rule.totalCount -= 1;
-    //           rule.saleRuleNotAppliedCount = rule.totalCount;
-    //           rule.notSaleRulePrice = newProduct.price;
-    //           rule.saleRulecount = 0;
-    //         }
-    //       }
-    //     }
-       
-    //   }
-    //   else {
-    //     matchingProduct.totalCount--;
-    //     const lastKey = Object.keys(appliedRules).pop();
-    //     const lastObject = appliedRules[lastKey];
-    //     console.log(lastObject);
-    //     console.log(lastObject.totalCount);
-
-    //     let result = findSaleRuleforSomeProduct(lastObject.totalCount, newProduct);
-    //     let returnedType = identifyResponseType(result);
-
-    //     if (returnedType == 'Type 1') {
-    //       console.log(appliedRules);
-    //       let newRuleData = result.Rules;
-    //       // Step 1: Convert appliedRules keys to an array and sort them numerically
-    //       let existingKeys = Object.keys(appliedRules).sort((a, b) => {
-    //         return parseInt(a.split(" ")[1]) - parseInt(b.split(" ")[1]);
-    //       });
-
-    //       // Step 2: Remove the last rule from appliedRules
-    //       if (existingKeys.length > 0) {
-    //         delete appliedRules[existingKeys.pop()];
-    //       }
-
-    //       // Step 3: Find the next rule number after removing the last rule
-    //       let nextRuleNumber = Math.max(...Object.keys(appliedRules).map(r => parseInt(r.split(" ")[1]))) + 1 || 1;
-
-    //       // Step 4: Add new rules sequentially with continuous numbering
-    //       for (const ruleKey in newRuleData) {
-    //         appliedRules[`rule ${nextRuleNumber}`] = newRuleData[ruleKey];
-    //         nextRuleNumber++;
-    //       }
-
-    //       // let existingKeys = Object.keys(appliedRules);
-    //       // console.log(existingKeys);
-        
-    //       // let newRuleData = result.Rules;
-    //       // let rulesToRemove = Object.keys(newRuleData).length;
-    //       // console.log(newRuleData);
-
-    //       // for (let i = 0; i < rulesToRemove; i++) {
-    //       //   if (existingKeys.length > 0) {
-    //       //     delete appliedRules[existingKeys.pop()];
-    //       //   }
-    //       // }
-
-    //       // // Get the next available rule number
-    //       // let nextRuleNumber = Object.keys(appliedRules).length + 1;
-    //       // // Add new rules with continuous numbering
-    //       // for (const ruleKey in newRuleData) {
-    //       //   appliedRules[`rule ${nextRuleNumber}`] = newRuleData[ruleKey];
-    //       //   nextRuleNumber++;
-    //       // }
-
-    //     } else {
-    //       // Get all rule keys
-    //       let ruleKeys = Object.keys(appliedRules);
-
-    //       if (ruleKeys.length >= 2) {
-    //         let secondLastKey = ruleKeys[ruleKeys.length - 2]; // Get second-to-last key
-    //         let lastKey = ruleKeys[ruleKeys.length - 1]; // Get last key
-
-    //         // Modify the second-to-last object
-    //         appliedRules[secondLastKey].saleRuleNotAppliedCount = lastObject.totalCount - 1; // Change value as needed
-    //         appliedRules[secondLastKey].notSaleRulePrice = newProduct.price; // Change value as needed
-
-    //         // Remove the last object
-    //         delete appliedRules[lastKey];
-    //       }
-    //     }
-    //   }
-    //   cartProduct = cartProduct.map(product =>
-    //     product.productID === matchingProduct.productID ? matchingProduct : product
-    //   );
-    // }
-    if(quantityBecome!=0){
-      let matchingProduct = cartProduct.find(product => product.productID === newProduct._id) ?? null;
-      const appliedRules = matchingProduct.Rules;
-      const objectCount = Object.keys(appliedRules).length;
-      matchingProduct.totalCount-=1;
-
-      if(matchingProduct.Rules.rule==undefined){
-        let Rules=matchingProduct.Rules;
-        const lastKey= Object.keys(Rules).pop(); 
-        const lastRule = Rules[lastKey];
-
-        if(lastRule.saleRuleNotAppliedCount==0){
-          let count=lastRule.saleRulecount*lastRule.saleAppliedCount;
-          count=count-lastRule.saleRulecount;
-
-          if(lastRule.saleAppliedCount>1){
-            let result=findSaleRuleforSomeProduct(count,newProduct);
-            if(result.length>1){
-              Rules=updateRules(Rules,result)
-            }else{
-              Rules=updateRules2(Rules,newProduct)
-            }
-
-          }else{
-            let result=findSaleRuleforSomeProduct(count,newProduct);
-            
-            if(result.length>1){
-
-              Rules=updateRules(Rules,result)
-            }else{
-              Rules= updateRules2(Rules,newProduct)
-            }
-          }
-          
-        }else{
-          lastRule.totalCount-=1;
-          lastRule.saleRuleNotAppliedCount-=1;
-        }
-
-      }else{
-        let rule=matchingProduct.Rules;
-        if(rule.saleAppliedCount>0){
-        }else{
-          rule.totalCount-=1;
-          rule.saleRuleNotAppliedCount-=1;
-        }
-      }
-    }
-    else {
-      cartProduct = cartProduct.filter(product => product.productID !== newProduct._id);
-    }
-
-    findTotal(cartProduct, '+');
-    let total = findTotal(cartProduct, '-');
-    setTotalPrice(total);
-    localStorage.setItem('total', total);
-    localStorage.setItem("cart", JSON.stringify(cartProduct));
-
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === newProduct._id
-          ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
-          : pro
-      )
-    );
-
-    setSaleruleProduct((prevProduct) => ({
-      ...prevProduct,
-      quantity: Math.max(prevProduct.quantity - 1, 0), // Prevent negative values
-    }));
-  }
-
-  function identifyResponseType(response) {
-    console.log(response);
-    if (response.hasOwnProperty("Rules")) {
-      return "Type 1";
-    } else {
-      return "Type 2";
-    }
-  }
-
   const decrementProduct = (product) => {
     let cartProducts = JSON.parse(localStorage.getItem('cart') || []);
     let productQuantitybecome = product.quantity - 1;
@@ -1327,7 +909,7 @@ const ProductScreen = () => {
       addDiscountProduct(product);
     }
     else if (product.sale && product.salePrice == 0 && product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(product,'+');
+      addSaleRuleProduct(product);
     }
     else {
       addNormalProduct(product);
@@ -1339,7 +921,7 @@ const ProductScreen = () => {
       addDiscountProduct(Product);
     }
     else if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(Product,'+');
+      addSaleRuleProduct(Product);
     }
     else {
       addNormalProduct(Product);
@@ -1348,8 +930,7 @@ const ProductScreen = () => {
 
   const handleDecrement = (Product) => {
     if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(Product,'-');
-      // decrementSaleRuleProduct(Product);
+      addSaleRuleProduct(Product, '-');
     }
     else {
       decrementProduct(Product)
@@ -1797,28 +1378,6 @@ const ProductScreen = () => {
 
   };
 
-  const checkSaleRule=(Product,quantity)=>{
-    const saleRules=Product.saleGroupRules;
-    const tempArr=[];
-
-    let ans={
-      productQuantity:'',
-      SaleRule:'',
-    };
-
-
-    saleRules.forEach(rule=>{
-      if(rule.status=='Active' && rule.count<=quantity){
-        ans.productQuantity=quantity/rule.count;
-        ans.SaleRule=rule;
-        tempArr.push(ans);
-
-        quantity = quantity % rule.count;
-      }
-    })
-
-    return tempArr;
-  }
 
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
@@ -1845,30 +1404,6 @@ const ProductScreen = () => {
     setShowPopup(true);
   }
 
-  function updateRules2(Rules, newProduct) {
-    let ruleKeys = Object.keys(Rules);
-
-    if (ruleKeys.length < 2) {
-        console.log("Not enough rules to modify.");
-        return Rules; // Ensure we have at least 2 rules
-    }
-
-    // Get last rule key and remove it
-    let lastKey = ruleKeys.pop();
-    delete Rules[lastKey];
-
-    // Get second-last rule key
-    let secondLastKey = ruleKeys[ruleKeys.length - 1];
-    let rule = Rules[secondLastKey];
-
-    // Update second-last rule
-    rule.salePrice = (rule.salePrice / rule.saleAppliedCount) * (rule.saleAppliedCount - 1);
-    rule.notSaleRulePrice = newProduct.price;
-    rule.saleAppliedCount -= 1;
-    rule.totalCount -= 1;
-
-    return Rules;
-}
 
   return (
     <div className=" h-screen">

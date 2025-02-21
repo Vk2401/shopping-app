@@ -33,29 +33,6 @@ const ProductScreen = () => {
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
   const [currence, setCurrence] = useState('SEK');
-  const [saleRUle, setSaleRULE] = useState('');
-  let tempARR = [];
-
-  const saleRuleProduct = {
-    productType: 'saleRule',
-    productId: '',
-    productPrice: '',
-    totalPrice: '',
-    totalCount: '',
-    saleRuleDetails: '',
-  }
-
-  // const [saleRuleProduct, setSaleRuleProduct] = useState(
-  //   {
-  //     productType: '',
-  //     productID: '',
-  //     totalCount: '',
-  //     saleAppliedCount: '',
-  //     saleRuleNotAppliedCount: '',
-  //     salePrice: 0,
-  //     notSaleRulePrice: 0
-  //   }
-  // );
 
   const [discountProduct, setDiscountProduct] = useState(
     {
@@ -68,33 +45,6 @@ const ProductScreen = () => {
     }
   );
 
-  const [normalProduct, setNormalProduct] = useState([
-    {
-      productType: '',
-      productID: '',
-      productCount: 0,
-      price: 0
-    }
-  ]);
-
-  const findActiveRule = (saleRules) => {
-
-    saleRules.forEach((rule) => {
-
-      if (rule.status === 'Active' && saleruleProduct.quantity >= rule.count) {
-        const roundedUp = saleruleProduct.quantity / rule.count;
-
-        const temp = {
-          ruleCOUNT: rule.count,
-          ans: roundedUp,
-        };
-        tempARR.push(temp);
-
-      }
-    })
-
-    tempARR.sort((a, b) => a.ans.toString().localeCompare(b.ans.toString()));
-  }
 
   useEffect(() => {
 
@@ -625,6 +575,7 @@ const ProductScreen = () => {
   };
 
   const findSaleRules = (Product, quantity) => {
+    let flag = 0;
     let rules = Product.saleGroupRules;
     rules.sort((a, b) => b.count - a.count);
     let tempArr = [];
@@ -639,6 +590,11 @@ const ProductScreen = () => {
         isSaleApplied: false,
       }
 
+      if ((tempQuantity + 1) % rule.count == 0 && flag == 0) {
+        tempObj.isNearby = true;
+        flag = 1;
+      }
+
       if (rule.status == 'Active' && rule.count <= tempQuantity) {
 
         let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
@@ -648,6 +604,7 @@ const ProductScreen = () => {
 
         saleNotAppliedQuantity = saleNotAppliedQuantity + 1;
         tempQuantity = tempQuantity - (saleAppliedQuantiy * rule.count);
+
       }
 
       tempArr.push(tempObj);
@@ -677,8 +634,8 @@ const ProductScreen = () => {
 
   const addSaleRuleProduct = (Product, operation) => {
     let cartProducts = JSON.parse(localStorage.getItem("cart")) || [];
-    let matchingProduct = cartProducts.find(product => product.productID === Product._id) ?? null;
     let updatedCartProducts = [];
+    let resultArr = [];
     let newProductQuantity;
 
     const saleRuleProduct = {
@@ -692,25 +649,42 @@ const ProductScreen = () => {
 
     newProductQuantity = operation === '-' ? --Product.quantity : ++Product.quantity;
 
-    if (matchingProduct == null) {
-      let resultArr = findSaleRules(Product, newProductQuantity);
+    if (cartProducts.length == 0) {
+      resultArr = findSaleRules(Product, newProductQuantity);
       saleRuleProduct.saleRuleDetails = resultArr;
       saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
       updatedCartProducts.push(saleRuleProduct);
     } else {
 
       updatedCartProducts = cartProducts.filter(pro => pro.productID !== Product._id);
+      resultArr = findSaleRules(Product, newProductQuantity);
+      saleRuleProduct.saleRuleDetails = resultArr;
 
-      if(newProductQuantity!=0){
-        let resultArr = findSaleRules(Product, newProductQuantity);
+      if (newProductQuantity != 0) {
+        resultArr = findSaleRules(Product, newProductQuantity);
         saleRuleProduct.saleRuleDetails = resultArr;
         saleRuleProduct.totalCount = newProductQuantity;
         saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
         updatedCartProducts.push(saleRuleProduct);
       }
+
     }
 
+    Product.saleGroupRules = Product.saleGroupRules.map(rule => {
+      let matchingRule = resultArr.find(res => res.saleRule.count === rule.count);
 
+      if (matchingRule) {
+        return {
+          ...rule,
+          isSaleApplied: matchingRule.isSaleApplied,
+          isNearby: matchingRule.isNearby
+        };
+      }
+
+      return rule; // If no match, return original object
+    })
+
+    setSalerule( Product.saleGroupRules);
     let total = findTotal(updatedCartProducts, '+');
     setTotalPrice(total);
 
@@ -821,7 +795,6 @@ const ProductScreen = () => {
 
   }
 
-
   const addNormalProduct = (newProduct) => {
     let flag = 0;
 
@@ -909,7 +882,7 @@ const ProductScreen = () => {
       addDiscountProduct(product);
     }
     else if (product.sale && product.salePrice == 0 && product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(product);
+      addSaleRuleProduct(product,'+');
     }
     else {
       addNormalProduct(product);
@@ -921,7 +894,7 @@ const ProductScreen = () => {
       addDiscountProduct(Product);
     }
     else if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(Product);
+      addSaleRuleProduct(Product,'+');
     }
     else {
       addNormalProduct(Product);
@@ -1378,32 +1351,18 @@ const ProductScreen = () => {
 
   };
 
-
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
   );
 
   const showSalePopup = (productID) => {
-
-    const saleGroupRules = [
-      {
-        "count": 25,
-        "price": 10,
-        "status": "Active"
-      },
-      {
-        "count": 8,
-        "price": 5,
-        "status": "Active"
-      }
-    ]
     const foundProduct = filteredProducts.find(product => product._id === productID);
 
     setSaleruleProduct(foundProduct);
+    console.log(foundProduct.saleGroupRules);
     setSalerule(foundProduct.saleGroupRules);
     setShowPopup(true);
   }
-
 
   return (
     <div className=" h-screen">
@@ -1610,55 +1569,22 @@ const ProductScreen = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {/* {saleRule
-                .filter(rule => rule.status === 'Active') // Filter only active rules
-                .map((rule, index) => {
-                  const isActive = saleruleProduct.quantity >= rule.count && saleruleProduct.quantity !=rule.count; // Check condition
-
-                  return (
-                    <div
-                      key={index}
-                      className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
-                      ${isActive ? 'bg-buttonColor text-white' : 'text-gray-400'}`} // Apply conditional styles
-                    >
-                      <p className="text-lg">BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span></p>
-                      <img src={tickMark} alt="" className={` h-7 w-7 rounded-full absolute right-2 ${isActive ? 'block' : 'hidden'}`} />
-                    </div>
-                  );
-                })
-              } */}
-
-              {findActiveRule(saleRule)}
-
-              {saleRule
-                .filter(rule => rule.status === 'Active') // Filter only active rules
-                .map((rule, index) => {
-
-                  // Check if saleruleProduct.quantity matches any other rule.count (excluding current rule)
-                  const isQuantityInOtherRules = saleRule.some(
-                    otherRule => otherRule.count === saleruleProduct.quantity && otherRule !== rule
-                  );
-
-                  // Condition: quantity must be >= rule.count AND must not match any other rule.count
-                  //  const isActive =saleruleProduct.quantity  >= rule.count && !isQuantityInOtherRules ;
-                  let isActive = false;
-                  if (tempARR.length > 0) {
-                    isActive = tempARR[0].ruleCOUNT == rule.count;
-                  }
-
-                  return (
-                    <div
-                      key={index}
-                      className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
-                    ${isActive ? 'bg-buttonColor text-white' : 'text-gray-400'}`} // Apply conditional styles
-                    >
-                      <p className="text-lg">BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span></p>
-                      <img src={tickMark} alt="" className={`h-7 w-7 rounded-full absolute right-2 ${isActive ? 'block' : 'hidden'}`} />
-                    </div>
-                  );
-                })
-              }
-
+              {saleRule.map((rule, index) => (
+                <div
+                  key={index}
+                  className={`flex border-2 border-gray-200 rounded-md items-center justify-center relative p-2 py-3 
+                  ${rule.isSaleApplied ? 'bg-buttonColor text-white' : 'bg-white text-gray-400'}`} // Change background based on isSaleApplied
+                >
+                  <p className="text-lg">
+                    BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span>
+                  </p>
+                  <img
+                    src={tickMark}
+                    alt=""
+                    className={`h-7 w-7 rounded-full absolute right-2 ${rule.isSaleApplied ? 'block' : 'hidden'}`}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>

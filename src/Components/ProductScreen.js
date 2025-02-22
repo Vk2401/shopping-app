@@ -13,6 +13,7 @@ import userIcon from '../utils/images/FontAwosemUser.png';
 import axios from "axios";
 import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
+import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -33,20 +34,8 @@ const ProductScreen = () => {
   const [isProductfetched, setisProductfetched] = useState(false);
   const [currence, setCurrence] = useState('SEK');
 
-  const [discountProduct, setDiscountProduct] = useState(
-    {
-      productType: '',
-      productID: '',
-      discountRate: '',
-      originalAmount: 0,
-      price: 0,
-      productCount: 0
-    }
-  );
-
-
   useEffect(() => {
-  
+
     if (!isAuthenticated) {
       navigate("/");
     }
@@ -542,7 +531,7 @@ const ProductScreen = () => {
       fetchCurrence();
       fetchProducts();
     }
-    
+
   }, [])
 
   const getCurrectLocation = () => {
@@ -559,340 +548,266 @@ const ProductScreen = () => {
     );
   };
 
-  const findSaleRules = (Product, quantity) => {
-    let flag = 0;
-    let rules = Product.saleGroupRules;
-    rules.sort((a, b) => b.count - a.count);
-    let tempArr = [];
-    let tempQuantity = quantity;
+  // const findSaleRules = (Product, quantity) => {
+  //   let flag = 0;
+  //   let rules = Product.saleGroupRules;
+  //   rules.sort((a, b) => b.count - a.count);
+  //   let tempArr = [];
+  //   let tempQuantity = quantity;
 
-    rules.forEach(rule => {
+  //   rules.forEach(rule => {
 
-      let tempObj = {
-        productQuantiy: 0,
-        saleRule: rule,
-        isNearby: false,
-        isSaleApplied: false,
-      }
+  //     let tempObj = {
+  //       productQuantiy: 0,
+  //       saleRule: rule,
+  //       isNearby: false,
+  //       isSaleApplied: false,
+  //     }
 
-      if ((tempQuantity + 1) % rule.count == 0 && flag == 0) {
-        tempObj.isNearby = true;
-        flag = 1;
-      }
+  //     if ((tempQuantity + 1) % rule.count == 0 && flag == 0) {
+  //       tempObj.isNearby = true;
+  //       flag = 1;
+  //     }
 
-      if (rule.status == 'Active' && rule.count <= tempQuantity) {
+  //     if (rule.status == 'Active' && rule.count <= tempQuantity) {
 
-        let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
-        let saleNotAppliedQuantity = tempQuantity % rule.count;
-        tempObj.productQuantiy = saleAppliedQuantiy;
-        tempObj.isSaleApplied = true;
+  //       let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
+  //       let saleNotAppliedQuantity = tempQuantity % rule.count;
+  //       tempObj.productQuantiy = saleAppliedQuantiy;
+  //       tempObj.isSaleApplied = true;
 
-        saleNotAppliedQuantity = saleNotAppliedQuantity + 1;
-        tempQuantity = tempQuantity - (saleAppliedQuantiy * rule.count);
+  //       saleNotAppliedQuantity = saleNotAppliedQuantity + 1;
+  //       tempQuantity = tempQuantity - (saleAppliedQuantiy * rule.count);
 
-      }
+  //     }
 
-      tempArr.push(tempObj);
-    })
+  //     tempArr.push(tempObj);
+  //   })
 
-    return tempArr;
-  }
+  //   return tempArr;
+  // }
 
-  const findSaleRuleProductTOtal = (Product, Quantity) => {
-    // Calculate total count and total price
-    const { totalCount, totalPrice } = Product.saleRuleDetails.reduce((acc, detail) => {
-      if (detail.productQuantiy !== 0) {
-        acc.totalCount += detail.productQuantiy * detail.saleRule.count;
-        acc.totalPrice += detail.productQuantiy * detail.saleRule.price;
-      }
-      return acc;
-    }, { totalCount: 0, totalPrice: 0 });
-
-
-    let a = Product.totalCount - totalCount;
-    a = a * Product.productPrice;
-    a = a + totalPrice;
-
-    return a;
-
-  }
-
-  const addSaleRuleProduct = (Product, operation) => {
-    let cartProducts = JSON.parse(localStorage.getItem("cart")) || [];
-    let updatedCartProducts = [];
-    let resultArr = [];
-    let newProductQuantity;
-
-    const saleRuleProduct = {
-      productType: 'saleRule',
-      productID: Product._id,
-      productPrice: Product.price,
-      totalPrice: Product.price,
-      totalCount: 1,
-      saleRuleDetails: null,
-    }
-
-    newProductQuantity = operation === '-' ? --Product.quantity : ++Product.quantity;
-
-    if (cartProducts.length == 0) {
-      resultArr = findSaleRules(Product, newProductQuantity);
-      saleRuleProduct.saleRuleDetails = resultArr;
-      saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
-      updatedCartProducts.push(saleRuleProduct);
-    } else {
-
-      updatedCartProducts = cartProducts.filter(pro => pro.productID !== Product._id);
-      resultArr = findSaleRules(Product, newProductQuantity);
-      saleRuleProduct.saleRuleDetails = resultArr;
-
-      if (newProductQuantity != 0) {
-        resultArr = findSaleRules(Product, newProductQuantity);
-        saleRuleProduct.saleRuleDetails = resultArr;
-        saleRuleProduct.totalCount = newProductQuantity;
-        saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
-        updatedCartProducts.push(saleRuleProduct);
-      }
-
-    }
-
-    Product.saleGroupRules = Product.saleGroupRules.map(rule => {
-      let matchingRule = resultArr.find(res => res.saleRule.count === rule.count);
-
-      if (matchingRule) {
-        return {
-          ...rule,
-          isSaleApplied: matchingRule.isSaleApplied,
-          isNearby: matchingRule.isNearby
-        };
-      }
-
-      return rule; // If no match, return original object
-    })
-
-    setSalerule( Product.saleGroupRules);
-    let total = findTotal(updatedCartProducts, '+');
-    setTotalPrice(total);
-
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === Product._id
-          ? { ...pro, quantity: newProductQuantity } // Creates a new object (safer for React state updates)
-          : pro
-      )
-    );
-
-    localStorage.setItem('total', total);
-    localStorage.setItem('cart', JSON.stringify(updatedCartProducts));
-  }
-
-  const findTotal = (cartProducts, op) => {
-    let totalPrice = 0;
-    let totalCount = 0;
-
-    if (cartProducts.length == 0) {
-      return totalPrice;
-    }
-
-    cartProducts.forEach((pro) => {
-      if (pro.productType == 'saleRule') {
-        totalPrice += pro.totalPrice;
-      }
-      else {
-        totalPrice += pro.price;
-      }
-    })
-    return totalPrice.toFixed(1);
-  }
-
-  const addDiscountProduct = (newProduct) => {
-    let cartProduct = JSON.parse(localStorage.getItem('cart')) || [];
-    let updatedProduct = null;
-
-    for (let pro of cartProduct) {
-      if (pro.productID === newProduct._id) {
-        pro.price += newProduct.price - (newProduct.price * newProduct.discount) / 100;
-        pro.productCount += 1; // Increase count
-        updatedProduct = pro;
-
-        localStorage.setItem('cart', JSON.stringify(cartProduct));
-
-        // Reset state
-        setDiscountProduct({
-          productType: '',
-          productID: '',
-          discountRate: '',
-          originalAmount: 0,
-          price: 0,
-          productCount: 0
-        });
-
-        let total = findTotal(cartProduct, '+');
-        setTotalPrice(total);
-        localStorage.setItem('total', total);
-        localStorage.setItem('cart', JSON.stringify(cartProduct));
-        setProducts(prevProducts =>
-          prevProducts.map(pro =>
-            pro._id === newProduct._id
-              ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
-              : pro
-          )
-        );
-        return;
-      }
-    }
-
-    if (!updatedProduct) {
-      updatedProduct = {
-        productType: 'discountProduct',
-        productID: newProduct._id,
-        discountRate: newProduct.discount,
-        originalAmount: newProduct.price,
-        price: newProduct.price - (newProduct.price * newProduct.discount) / 100,
-        productCount: 1
-      };
-
-      cartProduct.push(updatedProduct);
-    }
-
-    let total = findTotal(cartProduct, '+');
-    setTotalPrice(total);
-    localStorage.setItem('total', total);
-    localStorage.setItem('cart', JSON.stringify(cartProduct));
-
-    // Reset state
-    setDiscountProduct({
-      productType: '',
-      productID: '',
-      discountRate: '',
-      originalAmount: 0,
-      price: 0,
-      productCount: 0
-    });
+  // const findSaleRuleProductTOtal = (Product, Quantity) => {
+  //   // Calculate total count and total price
+  //   const { totalCount, totalPrice } = Product.saleRuleDetails.reduce((acc, detail) => {
+  //     if (detail.productQuantiy !== 0) {
+  //       acc.totalCount += detail.productQuantiy * detail.saleRule.count;
+  //       acc.totalPrice += detail.productQuantiy * detail.saleRule.price;
+  //     }
+  //     return acc;
+  //   }, { totalCount: 0, totalPrice: 0 });
 
 
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === newProduct._id
-          ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
-          : pro
-      )
-    );
+  //   let a = Product.totalCount - totalCount;
+  //   a = a * Product.productPrice;
+  //   a = a + totalPrice;
 
-  }
+  //   return a;
 
-  const addNormalProduct = (newProduct) => {
-    let flag = 0;
+  // }
 
-    let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
+  // const addSaleRuleProduct = (Product, operation) => {
+  //   let cartProducts = JSON.parse(localStorage.getItem("cart")) || [];
+  //   let updatedCartProducts = [];
+  //   let resultArr = [];
+  //   let newProductQuantity;
 
-    if (cartProducts.length > 0) {
-      cartProducts.forEach(cartproduct => {
-        if (cartproduct.productID == newProduct._id) {
-          cartproduct.productCount++;
+  //   const saleRuleProduct = {
+  //     productType: 'saleRule',
+  //     productID: Product._id,
+  //     productPrice: Product.price,
+  //     totalPrice: Product.price,
+  //     totalCount: 1,
+  //     saleRuleDetails: null,
+  //   }
 
-          cartproduct.price += newProduct.price;
-          flag = 1;
-        }
-      });
-    }
+  //   newProductQuantity = operation === '-' ? --Product.quantity : ++Product.quantity;
 
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === newProduct._id
-          ? { ...pro, quantity: pro.quantity + 1 } // Creates a new object (safer for React state updates)
-          : pro
-      )
-    );
+  //   if (cartProducts.length == 0) {
+  //     resultArr = findSaleRules(Product, newProductQuantity);
+  //     saleRuleProduct.saleRuleDetails = resultArr;
+  //     saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
+  //     updatedCartProducts.push(saleRuleProduct);
+  //   } else {
 
-    if (flag == 1) {
-      let total = findTotal(cartProducts, '+');
-      setTotalPrice(total);
-      localStorage.setItem('total', total);
-      localStorage.setItem('cart', JSON.stringify(cartProducts));
-      return;
-    }
+  //     updatedCartProducts = cartProducts.filter(pro => pro.productID !== Product._id);
+  //     resultArr = findSaleRules(Product, newProductQuantity);
+  //     saleRuleProduct.saleRuleDetails = resultArr;
 
-    let npOBJ = {
-      productType: 'NormalProduct',
-      productID: newProduct._id,
-      productCount: 1,
-      price: newProduct.price
-    }
+  //     if (newProductQuantity != 0) {
+  //       resultArr = findSaleRules(Product, newProductQuantity);
+  //       saleRuleProduct.saleRuleDetails = resultArr;
+  //       saleRuleProduct.totalCount = newProductQuantity;
+  //       saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
+  //       updatedCartProducts.push(saleRuleProduct);
+  //     }
 
-    cartProducts.push(npOBJ);
-    let total = findTotal(cartProducts, '+');
-    setTotalPrice(total);
-    localStorage.setItem('total', total);
-    localStorage.setItem('cart', JSON.stringify(cartProducts));
-  }
+  //   }
 
-  const decrementProduct = (product) => {
-    let cartProducts = JSON.parse(localStorage.getItem('cart') || []);
-    let productQuantitybecome = product.quantity - 1;
+  //   Product.saleGroupRules = Product.saleGroupRules.map(rule => {
+  //     let matchingRule = resultArr.find(res => res.saleRule.count === rule.count);
 
-    if (productQuantitybecome == 0) {
-      cartProducts = cartProducts.filter(cartProduct => cartProduct.productID !== product._id);
-    } else {
-      cartProducts.forEach((cartProduct) => {
-        if (cartProduct.productID == product._id) {
-          cartProduct.productCount--;
-          if (cartProduct.productType != 'discountProduct') {
-            cartProduct.price = cartProduct.price - product.price;
-          } else {
-            cartProduct.price = cartProduct.price - (product.price - ((product.price * product.discount) / 100));
-          }
-        }
-      })
-    }
+  //     if (matchingRule) {
+  //       return {
+  //         ...rule,
+  //         isSaleApplied: matchingRule.isSaleApplied,
+  //         isNearby: matchingRule.isNearby
+  //       };
+  //     }
 
-    // Update localStorage if needed
-    let total = findTotal(cartProducts, '-');
-    setTotalPrice(total);
-    localStorage.setItem('total', total);
-    localStorage.setItem("cart", JSON.stringify(cartProducts));
+  //     return rule; // If no match, return original object
+  //   })
 
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === product._id
-          ? { ...pro, quantity: pro.quantity - 1 } // Creates a new object (safer for React state updates)
-          : pro
-      )
-    );
+  //   setSalerule(Product.saleGroupRules);
+  //   let total = findTotal(updatedCartProducts, '+');
+  //   setTotalPrice(total);
 
-  }
+  //   setProducts(prevProducts =>
+  //     prevProducts.map(pro =>
+  //       pro._id === Product._id
+  //         ? { ...pro, quantity: newProductQuantity } // Creates a new object (safer for React state updates)
+  //         : pro
+  //     )
+  //   );
+
+  //   localStorage.setItem('total', total);
+  //   localStorage.setItem('cart', JSON.stringify(updatedCartProducts));
+  // }
+
+  // const findTotal = (cartProducts, op) => {
+  //   let totalPrice = 0;
+  //   let totalCount = 0;
+
+  //   if (cartProducts.length == 0) {
+  //     return totalPrice;
+  //   }
+
+  //   cartProducts.forEach((pro) => {
+  //     if (pro.productType == 'saleRule') {
+  //       totalPrice += pro.totalPrice;
+  //     }
+  //     else {
+  //       totalPrice += pro.price;
+  //     }
+  //   })
+  //   return totalPrice.toFixed(1);
+  // }
+
+  // const updateDicsountProductInCart = (newProduct, action) => {
+  //   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
+
+  //   let dpOBJ = {
+  //     productType: 'discountProduct',
+  //     productID: newProduct._id,
+  //     discountRate: newProduct.discount,
+  //     originalAmount: newProduct.price,
+  //     price: newProduct.price - (newProduct.price * newProduct.discount) / 100,
+  //     productCount: 1
+  //   };
+
+  //   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
+
+  //   if (cartProducts.length!=0) {
+  //     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
+
+  //     if (newQuantity != 0) {
+  //       dpOBJ.productCount = newQuantity;
+  //       dpOBJ.price = newQuantity * (newProduct.price - (newProduct.price * newProduct.discount) / 100);
+  //       cartProducts.push(dpOBJ);
+  //     }
+  //   }else{
+  //     cartProducts.push(dpOBJ);
+  //   }
+    
+  //   let total = findTotal(cartProducts, '+');
+  //   setTotalPrice(total);
+  //   localStorage.setItem('total', total);
+  //   localStorage.setItem('cart', JSON.stringify(cartProducts));
+
+  //   setProducts(prevProducts =>
+  //     prevProducts.map(pro =>
+  //       pro._id === newProduct._id
+  //         ? { ...pro, quantity: newQuantity }
+  //         : pro
+  //     )
+  //   );
+
+  // }
+
+  // const updateNormalProductIncart = (newProduct, action) => {
+  //   let npOBJ = {
+  //     productType: 'NormalProduct',
+  //     productID: newProduct._id,
+  //     productCount: 1,
+  //     price: newProduct.price
+  //   }
+
+  //   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
+  //   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
+
+  //   if (cartProducts != null) {
+  //     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
+  //     if (newQuantity != 0) {
+  //       npOBJ.productCount = newQuantity;
+  //       npOBJ.price = (newQuantity * newProduct.price)
+  //       cartProducts.push(npOBJ);
+  //     }
+  //   } else {
+  //     cartProducts.push(npOBJ);
+  //   }
+
+  //   let total = findTotal(cartProducts, '+');
+  //   setTotalPrice(total);
+  //   localStorage.setItem('total', total);
+  //   localStorage.setItem('cart', JSON.stringify(cartProducts));
+
+  //   setProducts(prevProducts =>
+  //     prevProducts.map(pro =>
+  //       pro._id === newProduct._id
+  //         ? { ...pro, quantity: newQuantity } // Creates a new object (safer for React state updates)
+  //         : pro
+  //     )
+  //   );
+
+  // }
 
   const handleAddClick = (product) => {
     product.quantity = 0;
     if (product.isDiscount) {
-      addDiscountProduct(product);
+      updateDicsountProductInCart(product, '+',setProducts, setTotalPrice);
     }
     else if (product.sale && product.salePrice == 0 && product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(product,'+');
+      updateSaleRuleProductInCart(product, '+',setProducts,setTotalPrice,setSalerule);
     }
     else {
-      addNormalProduct(product);
+      updateNormalProductIncart(product, '+',setProducts, setTotalPrice);
     }
   }
 
   const handleIncrement = (Product) => {
     if (Product.isDiscount) {
-      addDiscountProduct(Product);
+      updateDicsountProductInCart(Product, '+',setProducts, setTotalPrice);
     }
     else if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(Product,'+');
+      updateSaleRuleProductInCart(Product, '+',setProducts,setTotalPrice,setSalerule);
     }
     else {
-      addNormalProduct(Product);
+      updateNormalProductIncart(Product, '+',setProducts, setTotalPrice);
     }
   }
 
   const handleDecrement = (Product) => {
-    if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
-      addSaleRuleProduct(Product, '-');
+
+    if (Product.isDiscount) {
+      updateDicsountProductInCart(Product, '-', setProducts, setTotalPrice);
+    }
+    else if (Product.sale && Product.salePrice == 0 && Product.saleGroupRules.length > 0) {
+      updateSaleRuleProductInCart(Product, '-',setProducts,setTotalPrice,setSalerule);
     }
     else {
-      decrementProduct(Product)
+      updateNormalProductIncart(Product, '-',setProducts, setTotalPrice);
     }
+
   }
 
   const handleSearchChange = async (e) => {

@@ -27,8 +27,9 @@ const CheckoutScreen = () => {
     }
     setCurrence(localStorage.getItem('currence'));
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
-    const tokens = JSON.parse(localStorage.getItem('authToken'));
-    let localUSER = JSON.parse(localStorage.getItem("user")) || [];
+    const aToken=sessionStorage.getItem('accessToken');
+    const rToken=sessionStorage.getItem('refreshToken');
+    let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
     let store = sessionStorage.getItem('storeID');
     store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
     setStoreID(store);
@@ -46,7 +47,7 @@ const CheckoutScreen = () => {
         //   `${apiUrl}/vms/getProducts/${storeID}`,
         //   {
         //     headers: {
-        //       'Authorization': `Bearer ${tokens.accessToke}`,
+        //       'Authorization': `Bearer ${aToken}`,
         //       'accept': '*/*',
         //       'env': environment,
         //     },
@@ -469,7 +470,6 @@ const CheckoutScreen = () => {
         }));
 
         setProducts(proArr);
-        console.log();
 
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -485,10 +485,9 @@ const CheckoutScreen = () => {
   }, [storeID]);
 
   const handleCheckout = async () => {
-    let localUSER = JSON.parse(localStorage.getItem("user")) || [];
-    let tokens = JSON.parse(localStorage.getItem("authToken")) || [];
-    let aToken = tokens.accessToke;
-    console.log(products);
+    let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
+    let aToken = sessionStorage.getItem("accessToken");
+    let rToken = sessionStorage.getItem("refreshToken");
 
     const response = await axios.post(
       `${apiUrl}/storedatasync/erp-task`,

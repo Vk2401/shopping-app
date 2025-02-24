@@ -80,8 +80,10 @@ const Welcome_Screen = () => {
   };
 
   const fetchStores = async () => {
-    const tokens = JSON.parse(localStorage.getItem('authToken'));
-    const aToken = tokens.accessToke;
+ 
+    const aToken= sessionStorage.getItem('accessToken');
+    const rToken= sessionStorage.getItem('refreshToken');
+
     const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
@@ -91,7 +93,6 @@ const Welcome_Screen = () => {
     });
 
     const allStores = response.data.data;
-    console.log(allStores);
 
     // const allStores = [
     //   {

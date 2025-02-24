@@ -43,8 +43,8 @@ const ProductScreen = () => {
       getCurrectLocation();
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      const aToken = JSON.parse(sessionStorage.getItem('accessToken'));
-      const rToken = JSON.parse(sessionStorage.getItem('v'));
+      const aToken = sessionStorage.getItem('accessToken');
+      const rToken = sessionStorage.getItem('refreshToken');
 
       const total = localStorage.getItem('total') || 0;
 
@@ -520,6 +520,7 @@ const ProductScreen = () => {
             },
           }
         );
+
         const currencyExists = correnc.data.value.hasOwnProperty('currency');
 
         if (currencyExists) {

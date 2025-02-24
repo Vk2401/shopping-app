@@ -17,9 +17,7 @@ const SettingScreen = () => {
         if (text == 'yes') {
             localStorage.removeItem('cart');
             localStorage.removeItem('total');
-            localStorage.removeItem('authToken');
             localStorage.removeItem('storeID');
-            
             logout();
             navigate('/');
         }

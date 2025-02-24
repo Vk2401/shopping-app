@@ -10,7 +10,7 @@ const SettingScreen = () => {
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
-    
+
 
     const handleLogout = (text) => {
         if (text == 'yes') {

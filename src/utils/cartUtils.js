@@ -27,7 +27,6 @@
     
     let total = findTotal(cartProducts, '+');
     setTotalPrice(total);
-    localStorage.setItem('total', total);
     localStorage.setItem('cart', JSON.stringify(cartProducts));
 
     setProducts(prevProducts =>
@@ -64,7 +63,6 @@
 
     let total = findTotal(cartProducts, '+');
     setTotalPrice(total);
-    localStorage.setItem('total', total);
     localStorage.setItem('cart', JSON.stringify(cartProducts));
 
     setProducts(prevProducts =>
@@ -141,7 +139,6 @@
       )
     );
 
-    localStorage.setItem('total', total);
     localStorage.setItem('cart', JSON.stringify(updatedCartProducts));
   }
 
@@ -220,4 +217,44 @@
       }
     })
     return totalPrice.toFixed(1);
+  }
+
+  const findTotal2=(cartProducts)=>{
+    const allProducts=[];
+
+    let totalPrice = 0;
+    let totalCount = 0;
+  
+
+    if (cartProducts.length == 0) {
+      return totalPrice;
+    }
+
+    cartProducts.forEach((pro) => {
+      if (pro.productType == 'saleRule') {
+        let matchingProduct=allProducts.filter(pro=>pro._id==pro.productID);
+        let allRules=matchingProduct.saleGroupRules ;
+        let tempCOUNT=pro.totalCount;
+        let v=0;
+      
+        pro.saleRuleDetails.forEach(temp=>{
+          if(temp.isSaleApplied){
+            allRules.forEach(ruleT=>{
+              if(temp.saleRule.count ==ruleT.count && temp.saleRule.price==ruleT.price){
+                tempCOUNT-=temp.saleRule.count;
+                let a=temp.saleRule.count * temp.saleRule.price;
+                v+=a;
+              }
+            })
+          }
+        })
+        v+=matchingProduct.price;
+        totalPrice = v;;
+      }
+      else {
+        totalPrice += pro.price;
+      }
+    })
+    return totalPrice.toFixed(1);
+
   }

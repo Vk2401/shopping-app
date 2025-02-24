@@ -7,6 +7,7 @@ import productDefaultimg from '../utils/images/grocery.png';
 import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../utils/images/FontAwosemUser.png';
 import { Data } from '../Components/r.js';
+import {findTotal} from '../utils/cartUtils.js';
 
 const CheckoutScreen = () => {
   const { isAuthenticated } = useAuth();
@@ -15,7 +16,8 @@ const CheckoutScreen = () => {
   const [user, setUser] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
-  const apiUrl = process.env.REACT_APP_AUTH_API_URL
+  const productFecthAPI_URL =process.env.REACT_APP_API_URL
+  const productPurchaseAPI_URL=process.env.REACT_APP_AUTH_API_URL 
   const Distance = process.env.REACT_APP_DISTANCE
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts, setCartProducts] = useState([]);
@@ -24,17 +26,18 @@ const CheckoutScreen = () => {
   const [accessTOken,setAccessToken]=useState('');
 
   useEffect(() => {
-    console.log(Data);
 
     if (!isAuthenticated) {
       navigate('/');
     }
+
     setCurrence(localStorage.getItem('currence'));
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     const aToken=sessionStorage.getItem('accessToken');
     let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
     let store = sessionStorage.getItem('storeID');
     store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    console.log(findTotal(cartProduct));
 
     setAccessToken(aToken);
     setStoreID(store);
@@ -43,13 +46,13 @@ const CheckoutScreen = () => {
     if (cartProduct.length == 0) {
       navigate('/products');
     }
-
     setCartProducts(cartProduct);
 
     const fetchProduct = async () => {
       try {
+
         let  response = await axios.get(
-          `${apiUrl}/vms/getProducts/${storeID}`,
+          `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
           {
             headers: {
               'Authorization': `Bearer ${aToken}`,
@@ -59,7 +62,7 @@ const CheckoutScreen = () => {
           }
         );
 
-           const fetchedProduct = response.data;
+        const fetchedProduct = response.data;
         // const fetchedProduct = Data;
 
         // Update cartProduct with fetched product details
@@ -103,9 +106,11 @@ const CheckoutScreen = () => {
   }, [storeID]);
 
   const handleCheckout = async () => {
+    console.log(user.id);
+    console.log(products);
 
     const response = await axios.post(
-      `${apiUrl}/storedatasync/erp-task`,
+      `${productPurchaseAPI_URL}/storedatasync/erp-task`,
       {
         storeId: storeID,
         userId: user.id,
@@ -123,6 +128,7 @@ const CheckoutScreen = () => {
         }
       }
     )
+    
 
     if (response.status == 201) {
       localStorage.removeItem('cart');

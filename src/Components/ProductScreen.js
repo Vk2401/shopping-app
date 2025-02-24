@@ -14,6 +14,7 @@ import axios from "axios";
 import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
+import {Data} from '../Components/r.js';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -64,14 +65,18 @@ const ProductScreen = () => {
               },
             }
           );
+          console.log(response);
+          let responsew=Data;
 
-          response.data.forEach((prod) => {
+          responsew.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
             }
           })
 
-          let fetchProduct = response.data;
+          let fetchProduct = responsew;
+          console.log(responsew);
+     
           if (fetchProduct.length == 0) {
             setisProductfetched(true);
           }

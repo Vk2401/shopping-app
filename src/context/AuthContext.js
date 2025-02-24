@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("authToken"));
+  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("accessToken"));
   const [accessToken, setAccessToken] = useState(sessionStorage.getItem("accessToken"));
   const [refreshToken, setRefreshToken] = useState(sessionStorage.getItem("refreshToken"));
   const [tokenExpiry, setTokenExpiry] = useState(sessionStorage.getItem("tokenExpiry"));

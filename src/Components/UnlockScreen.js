@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const UnlockScreen = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     navigate('/');
   }

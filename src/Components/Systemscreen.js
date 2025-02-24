@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const Systemscreen = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     navigate('/');
   }
@@ -15,7 +15,6 @@ const Systemscreen = () => {
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "contain",
-
       }}>
       <h1 className="text-white">Please Login using an Mobile Device to get access to our App</h1>
     </div>

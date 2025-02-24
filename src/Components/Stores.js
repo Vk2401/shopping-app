@@ -187,31 +187,7 @@ const Stores = () => {
                   </div>
                 </Popup>
               </Marker>
-
-              // <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon}>
-              //     <Popup>
-              //     <div style={{ textAlign: "center" }}>
-              //         <img src={locationIcon} alt="Store Icon" width="30" height="30" />
-              //         <br />
-              //         <strong>{store.name}</strong>
-              //         <br />
-              //         <button
-              //         onClick={() => openNavigation(store.lat, store.lng)}
-              //         style={{
-              //             marginTop: "8px",
-              //             padding: "6px 12px",
-              //             border: "none",
-              //             backgroundColor: "#007bff",
-              //             color: "#fff",
-              //             borderRadius: "5px",
-              //             cursor: "pointer",
-              //         }}
-              //         >
-              //         Go to Store
-              //         </button>
-              //     </div>
-              //     </Popup>
-              // </Marker>
+              
             ))}
           </MapContainer>
         </div>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import arrow from '../utils/images/arrow-circle-left_solid.png';
 import FontAwosemUser from '../utils/images/FontAwosemUser.png';
 import Userpic from '../utils/images/Userpic.png';
-import { div } from "framer-motion/client";
 import door from '../utils/images/no-door.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";

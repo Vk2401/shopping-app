@@ -12,7 +12,7 @@ const ProfileScreen = () => {
 
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {

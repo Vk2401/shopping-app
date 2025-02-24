@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext.js";
 
 const ReachedStore = () => {
     const navigate = useEffect();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
         if (!isAuthenticated) {

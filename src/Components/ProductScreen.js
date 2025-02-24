@@ -43,7 +43,9 @@ const ProductScreen = () => {
       getCurrectLocation();
 
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      const tokens = JSON.parse(localStorage.getItem('authToken'));
+      const aToken = JSON.parse(sessionStorage.getItem('accessToken'));
+      const rToken = JSON.parse(sessionStorage.getItem('v'));
+
       const total = localStorage.getItem('total') || 0;
 
       // const storeID=localStorage.getItem('storeID');
@@ -59,7 +61,7 @@ const ProductScreen = () => {
             `${apiUrl}/vms/getProducts/${storeID}`,
             {
               headers: {
-                'Authorization': `Bearer ${tokens.accessToke}`,
+                'Authorization': `Bearer ${aToken.accessToke}`,
                 'accept': '*/*',
                 'env': environment,
               },
@@ -512,7 +514,7 @@ const ProductScreen = () => {
         const correnc = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
           {
             headers: {
-              'Authorization': `Bearer ${tokens.accessToke}`,
+              'Authorization': `Bearer ${aToken.accessToke}`,
               'accept': '*/*',
               'env': environment,
             },

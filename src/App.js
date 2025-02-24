@@ -19,6 +19,8 @@ import HistoryScreen from './Components/History.js'
 import Error_page from './Components/ErrorScreen.js'
 import React, { useEffect, useState } from "react";
 import Nointernet from './Components/Nointernet.js'
+import HomeScreen from './Components/HomeScreen.js'
+
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -79,6 +81,9 @@ function App() {
           <Route path="/ReachedStore" element={<ReachedStore />} />
           <Route path="/settings" element={<SettingScreen />} />
           <Route path="/history" element={<HistoryScreen />} />
+          <Route path="/home" element={<HomeScreen />} />
+
+          
           <Route path="/error" element={<Error_page />} />
         </Route>
 

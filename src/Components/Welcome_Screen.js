@@ -10,7 +10,7 @@ const Welcome_Screen = () => {
   const authAPIURL=process.env.REACT_APP_AUTH_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
   const Distance=process.env.REACT_APP_DISTANCE
-  const { login, isAuthenticated } = useAuth();
+  const {isAuthenticated,storeTokens } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState('');
   const [err, setErr] = useState('');
@@ -443,11 +443,10 @@ const Welcome_Screen = () => {
 
         const rToken = response.data.tokens.refresh.token;
         const aToken = response.data.tokens.access.token;
+        const expireAt=response.data.tokens.access.expires;
+        const user=response.data.user;
 
-        login({
-          accessToke: aToken,
-          refreshToken: rToken
-        }, response.data.user);
+        storeTokens(aToken,expireAt,rToken,user);
 
         let nearbyStores = await fetchStores();
         if (nearbyStores.length > 0) {

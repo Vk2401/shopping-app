@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../utils/images/FontAwosemUser.png';
 import { Data } from '../Components/r.js';
 import {findTotal} from '../utils/cartUtils.js';
-
+import { useLocation } from "react-router-dom";
 const CheckoutScreen = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -24,6 +24,8 @@ const CheckoutScreen = () => {
   const [storeID, setStoreID] = useState('');
   const [currence, setCurrence] = useState('SEK');
   const [accessTOken,setAccessToken]=useState('');
+  const location = useLocation();
+  const data = location.state; // Get passed data
 
   useEffect(() => {
 
@@ -37,11 +39,11 @@ const CheckoutScreen = () => {
     let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
     let store = sessionStorage.getItem('storeID');
     store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-    console.log(findTotal(cartProduct));
 
     setAccessToken(aToken);
     setStoreID(store);
     setUser(localUSER);
+    setTotal(findTotal(cartProduct));
 
     if (cartProduct.length == 0) {
       navigate('/products');
@@ -51,26 +53,26 @@ const CheckoutScreen = () => {
     const fetchProduct = async () => {
       try {
 
-        let  response = await axios.get(
-          `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${aToken}`,
-              'accept': '*/*',
-              'env': environment,
-            },
-          }
-        );
+        // let  response = await axios.get(
+        //   `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
+        //   {
+        //     headers: {
+        //       'Authorization': `Bearer ${aToken}`,
+        //       'accept': '*/*',
+        //       'env': environment,
+        //     },
+        //   }
+        // );
 
-        const fetchedProduct = response.data;
-        // const fetchedProduct = Data;
+        // const fetchedProduct = response.data;
+    
+        const fetchedProduct = data;
 
         // Update cartProduct with fetched product details
         cartProduct = cartProduct.map((cartItem) => {
           const matchingProduct = fetchedProduct.find(
             (product) => product._id === cartItem.productID
           );
-
 
           if (matchingProduct) {
             return {

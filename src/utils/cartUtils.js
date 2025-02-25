@@ -1,3 +1,5 @@
+import {Data} from '../Components/r.js';
+
   export const updateDicsountProductInCart = (newProduct, action,setProducts,setTotalPrice) => {
     let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -27,7 +29,7 @@
     
     let total = findTotal(cartProducts, '+');
     setTotalPrice(total);
-    localStorage.setItem('cart', JSON.stringify(cartProducts));
+   
 
     setProducts(prevProducts =>
       prevProducts.map(pro =>
@@ -36,6 +38,8 @@
           : pro
       )
     );
+
+    localStorage.setItem('cart', JSON.stringify(cartProducts));
 
   }
 
@@ -63,16 +67,22 @@
 
     let total = findTotal(cartProducts, '+');
     setTotalPrice(total);
-    localStorage.setItem('cart', JSON.stringify(cartProducts));
 
-    setProducts(prevProducts =>
-      prevProducts.map(pro =>
-        pro._id === newProduct._id
-          ? { ...pro, quantity: newQuantity } // Creates a new object (safer for React state updates)
-          : pro
-      )
+    setProducts(prevProducts => 
+      prevProducts.map(pro => {
+        if (pro._id === newProduct._id) {
+          console.log("Before update:", pro); // Log before update
+    
+          const updatedProduct = { ...pro, quantity: newQuantity };
+    
+          console.log("After update:", updatedProduct); // Log after update
+    
+          return updatedProduct;
+        }
+        return pro;
+      })
     );
-
+    localStorage.setItem('cart', JSON.stringify(cartProducts));
   }
 
   export const updateSaleRuleProductInCart = (Product, operation,setProducts,setTotalPrice,setSalerule) => {
@@ -138,7 +148,7 @@
           : pro
       )
     );
-
+    console.log(Product);
     localStorage.setItem('cart', JSON.stringify(updatedCartProducts));
   }
 
@@ -219,12 +229,9 @@
     return totalPrice.toFixed(1);
   }
 
-  const findTotal2=(cartProducts)=>{
-    const allProducts=[];
-
+  export const findTotal2=(cartProducts,allProducts)=>{
     let totalPrice = 0;
     let totalCount = 0;
-  
 
     if (cartProducts.length == 0) {
       return totalPrice;
@@ -248,6 +255,7 @@
             })
           }
         })
+
         v+=matchingProduct.price;
         totalPrice = v;;
       }
@@ -256,5 +264,4 @@
       }
     })
     return totalPrice.toFixed(1);
-
   }

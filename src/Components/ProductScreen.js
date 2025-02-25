@@ -15,6 +15,7 @@ import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
 import {Data} from '../Components/r.js';
+import {findTotal} from '../utils/cartUtils.js';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -41,17 +42,6 @@ const ProductScreen = () => {
       navigate("/");
     }
     else {
-      getCurrectLocation();
-      const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      const aToken = sessionStorage.getItem('accessToken');
-      const total = localStorage.getItem('total') || 0;
-
-      // const storeID=localStorage.getItem('storeID');
-      const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-      setStoreid(storeID);
-      setTotalCount(addedProducts.length);
-      setTotalPrice(total);
-
       const fetchProducts = async () => {
         try {
 
@@ -65,7 +55,7 @@ const ProductScreen = () => {
               },
             }
           );
-          console.log(response);
+          console.log(Data);
           let responsew=Data;
 
           responsew.forEach((prod) => {
@@ -75,29 +65,28 @@ const ProductScreen = () => {
           })
 
           let fetchProduct = responsew;
-          console.log(responsew);
      
           if (fetchProduct.length == 0) {
             setisProductfetched(true);
           }
 
           let cart = addedProducts;
-
           if (cart.length > 0) {
-
+    
             fetchProduct.forEach(fPro => {
+              
               cart.forEach(cartPRO => {
                 if (cartPRO.productID == fPro._id) {
                   if (cartPRO.productType == 'saleRule') {
-                    fPro.quantity = (fPro.quantity ?? 0) + cartPRO.totalCount;
+                    fPro.quantity = cartPRO.totalCount;
                   }
                   else {
-                    fPro.quantity = (fPro.quantity ?? 0) + cartPRO.productCount;
+                    fPro.quantity=cartPRO.productCount
                   }
                 }
               })
-            })
 
+            })
             setProducts(fetchProduct);
 
           } else {
@@ -135,6 +124,16 @@ const ProductScreen = () => {
         }
         localStorage.setItem('currence', currence);
       }
+
+      getCurrectLocation();
+      const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
+      const aToken = sessionStorage.getItem('accessToken');
+
+      // const storeID=localStorage.getItem('storeID');
+      const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+      setStoreid(storeID);
+      setTotalCount(addedProducts.length);
+      setTotalPrice(findTotal(addedProducts));
 
       fetchCurrence();
       fetchProducts();
@@ -629,7 +628,7 @@ const ProductScreen = () => {
 
   const handleCheckout = () => {
     if (totalPrice > 0) {
-      navigate(`/checkout`);
+      navigate(`/checkout`,{state:Products});
     } else {
       setNoproduct(true);
     }

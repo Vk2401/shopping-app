@@ -5,3 +5,12 @@
 .clip-bottom-curve {
     clip-path: ellipse(50% 15% at 50% 100%);
 }
+
+.hidden-scrollbar {
+    overflow-y: scroll; /* Enable scrolling */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+  
+  .hidden-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+}

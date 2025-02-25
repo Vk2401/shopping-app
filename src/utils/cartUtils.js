@@ -33,9 +33,7 @@ export const updateDicsountProductInCart = (newProduct, action, setProducts, set
   setProducts(prevProducts =>
     prevProducts.map(pro => {
       if (pro._id === newProduct._id) {
-        console.log(pro);
         const updatedProduct = { ...pro, quantity: newQuantity };
-        console.log(updatedProduct);
 
         Data.forEach(proe => {
           if (proe._id == pro._id) {
@@ -80,9 +78,7 @@ export const updateNormalProductIncart = (newProduct, action, setProducts, setTo
   setProducts(prevProducts =>
     prevProducts.map(pro => {
       if (pro._id === newProduct._id) {
-        console.log(pro);
         const updatedProduct = { ...pro, quantity: newQuantity };
-        console.log(updatedProduct);
 
         Data.forEach(proe => {
           if (proe._id == pro._id) {
@@ -170,7 +166,7 @@ export const findSaleRules = (Product, quantity) => {
   rules.sort((a, b) => b.count - a.count);
   let tempArr = [];
   let tempQuantity = quantity;
-
+ 
   rules.forEach(rule => {
 
     let tempObj = {
@@ -187,6 +183,7 @@ export const findSaleRules = (Product, quantity) => {
 
     if (rule.status == 'Active' && rule.count <= tempQuantity) {
 
+
       let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
       let saleNotAppliedQuantity = tempQuantity % rule.count;
       tempObj.productQuantiy = saleAppliedQuantiy;
@@ -194,7 +191,6 @@ export const findSaleRules = (Product, quantity) => {
 
       saleNotAppliedQuantity = saleNotAppliedQuantity + 1;
       tempQuantity = tempQuantity - (saleAppliedQuantiy * rule.count);
-
     }
 
     tempArr.push(tempObj);

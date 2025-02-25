@@ -9,6 +9,7 @@ import userIcon from '../utils/images/FontAwosemUser.png';
 import { Data } from '../Components/r.js';
 import { findTotal } from '../utils/cartUtils.js';
 import { useLocation } from "react-router-dom";
+
 const CheckoutScreen = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -40,7 +41,6 @@ const CheckoutScreen = () => {
     let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
     let store = sessionStorage.getItem('storeID');
     store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-
 
     setAccessToken(aToken);
     setStoreID(store);
@@ -110,37 +110,35 @@ const CheckoutScreen = () => {
   }, [storeID]);
 
   const handleCheckout = async () => {
-    console.log(user.id);
-    console.log(products);
 
-    const response = await axios.post(
-      `${productPurchaseAPI_URL}/storedatasync/erp-task`,
-      {
-        storeId: storeID,
-        userId: user.id,
-        goal: "dispense",
-        details: {
-          products: products
-        }
-      },
-      {
-        headers: {
-          'accept': 'application/json',
-          'env': environment,
-          'Authorization': `Bearer ${accessTOken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
+    // const response = await axios.post(
+    //   `${productPurchaseAPI_URL}/storedatasync/erp-task`,
+    //   {
+    //     storeId: storeID,
+    //     userId: user.id,
+    //     goal: "dispense",
+    //     details: {
+    //       products: products
+    //     }
+    //   },
+    //   {
+    //     headers: {
+    //       'accept': 'application/json',
+    //       'env': environment,
+    //       'Authorization': `Bearer ${accessTOken}`,
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // )
 
 
-    if (response.status == 201) {
-      localStorage.removeItem('cart');
-      localStorage.removeItem('total');
-      navigate('/PaymentSuccess');
-    }
+    // if (response.status == 201) {
+    //   localStorage.removeItem('cart');
+    //   localStorage.removeItem('total');
+    //   navigate('/PaymentSuccess');
+    // }
 
-    navigate('/payment');
+    // navigate('/payment');
   };
 
   return (
@@ -206,7 +204,7 @@ const CheckoutScreen = () => {
                   {/* Step 2: Render Green Divs (Applied Sale Rules) */}
                   {pro.saleRuleDetails.map((rule, ruleIndex) => (
                     rule.isSaleApplied && (
-                      <div key={ruleIndex} className="flex justify-between items-center border-2 border-green-300 rounded-lg px-4 py-2 mb-4">
+                      <div key={ruleIndex} className="flex justify-between items-center border-2 border-buttonColor rounded-lg px-4 py-2 mb-4">
                         <div className="flex items-center gap-2">
                           <img src={pro.picture || productDefaultimg} alt={pro.title} className="w-14 h-16 object-cover" />
                           <div className="flex flex-col">

@@ -33,7 +33,7 @@ const NolocationScreen = () => {
       navigate('/');
     }
 
-    // getCurrectLocation();
+    getCurrectLocation();
   }, []);
   return (
     <div className="flex flex-col justify-between h-screen font-poppins">
@@ -60,6 +60,7 @@ const NolocationScreen = () => {
             className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
             onClick={getCurrectLocation}
           >
+            Enable Location
           </button>
         </div>
       </div>
@@ -71,7 +72,7 @@ const NolocationScreen = () => {
             <h2 className="text-lg font-bold mb-4">Enable GPS</h2>
             <p className="text-gray-600 mb-4">GPS is turned off. Would you like to enable it?</p>
             <div className="flex justify-center gap-4">
-              <button className="bg-green-500 text-white px-4 py-2 rounded-md">
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>
                 Yes, Enable
               </button>
               <button

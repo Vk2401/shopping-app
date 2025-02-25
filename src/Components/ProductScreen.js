@@ -396,7 +396,7 @@ const ProductScreen = () => {
             </button>
 
             <div className="flex items-center text-white font-semibold tracking-wider gap-2">
-              <span>Total <br /> {totalPrice} </span>
+              <span> Total <br /> {totalPrice} </span>
               <div className="h-16 w-16 flex items-center justify-center bg-white rounded-full">
                 <img src={basketImage} alt="" className="h-9 w-9" />
               </div>
@@ -432,13 +432,13 @@ const ProductScreen = () => {
                     <strong>{saleruleProduct.title}</strong>
                     {!saleruleProduct.isDiscount ? (
                       <div className="flex items-center">
-                        <strong className="text-buttonColor font-semibold">{saleruleProduct.price} $</strong>
+                        <strong className="text-buttonColor font-semibold">{saleruleProduct.price} {currence}</strong>
                       </div>
                     ) : (
                       <div className="flex items-center">
                         <strong className="font-semibold text-buttonColor">
                           {(saleruleProduct.price - (saleruleProduct.price * saleruleProduct.discount) / 100).toFixed(2)}
-                          <span className="text-gray-400 ml-2 line-through decoration-red-500">{saleruleProduct.price} kr</span>
+                          <span className="text-gray-400 ml-2 line-through decoration-red-500">{saleruleProduct.price} {currence}</span>
                         </strong>
                       </div>
                     )}
@@ -473,7 +473,7 @@ const ProductScreen = () => {
                 >
                   <div className="flex w-full justify-center items-center flex-1 py-4">
                     <p className="text-lg">
-                      BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} Rs</span>
+                      BUY <span>{rule.count}</span> FOR <span className="font-semibold">{rule.price} {currence}</span>
                     </p>
                     <img
                       src={tickMark}
@@ -481,7 +481,7 @@ const ProductScreen = () => {
                       className={`h-7 w-7 rounded-full absolute right-2 ${rule.isSaleApplied ? 'block' : 'hidden'}`}
                     />
                   </div>
-                  <p className={`h-2 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-2 bg-red-500 text-white justify-center items-center flex absolute bottom-0 pt-3 rounded-b-md`}>Add 1 to get {rule.count} for  {rule.price}</p>
+                  <p className={`h-2 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-2 bg-red-500 text-white justify-center items-center flex absolute bottom-0 pt-3 rounded-b-md`}>Add 1 to get {rule.count} for {rule.price} {currence}</p>
                 </div>
               ))}
             </div>

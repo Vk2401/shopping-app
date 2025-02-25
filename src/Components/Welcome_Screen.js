@@ -94,7 +94,7 @@ const Welcome_Screen = () => {
     });
 
     const allStores = response.data.data;
-
+    console.log(Distance);
     const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
     return nearbyStores;
   }
@@ -103,7 +103,6 @@ const Welcome_Screen = () => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
   };
-  
 
   const validatePhoneNumber = (phoneNumber) => {
     const phoneRegex = /^[0-9]{10}$/;
@@ -231,7 +230,7 @@ const Welcome_Screen = () => {
         <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
-      <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 overflow-y-auto">
+      <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 overflow-y-scroll hidden-scrollbar ">
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg">
           <div className="flex flex-col gap-3 w-full">
             {
@@ -291,7 +290,9 @@ const Welcome_Screen = () => {
             <button className="bg-buttonColor text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
               {showOTPField ? 'Validate OTP' : 'GET OTP'}
             </button>
-            <p onClick={()=>setRegisterUser(true)}>New here? Register now!</p>
+            <p onClick={() => setRegisterUser((prev) => !prev)} className="cursor-pointer text-buttonColor">
+              {registerUser ? "Already registered? Login here!" : "New here? Register now!"}
+            </p>
             
             <p className="text-gray-600 text-sm text-center">
               By Signing In you accept our

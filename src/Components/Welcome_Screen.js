@@ -12,11 +12,13 @@ const Welcome_Screen = () => {
   const Distance=process.env.REACT_APP_DISTANCE
   const {isAuthenticated,storeTokens } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState('');
+  // const [data, setData] = useState('');
+  const [data, setData] = useState({ userName: '', pnumber: '' });
   const [err, setErr] = useState('');
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState("");
   const [showOTPField, setShowOTPField] = useState(false);
+  const [registerUser,setRegisterUser]=useState(false);
   const loginData = {
     "login_type": "bankid",
     "login_id": "199609052387",
@@ -97,10 +99,11 @@ const Welcome_Screen = () => {
     return nearbyStores;
   }
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   const validatePhoneNumber = (phoneNumber) => {
     const phoneRegex = /^[0-9]{10}$/;
@@ -231,6 +234,20 @@ const Welcome_Screen = () => {
       <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 overflow-y-auto">
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg">
           <div className="flex flex-col gap-3 w-full">
+            {
+              registerUser  &&  
+              <>
+                 <label htmlFor="userName" className="font-semibold text-lg text-gray-700 ml-2">User Name</label>
+                  <input
+                    type="text"
+                    name="userName"
+                    className="w-full border border-gray-300 outline-none py-3 px-4 rounded-md focus:ring-2 focus:ring-buttonColor transition-all"
+                    placeholder="Enter Name"
+                    onChange={handleChange}
+                  />
+              </>
+            }
+
             <label htmlFor="phone" className="font-semibold text-lg text-gray-700 ml-2">Phone Number</label>
             <input
               type="number"
@@ -239,6 +256,7 @@ const Welcome_Screen = () => {
               placeholder="Enter mobile number"
               onChange={handleChange}
             />
+            
             {err && (<p className="text-red-500">{err}</p>)}
 
             {showOTPField && (
@@ -269,10 +287,12 @@ const Welcome_Screen = () => {
             )}
           </div>
 
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-2">
             <button className="bg-buttonColor text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
               {showOTPField ? 'Validate OTP' : 'GET OTP'}
             </button>
+            <p onClick={()=>setRegisterUser(true)}>New here? Register now!</p>
+            
             <p className="text-gray-600 text-sm text-center">
               By Signing In you accept our
               <span className="text-buttonColor font-semibold cursor-pointer"> Terms of Services</span> and

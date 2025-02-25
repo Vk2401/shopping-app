@@ -55,6 +55,7 @@ const ProductScreen = () => {
               },
             }
           );
+          
           let responsew = Data;
 
           responsew.forEach((prod) => {
@@ -104,7 +105,7 @@ const ProductScreen = () => {
 
       const fetchCurrence = async () => {
 
-        const correnc = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
+        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
           {
             headers: {
               'Authorization': `Bearer ${aToken}`,
@@ -114,11 +115,11 @@ const ProductScreen = () => {
           }
         );
 
-        const currencyExists = correnc.data.value.hasOwnProperty('currency');
+        const currencyExists = corrence.data.value.hasOwnProperty('currency');
 
         if (currencyExists) {
-          if (correnc.data.value !== '') {
-            setCurrence(correnc.data.value.currency)
+          if (corrence.data.value !== '') {
+            setCurrence(corrence.data.value.currency)
           }
         }
         localStorage.setItem('currence', currence);
@@ -480,7 +481,7 @@ const ProductScreen = () => {
                       className={`h-7 w-7 rounded-full absolute right-2 ${rule.isSaleApplied ? 'block' : 'hidden'}`}
                     />
                   </div>
-                  <p className={`h-2 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-2 bg-red-500 text-white justify-center items-center flex absolute bottom-0 pt-3`}>Add 1 to get {rule.count} for  {rule.price}</p>
+                  <p className={`h-2 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-2 bg-red-500 text-white justify-center items-center flex absolute bottom-0 pt-3 rounded-b-md`}>Add 1 to get {rule.count} for  {rule.price}</p>
                 </div>
               ))}
             </div>

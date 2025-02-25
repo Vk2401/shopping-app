@@ -7,7 +7,7 @@ import productDefaultimg from '../utils/images/grocery.png';
 import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../utils/images/FontAwosemUser.png';
 import { Data } from '../Components/r.js';
-import {findTotal} from '../utils/cartUtils.js';
+import { findTotal } from '../utils/cartUtils.js';
 import { useLocation } from "react-router-dom";
 const CheckoutScreen = () => {
   const { isAuthenticated } = useAuth();
@@ -16,16 +16,17 @@ const CheckoutScreen = () => {
   const [user, setUser] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
-  const productFecthAPI_URL =process.env.REACT_APP_API_URL
-  const productPurchaseAPI_URL=process.env.REACT_APP_AUTH_API_URL 
+  const productFecthAPI_URL = process.env.REACT_APP_API_URL
+  const productPurchaseAPI_URL = process.env.REACT_APP_AUTH_API_URL
   const Distance = process.env.REACT_APP_DISTANCE
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts, setCartProducts] = useState([]);
   const [storeID, setStoreID] = useState('');
   const [currence, setCurrence] = useState('SEK');
-  const [accessTOken,setAccessToken]=useState('');
+  const [accessTOken, setAccessToken] = useState('');
   const location = useLocation();
   const data = location.state; // Get passed data
+  let Total = 0;
 
   useEffect(() => {
 
@@ -35,15 +36,17 @@ const CheckoutScreen = () => {
 
     setCurrence(localStorage.getItem('currence'));
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
-    const aToken=sessionStorage.getItem('accessToken');
+    const aToken = sessionStorage.getItem('accessToken');
     let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
     let store = sessionStorage.getItem('storeID');
     store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+
 
     setAccessToken(aToken);
     setStoreID(store);
     setUser(localUSER);
     setTotal(findTotal(cartProduct));
+    Total = cartProduct;
 
     if (cartProduct.length == 0) {
       navigate('/products');
@@ -65,7 +68,7 @@ const CheckoutScreen = () => {
         // );
 
         // const fetchedProduct = response.data;
-    
+
         const fetchedProduct = data;
 
         // Update cartProduct with fetched product details
@@ -85,7 +88,7 @@ const CheckoutScreen = () => {
         });
 
         setCartProducts(cartProduct);
-        
+
         // Prepare products array
         let proArr = cartProduct.map((pro) => ({
           productId: pro.productID,
@@ -103,7 +106,6 @@ const CheckoutScreen = () => {
 
     fetchProduct();
     // Set other states
-    setTotal(localStorage.getItem("total"));
     setUser(JSON.parse(sessionStorage.getItem("user")));
   }, [storeID]);
 
@@ -130,7 +132,7 @@ const CheckoutScreen = () => {
         }
       }
     )
-    
+
 
     if (response.status == 201) {
       localStorage.removeItem('cart');
@@ -245,7 +247,7 @@ const CheckoutScreen = () => {
             })}
 
           <div className="flex justify-center items-center fixed bottom-0 left-0 w-full z-10 pb-5 bg-white">
-            <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} Rs</button>
+            <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} {currence}</button>
           </div>
         </div>
       )}

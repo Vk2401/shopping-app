@@ -94,7 +94,7 @@ const Welcome_Screen = () => {
     });
 
     const allStores = response.data.data;
-    console.log(Distance);
+   
     const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
     return nearbyStores;
   }

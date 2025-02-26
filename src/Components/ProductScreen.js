@@ -55,27 +55,25 @@ const ProductScreen = () => {
               },
             }
           );
-          
-          let responsew = Data;
 
-          responsew.forEach((prod) => {
+          // let responsew = Data;
+          response.data.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
             }
           })
 
-          let fetchProduct = responsew;
+          let fetchProduct = response.data;
 
           if (fetchProduct.length == 0) {
             setisProductfetched(true);
           }
 
-          let cart = addedProducts;
-          if (cart.length > 0) {
+          if (addedProducts.length > 0) {
 
             fetchProduct.forEach(fPro => {
 
-              cart.forEach(cartPRO => {
+              addedProducts.forEach(cartPRO => {
                 if (cartPRO.productID == fPro._id) {
                   if (cartPRO.productType == 'saleRule') {
                     fPro.quantity = cartPRO.totalCount;
@@ -94,8 +92,6 @@ const ProductScreen = () => {
           }
 
         } catch (error) {
-          if (error.status == 401) {
-          }
           console.error('Error fetching products:', error);
         }
         finally {
@@ -104,7 +100,6 @@ const ProductScreen = () => {
       };
 
       const fetchCurrence = async () => {
-
         const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
           {
             headers: {
@@ -138,7 +133,6 @@ const ProductScreen = () => {
       fetchCurrence();
       fetchProducts();
     }
-
   }, [])
 
   const getCurrectLocation = () => {
@@ -380,7 +374,6 @@ const ProductScreen = () => {
               ) : (
                 <div className="flex flex-col mb-5 gap-2 w-full h-full items-center justify-center">
                   <img src={empty} alt="" className="h-44 w-44 " />
-                  {/* <h1 className="text-center text-black text-lg font-semibold">Product not matched</h1> */}
                 </div>
               )}
             </div>

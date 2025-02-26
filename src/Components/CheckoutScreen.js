@@ -134,10 +134,10 @@ const CheckoutScreen = () => {
     if (response.status == 201) {
       localStorage.removeItem('cart');
       localStorage.removeItem('total');
-      // navigate('/PaymentSuccess');
+      setProducts([]);
+      navigate('/PaymentSuccess');
     }
-
-    // navigate('/payment');
+    navigate('/payment');
   };
 
   return (

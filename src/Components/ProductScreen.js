@@ -56,14 +56,14 @@ const ProductScreen = () => {
             }
           );
 
-          // let responsew = Data;
-          response.data.forEach((prod) => {
+          let responsew = Data;
+          responsew.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
             }
           })
 
-          let fetchProduct = response.data;
+          let fetchProduct =responsew;
 
           if (fetchProduct.length == 0) {
             setisProductfetched(true);
@@ -235,12 +235,12 @@ const ProductScreen = () => {
     <div className=" h-screen">
 
       {loading ? (
-        <div className="h-screen flex items-center justify-center bg-red-100">
-          <img src={loader} alt="" className="bg-buttonColor h-full" />
+        <div className="h-screen flex items-center justify-center bg-buttonColor">
+          <img src={loader} alt="" className=""/>
         </div>
       ) : (
-        <div className="font-poppins h-full px-3">
-          <div className=" px-3 h-40 flex flex-col fixed top-0 left-0 w-full z-10 bg-white">
+        <div className="font-poppins px-3 h-screen ">
+          <div className=" px-3 h-36 flex flex-col fixed top-0 left-0 w-full bg-white ">
             <div className="flex items-center justify-between relative h-1/2">
               <img onClick={() => navigate(`/stores`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
@@ -265,14 +265,14 @@ const ProductScreen = () => {
           </div>
 
           {isProductfetched ? (
-            <div className="flex-1 flex flex-col justify-center items-center h-full w-full gap-2 ">
+            <div className=" flex flex-col bg justify-center items-center h-full w-full gap-2">
               <img src={noProductImage} alt="" className="h-52 w-52" />
               <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center">
+            <div className="flex flex-col items-center flex-1 min-h-[570px]">
               {filteredProducts?.length > 0 ? (
-                <div className="flex flex-col overflow-y-auto mb-5 gap-2 w-full py-16  mt-28">
+                <div className=" flex flex-col overflow-y-auto mb-5 gap-2 w-full mt-36">
                   {filteredProducts?.filter((product) => product.isVending).map((product) => (
                     <div key={product._id}
                       className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"
@@ -357,7 +357,7 @@ const ProductScreen = () => {
           )}
 
           {/* Checkout Bar - Conditionally Hidden */}
-          <div className={`h-24 shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor px-3 flex items-center justify-between rounded-t-lg py-5 fixed bottom-0 left-0 w-full z-10 ${isProductfetched ? 'hidden' : 'block'}`}>
+          <div className={`shadow-[0_0_20px_5px_rgba(255,255,255,0.5)] bg-buttonColor px-3 flex items-center justify-between rounded-t-lg py-5 bottom-0 left-0 w-full fixed ${isProductfetched ? 'hidden' : 'block'}`}>
             <button
               onClick={handleCheckout}
               className="p-2 px-10 font-semibold text-lg bg-white text-black rounded-full text-center"
@@ -377,7 +377,7 @@ const ProductScreen = () => {
 
       {showPopup && (
         <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
-          <div className="w-full max-h-[500px] bg-white rounded-2xl px-4 py-5 ">
+          <div className="w-full max-h-[500px] bg-white rounded-2xl px-4 py-5">
             <div className="flex items-center justify-between pb-2">
               <div className="flex  items-center justify-start gap-x-2">
                 <img src={discountImag} alt="" className="h-8 w-8" />
@@ -451,7 +451,7 @@ const ProductScreen = () => {
                       className={`h-7 w-7 rounded-full absolute right-2 ${rule.isSaleApplied ? 'block' : 'hidden'}`}
                     />
                   </div>
-                  <p className={`h-2 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-2 bg-red-500 text-white justify-center items-center flex absolute bottom-0 pt-3 rounded-b-md`}>Add 1 to get {rule.count} for {rule.price} {currence}</p>
+                  <p className={`h-3 ${(saleruleProduct.quantity + 1) % rule.count === 0 ? 'block' : 'hidden'} w-full  text-center py-3 bg-gray-100 text-redColor justify-center items-center flex absolute bottom-0 font-bold text-lg rounded-b-md`}>ADD 1 ITEM TO APPLY OFFER</p>
                 </div>
               ))}
             </div>

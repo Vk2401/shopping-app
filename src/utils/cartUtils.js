@@ -19,7 +19,7 @@ export const updateDicsountProductInCart = (newProduct, action, setProducts, set
 
     if (newQuantity != 0) {
       dpOBJ.productCount = newQuantity;
-      dpOBJ.price = newQuantity * (newProduct.price - (newProduct.price * newProduct.discount) / 100);
+      dpOBJ.price = parseFloat((newQuantity * (newProduct.price - (newProduct.price * newProduct.discount) / 100)).toFixed(2));
       cartProducts.push(dpOBJ);
     }
   } else {
@@ -65,6 +65,7 @@ export const updateNormalProductIncart = (newProduct, action, setProducts, setTo
     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
     if (newQuantity != 0) {
       npOBJ.productCount = newQuantity;
+      console.log((newQuantity * newProduct.price));
       npOBJ.price = (newQuantity * newProduct.price)
       cartProducts.push(npOBJ);
     }

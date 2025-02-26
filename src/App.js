@@ -38,7 +38,6 @@ function App() {
     }
   };
 
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1024);
@@ -63,7 +62,6 @@ function App() {
 
   if (!isLocationEnabled) return <NolocationScreen onRetry={checkLocation} />;
 
-
   return !isMobile ? <SystemScreen /> :
     (
       <Routes>
@@ -82,13 +80,12 @@ function App() {
           <Route path="/settings" element={<SettingScreen />} />
           <Route path="/history" element={<HistoryScreen />} />
           <Route path="/home" element={<HomeScreen />} />
-          
+
           <Route path="/error" element={<Error_page />} />
         </Route>
 
         <Route path="*" element={<NotFoundScreen />} />
         <Route path="/" element={<Welcome_Screen />} />
-
 
       </Routes>
     );;

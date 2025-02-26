@@ -273,3 +273,28 @@ export const findTotal2 = (cartProducts, allProducts) => {
   })
   return totalPrice.toFixed(1);
 }
+
+export const changeProductQuantity=(fetchedProducts)=>{
+
+  const cartProducts=JSON.parse(localStorage.getItem('cart'));
+  
+  if(cartProducts.length>0){
+    
+    fetchedProducts.forEach(fPro => {
+    
+      cartProducts.forEach(cartPRO => {
+        if (cartPRO.productID == fPro._id) {
+          if (cartPRO.productType == 'saleRule') {
+            fPro.quantity = cartPRO.totalCount;
+          }
+          else {
+            fPro.quantity = cartPRO.productCount
+          }
+        }
+      })
+
+    })
+
+  }
+  return fetchedProducts;
+}

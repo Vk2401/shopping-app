@@ -15,7 +15,7 @@ import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
 import { Data } from '../Components/r.js';
-import { findTotal } from '../utils/cartUtils.js';
+import { findTotal,changeProductQuantity } from '../utils/cartUtils.js';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -70,23 +70,8 @@ const ProductScreen = () => {
           }
 
           if (addedProducts.length > 0) {
-
-            fetchProduct.forEach(fPro => {
-
-              addedProducts.forEach(cartPRO => {
-                if (cartPRO.productID == fPro._id) {
-                  if (cartPRO.productType == 'saleRule') {
-                    fPro.quantity = cartPRO.totalCount;
-                  }
-                  else {
-                    fPro.quantity = cartPRO.productCount
-                  }
-                }
-              })
-
-            })
+            fetchProduct = changeProductQuantity(fetchProduct);
             setProducts(fetchProduct);
-
           } else {
             setProducts(fetchProduct);
           }
@@ -189,20 +174,8 @@ const ProductScreen = () => {
   }
 
   const handleSearchChange = async (e) => {
-    const value = e.target.value.toLowerCase();
-
-    //   const value = e.target.value.toLowerCase(); // Convert input to lowercase
-    //   console.log(value);
-    //   if(value==''){
-    //     setProducts(response);
-    //     return;
-    //   }
-    //   const searchedProducts = filteredProducts.filter((pro) =>
-    //     pro.title.toLowerCase().includes(value) // Check if title includes input
-    //   );
-
-    //   setProducts(searchedProducts);
-
+    const value = e.target.value.toLowerCase(); // Convert input to lowercase
+    const cartProducts = JSON.parse(localStorage.getItem('cart'));
 
     if (e.target.value.toLowerCase() === '') {
       const response = await axios.get(
@@ -215,7 +188,13 @@ const ProductScreen = () => {
           },
         }
       );
-      setProducts(response.data);
+      let fetchedProducts = response.data;
+
+      if (cartProducts.length > 0) {
+        fetchedProducts = changeProductQuantity(fetchedProducts);
+      }
+
+      setProducts(fetchedProducts);
     }
     else {
       const response = await axios.get(
@@ -228,7 +207,13 @@ const ProductScreen = () => {
           },
         }
       );
-      setProducts(response.data);
+      let fetchedProducts = response.data;
+
+      if (cartProducts.length > 0) {
+        fetchedProducts = changeProductQuantity(fetchedProducts);
+      }
+
+      setProducts(fetchedProducts);
     }
 
     setSearchTerm(e.target.value.toLowerCase());

@@ -173,51 +173,51 @@ const ProductScreen = () => {
 
   }
 
-  const handleSearchChange = async (e) => {
-    const value = e.target.value.toLowerCase(); // Convert input to lowercase
-    const cartProducts = JSON.parse(localStorage.getItem('cart'));
+  // const handleSearchChange = async (e) => {
+  //   const value = e.target.value.toLowerCase(); // Convert input to lowercase
+  //   const cartProducts = JSON.parse(localStorage.getItem('cart'));
 
-    if (e.target.value.toLowerCase() === '') {
-      const response = await axios.get(
-        `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'accept': '*/*',
-            'env': environment,
-          },
-        }
-      );
-      let fetchedProducts = response.data;
+  //   if (e.target.value.toLowerCase() === '') {
+  //     const response = await axios.get(
+  //       `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
+  //       {
+  //         headers: {
+  //           'Authorization': `Bearer ${accessToken}`,
+  //           'accept': '*/*',
+  //           'env': environment,
+  //         },
+  //       }
+  //     );
+  //     let fetchedProducts = response.data;
 
-      if (cartProducts.length > 0) {
-        fetchedProducts = changeProductQuantity(fetchedProducts);
-      }
+  //     if (cartProducts.length > 0) {
+  //       fetchedProducts = changeProductQuantity(fetchedProducts);
+  //     }
 
-      setProducts(fetchedProducts);
-    }
-    else {
-      const response = await axios.get(
-        `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'accept': '*/*',
-            'env': environment,
-          },
-        }
-      );
-      let fetchedProducts = response.data;
+  //     setProducts(fetchedProducts);
+  //   }
+  //   else {
+  //     const response = await axios.get(
+  //       `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
+  //       {
+  //         headers: {
+  //           'Authorization': `Bearer ${accessToken}`,
+  //           'accept': '*/*',
+  //           'env': environment,
+  //         },
+  //       }
+  //     );
+  //     let fetchedProducts = response.data;
 
-      if (cartProducts.length > 0) {
-        fetchedProducts = changeProductQuantity(fetchedProducts);
-      }
+  //     if (cartProducts.length > 0) {
+  //       fetchedProducts = changeProductQuantity(fetchedProducts);
+  //     }
 
-      setProducts(fetchedProducts);
-    }
+  //     setProducts(fetchedProducts);
+  //   }
 
-    setSearchTerm(e.target.value.toLowerCase());
-  };
+  //   setSearchTerm(e.target.value.toLowerCase());
+  // };
 
   const handleCheckout = () => {
     if (totalPrice > 0) {
@@ -228,6 +228,45 @@ const ProductScreen = () => {
 
   };
 
+  const handleSearchChange = async (e) => {
+    const searchTerm = e.target.value.toLowerCase(); // Convert input to lowercase
+    const cartProducts = JSON.parse(localStorage.getItem('cart')) || []; // Get cart products (if any)
+  
+    // Build the API URL dynamically based on whether the search term is empty or not
+    const searchUrl = searchTerm === '' 
+      ? `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`
+      : `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${searchTerm}`;
+  
+    try {
+      // Make the API call to fetch the products
+      const response = await axios.get(searchUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'accept': '*/*',
+          'env': environment,
+        },
+      });
+  
+      let fetchedProducts = response.data;
+  
+      // If there are cart products, adjust the quantities
+      if (cartProducts.length > 0) {
+        fetchedProducts = changeProductQuantity(fetchedProducts, cartProducts);  // Assuming changeProductQuantity takes both parameters
+      }
+  
+      // Update the products state
+      setProducts(fetchedProducts);
+  
+      // Update the search term state
+      setSearchTerm(searchTerm);
+  
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      // Handle any errors here, e.g., show a notification to the user
+    }
+  };
+
+  
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
   );

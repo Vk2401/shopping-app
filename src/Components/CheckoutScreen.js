@@ -130,9 +130,7 @@ const CheckoutScreen = () => {
         }
       }
     )
-
-
-    console.log(response);
+ 
     if (response.status == 201) {
       localStorage.removeItem('cart');
       localStorage.removeItem('total');

@@ -61,7 +61,7 @@ function App() {
 
   if (!isOnline) return <Nointernet />;
 
-  // if (!isLocationEnabled) return <NolocationScreen onRetry={checkLocation} />;
+  if (!isLocationEnabled) return <NolocationScreen onRetry={checkLocation} />;
 
 
   return !isMobile ? <SystemScreen /> :

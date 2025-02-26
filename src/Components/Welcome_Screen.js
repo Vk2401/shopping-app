@@ -42,7 +42,6 @@ const Welcome_Screen = () => {
           currentLongitude: longitude,
         });
 
-        // GPS is enabled
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
@@ -82,9 +81,8 @@ const Welcome_Screen = () => {
   };
 
   const fetchStores = async () => {
- 
     const aToken= sessionStorage.getItem('accessToken');
-
+    
     const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
@@ -94,7 +92,6 @@ const Welcome_Screen = () => {
     });
 
     const allStores = response.data.data;
-   
     const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
     return nearbyStores;
   }
@@ -223,14 +220,14 @@ const Welcome_Screen = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen justify-center font-poppins px-5" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
+    <div className="flex flex-col h-screen justify-center font-poppins px-5 overflow-y-scroll hidden-scrollbar" style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "contain" }}>
       <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6 mt-10">
         <strong className="text-white text-3xl font-bold">Welcome!</strong>
         <img src={loginUser} alt="" className="h-[200px] w-[200px]" />
         <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
-      <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 overflow-y-scroll hidden-scrollbar ">
+      <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 ">
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg">
           <div className="flex flex-col gap-3 w-full">
             {

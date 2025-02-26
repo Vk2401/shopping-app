@@ -15,7 +15,7 @@ import empty from '../utils/images/ProductsNotFoundpng.png';
 import noProductImage from '../utils/images/ProductsNotFoundpng.png';
 import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
 import { Data } from '../Components/r.js';
-import { findTotal,changeProductQuantity } from '../utils/cartUtils.js';
+import { findTotal, changeProductQuantity } from '../utils/cartUtils.js';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -118,7 +118,7 @@ const ProductScreen = () => {
       fetchCurrence();
       fetchProducts();
     }
-  }, [])
+  }, []);
 
   const getCurrectLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -145,7 +145,7 @@ const ProductScreen = () => {
     else {
       updateNormalProductIncart(product, '+', setProducts, setTotalPrice);
     }
-  }
+  };
 
   const handleIncrement = (Product) => {
     if (Product.isDiscount) {
@@ -157,7 +157,7 @@ const ProductScreen = () => {
     else {
       updateNormalProductIncart(Product, '+', setProducts, setTotalPrice);
     }
-  }
+  };
 
   const handleDecrement = (Product) => {
 
@@ -171,53 +171,45 @@ const ProductScreen = () => {
       updateNormalProductIncart(Product, '-', setProducts, setTotalPrice);
     }
 
-  }
+  };
 
-  // const handleSearchChange = async (e) => {
-  //   const value = e.target.value.toLowerCase(); // Convert input to lowercase
-  //   const cartProducts = JSON.parse(localStorage.getItem('cart'));
+  const handleSearchChange = async (e) => {
+    const searchTerm = e.target.value.toLowerCase(); // Convert input to lowercase
+    const cartProducts = JSON.parse(localStorage.getItem('cart')) || []; // Get cart products (if any)
 
-  //   if (e.target.value.toLowerCase() === '') {
-  //     const response = await axios.get(
-  //       `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`,
-  //       {
-  //         headers: {
-  //           'Authorization': `Bearer ${accessToken}`,
-  //           'accept': '*/*',
-  //           'env': environment,
-  //         },
-  //       }
-  //     );
-  //     let fetchedProducts = response.data;
+    // Build the API URL dynamically based on whether the search term is empty or not
+    const searchUrl = searchTerm === ''
+      ? `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`
+      : `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${searchTerm}`;
 
-  //     if (cartProducts.length > 0) {
-  //       fetchedProducts = changeProductQuantity(fetchedProducts);
-  //     }
+    try {
+      // Make the API call to fetch the products
+      const response = await axios.get(searchUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'accept': '*/*',
+          'env': environment,
+        },
+      });
 
-  //     setProducts(fetchedProducts);
-  //   }
-  //   else {
-  //     const response = await axios.get(
-  //       `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${value}`,
-  //       {
-  //         headers: {
-  //           'Authorization': `Bearer ${accessToken}`,
-  //           'accept': '*/*',
-  //           'env': environment,
-  //         },
-  //       }
-  //     );
-  //     let fetchedProducts = response.data;
+      let fetchedProducts = response.data;
 
-  //     if (cartProducts.length > 0) {
-  //       fetchedProducts = changeProductQuantity(fetchedProducts);
-  //     }
+      // If there are cart products, adjust the quantities
+      if (cartProducts.length > 0) {
+        fetchedProducts = changeProductQuantity(fetchedProducts);  // Assuming changeProductQuantity takes both parameters
+      }
 
-  //     setProducts(fetchedProducts);
-  //   }
+      // Update the products state
+      setProducts(fetchedProducts);
 
-  //   setSearchTerm(e.target.value.toLowerCase());
-  // };
+      // Update the search term state
+      setSearchTerm(searchTerm);
+
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      // Handle any errors here, e.g., show a notification to the user
+    }
+  };
 
   const handleCheckout = () => {
     if (totalPrice > 0) {
@@ -228,45 +220,6 @@ const ProductScreen = () => {
 
   };
 
-  const handleSearchChange = async (e) => {
-    const searchTerm = e.target.value.toLowerCase(); // Convert input to lowercase
-    const cartProducts = JSON.parse(localStorage.getItem('cart')) || []; // Get cart products (if any)
-  
-    // Build the API URL dynamically based on whether the search term is empty or not
-    const searchUrl = searchTerm === '' 
-      ? `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`
-      : `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${searchTerm}`;
-  
-    try {
-      // Make the API call to fetch the products
-      const response = await axios.get(searchUrl, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'accept': '*/*',
-          'env': environment,
-        },
-      });
-  
-      let fetchedProducts = response.data;
-  
-      // If there are cart products, adjust the quantities
-      if (cartProducts.length > 0) {
-        fetchedProducts = changeProductQuantity(fetchedProducts, cartProducts);  // Assuming changeProductQuantity takes both parameters
-      }
-  
-      // Update the products state
-      setProducts(fetchedProducts);
-  
-      // Update the search term state
-      setSearchTerm(searchTerm);
-  
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      // Handle any errors here, e.g., show a notification to the user
-    }
-  };
-
-  
   const filteredProducts = Products?.filter((product) =>
     product.title.toLowerCase().includes(searchTerm) && product.isVending
   );
@@ -276,7 +229,7 @@ const ProductScreen = () => {
     setSaleruleProduct(foundProduct);
     setSalerule(foundProduct.saleGroupRules);
     setShowPopup(true);
-  }
+  };
 
   return (
     <div className=" h-screen">

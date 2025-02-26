@@ -111,32 +111,33 @@ const CheckoutScreen = () => {
 
   const handleCheckout = async () => {
 
-    // const response = await axios.post(
-    //   `${productPurchaseAPI_URL}/storedatasync/erp-task`,
-    //   {
-    //     storeId: storeID,
-    //     userId: user.id,
-    //     goal: "dispense",
-    //     details: {
-    //       products: products
-    //     }
-    //   },
-    //   {
-    //     headers: {
-    //       'accept': 'application/json',
-    //       'env': environment,
-    //       'Authorization': `Bearer ${accessTOken}`,
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }
-    // )
+    const response = await axios.post(
+      `${productPurchaseAPI_URL}/storedatasync/erp-task`,
+      {
+        storeId: storeID,
+        userId: user.id,
+        goal: "dispense",
+        details: {
+          products: products
+        }
+      },
+      {
+        headers: {
+          'accept': 'application/json',
+          'env': environment,
+          'Authorization': `Bearer ${accessTOken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
 
 
-    // if (response.status == 201) {
-    //   localStorage.removeItem('cart');
-    //   localStorage.removeItem('total');
-    //   navigate('/PaymentSuccess');
-    // }
+    console.log(response);
+    if (response.status == 201) {
+      localStorage.removeItem('cart');
+      localStorage.removeItem('total');
+      // navigate('/PaymentSuccess');
+    }
 
     // navigate('/payment');
   };

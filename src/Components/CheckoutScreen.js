@@ -39,8 +39,8 @@ const CheckoutScreen = () => {
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     const aToken = sessionStorage.getItem('accessToken');
     let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
-    let store = sessionStorage.getItem('storeID');
-    store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    // let store = sessionStorage.getItem('storeID');
+    let store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
 
     setAccessToken(aToken);
     setStoreID(store);
@@ -68,6 +68,7 @@ const CheckoutScreen = () => {
         );
 
         const fetchedProduct = response.data;
+        console.log(fetchedProduct);
 
         // const fetchedProduct = data;
 
@@ -98,7 +99,7 @@ const CheckoutScreen = () => {
         setProducts(proArr);
 
       } catch (error) {
-        console.error("Error fetching products:", error);
+        // console.error("Error fetching products:", error);
       } finally {
         setLoading(false); // Stop loading once data is fetched
       }
@@ -110,48 +111,46 @@ const CheckoutScreen = () => {
   }, [storeID]);
 
   const checkStatus = async (responseID) => {
-    return new Promise((resolve, reject) => {
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms)); // Helper function to delay
+  
+    let status = '';
+    
+    // Loop to keep calling the API until the status is 'done'
+    while (status !== 'done') {
       try {
-        const checkStatusInterval = setInterval(async () => {
-          try {
-            const response = await axios.post(
-              `${productPurchaseAPI_URL}/storedatasync/erp-task/${user.id}/${responseID}`,
-              {
-                headers: {
-                  'accept': 'application/json',
-                  'env': environment,
-                  'Authorization': `Bearer ${accessTOken}`,  // Ensure correct token name here
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-  
-            // Check the status in the response
-            const status = response.data.status;
-  
-            if (status === "completed") {
-              console.log("Task completed successfully!");
-              clearInterval(checkStatusInterval);  // Stop the interval when the status is "completed"
-              resolve(true); // Resolve the promise with `true` when task is completed
-            } else {
-              console.log("Status not completed yet. Checking again...");
+        const response = await axios.get(
+          `${productPurchaseAPI_URL}/storedatasync/erp-task/${user.id}/${responseID}`,
+          {
+            headers: {
+              'accept': 'application/json',
+              'env': environment,
+              'Authorization': `Bearer ${accessTOken}`,  // Ensure correct token name here
+              'Content-Type': 'application/json'
             }
-          } catch (error) {
-            console.error("Error checking status:", error);
-            clearInterval(checkStatusInterval);  // Stop the interval if there's an error
-            reject(error); // Reject the promise if there's an error
           }
-        }, 2000); // Set the interval to 2 seconds (2000 ms)
+        );
+        
+        status = response.data.status;
+        console.log('Current status:', status); // Log the status for debugging
+  
+        if (status !== 'done') {
+          console.log('Status is not done, retrying...');
+          await delay(5000); // Wait for 5 seconds before retrying
+        }
+        
       } catch (error) {
-        console.error("Error initiating status check:", error);
-        reject(error); // Reject the promise if there's an issue initiating the check
+        console.error('Error checking status:', error);
+        break; // Optionally, break the loop if there's an error with the request
       }
-    });
+    }
+    
+    return true;
   };
   
+  
   const handleCheckout = async () => {
-
     const response = await axios.post(
+
       `${productPurchaseAPI_URL}/storedatasync/erp-task`,
       {
         storeId: storeID,
@@ -172,14 +171,15 @@ const CheckoutScreen = () => {
     )
 
     const responseID=response.data.id;
-    checkStatus(responseID);
-    // if (response.status == 201) {
-    //   localStorage.removeItem('cart');
-    //   localStorage.removeItem('total');
-    //   setProducts([]);
-    //   navigate('/PaymentSuccess');
-    // }
-    navigate('/payment');
+    let isDispenced=await checkStatus(responseID);
+  
+    if (isDispenced) {
+      localStorage.removeItem('cart');
+      localStorage.removeItem('total');
+      setProducts([]);
+      navigate('/PaymentSuccess');
+    }
+    
   };
 
   return (
@@ -222,7 +222,7 @@ const CheckoutScreen = () => {
                 <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
                   <span>{product.productCount}</span>
                   <span>x</span>
-                  <span>{product.price / product.productCount}</span>
+                  <span>{parseFloat((product.price / product.productCount).toFixed(2))}</span>
                 </div>
               </div>
             ))}
@@ -257,7 +257,7 @@ const CheckoutScreen = () => {
                         <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
                           <span>{rule.productQuantiy}</span>
                           <span>x</span>
-                          <span>{rule.saleRule.price}</span>
+                          <span>{rule.saleRule.price.toFixed(2)}</span>
                         </div>
                       </div>
                     )

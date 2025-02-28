@@ -19,6 +19,7 @@ const Stores = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [filteredShops, setFilteredShops] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
+  const [mapCompleted, setMapCompleted] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
   const environment = process.env.REACT_APP_ENVIRONMENT;
 
@@ -219,7 +220,7 @@ const Stores = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%] mt-5">
+        {/* <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%] mt-5">
           {loading ? (
             <div className="flex flex-1 items-center justify-center">
               <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
@@ -241,7 +242,7 @@ const Stores = () => {
                   ? `${(distanceInMeters / 1000).toFixed(1)} km`
                   : `${Math.round(distanceInMeters)} m`;
               }
-              console.log(loading);
+              console.log(shop);
               return (
                 <div key={shop.id} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                   <div className="flex gap-2 items-center">
@@ -264,7 +265,65 @@ const Stores = () => {
               );
             })
           )}
+        </div> */}
+
+        <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%] mt-5">
+          {loading ? (
+            <div className="flex flex-1 items-center justify-center">
+              <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+            </div>
+          ) : filteredShops.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center">
+              <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+            </div>
+          ) : (
+            filteredShops.map((shop) => {
+              const shopLat = parseFloat(shop.location.lat);
+              const shopLon = parseFloat(shop.location.lon);
+
+              const distance =
+                userLocation && shopLat && shopLon
+                  ? formatDistance(
+                    calculateDistance(userLocation.lat, userLocation.lon, shopLat, shopLon)
+                  )
+                  : "Calculating...";
+
+              function formatDistance(distanceInMeters) {
+                return distanceInMeters >= 1000
+                  ? `${(distanceInMeters / 1000).toFixed(1)} km`
+                  : `${Math.round(distanceInMeters)} m`;
+              }
+
+              return (
+                <div
+                  key={shop.id}
+                  onClick={() => {
+                    openonMap(shop.id);
+                  }}
+                  className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2"
+                >
+                  <div className="flex gap-2 items-center">
+                    <img src={locationIcon} alt="" className="h-5 w-4" />
+                    <div className="flex flex-col">
+                      <strong className="text-buttonColor text-lg font-semibold">{shop.name}</strong>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2">
+                    <span
+                      className={`rounded-md px-2 py-1 font-semibold text-white ${shop.status === "open" ? "bg-buttonColor" : "bg-yellow-500"
+                        }`}
+                    >
+                      {shop.status === "open" ? "Open" : "Coming Soon"}
+                    </span>
+                    <span className="text-lg font-semibold">{distance}</span>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
+
       </div>
     </div>
   );

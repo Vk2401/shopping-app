@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import noLocation from "../utils/images/noLocation.png";
+import noLocation from "../assets/images/noLocation.png";
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 

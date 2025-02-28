@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import thankyou from '../utils/images/Thankyouforshopping.png';
-import success from '../utils/images/checklist.png';
-import reciptIcon from '../utils/images/reciptIcon.png';
+import thankyou from '../assets/images/Thankyouforshopping.png';
+import success from '../assets/images/checklist.png';
+import reciptIcon from '../assets/images/reciptIcon.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
 

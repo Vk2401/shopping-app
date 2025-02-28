@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import LanguageSwitch from '../utils/images/LanguageSwitch.png'
-import storeImage from '../utils/images/location.png'
-import locationImage from '../utils/images/locatioImage.png'
+import LanguageSwitch from '../assets/images/LanguageSwitch.png'
+import storeImage from '../assets/images/location.png'
+import locationImage from '../assets/images/locatioImage.png'
 import { useLocation as useRouterLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
-import userIcon from '../utils/images/FontAwosemUser.png';
+import userIcon from '../assets/images/FontAwosemUser.png';
 
 
 const NotclosetoStore = () => {

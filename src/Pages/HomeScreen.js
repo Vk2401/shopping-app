@@ -1,7 +1,7 @@
 import react from "react";
-import userIcon from '../utils/images/FontAwosemUser.png';
-import VM from '../utils/images/VM.png';
-import StoresImage from '../utils/images/location.png';
+import userIcon from '../assets/images/FontAwosemUser.png';
+import VM from '../assets/images/VM.png';
+import StoresImage from '../assets/images/location.png';
 import { useNavigate } from 'react-router-dom';
 
 const HomeScreen=()=>{

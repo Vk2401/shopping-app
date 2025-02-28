@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import arrow from '../utils/images/arrow-circle-left_solid.png';
-import closeicon from '../utils/images/ios-close-circle.png';
-import Userpic from '../utils/images/Userpic.png';
-import editIcon from '../utils/images/editIcon.png';
-import rightArrow from '../utils/images/rightArrow.png';
-import leftArrow from '../utils/images/leftArrow.png';
+import Userpic from '../assets/images/Userpic.png';
+import editIcon from '../assets/images/editIcon.png';
+import leftArrow from '../assets/images/leftArrow.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 

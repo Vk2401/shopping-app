@@ -1,8 +1,8 @@
 import { div } from "framer-motion/client";
 import React, { useState, useEffect } from "react";
-import discountImag from '../utils/images/discount.png';
-import closeImage from '../utils/images/ios-close-circle.png';
-import productDefaultimg from '../utils/images/grocery.png';
+import discountImag from '../assets/images/discount.png';
+import closeImage from '../assets/images/ios-close-circle.png';
+import productDefaultimg from '../assets/images/grocery.png';
 
 const SalerulePopup = () => {
     return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import arrow from '../utils/images/arrow-circle-left_solid.png';
-import FontAwosemUser from '../utils/images/FontAwosemUser.png';
-import Userpic from '../utils/images/Userpic.png';
-import door from '../utils/images/no-door.png';
+import arrow from '../assets/images/arrow-circle-left_solid.png';
+import FontAwosemUser from '../assets/images/FontAwosemUser.png';
+import Userpic from '../assets/images/Userpic.png';
+import door from '../assets/images/no-door.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
 

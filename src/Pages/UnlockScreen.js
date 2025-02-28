@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import Door from '../utils/images/Door.png';
-import DoorUnlockedBG from '../utils/images/DoorUnlockedBG.png';
+import Door from '../assets/images/Door.png';
+import DoorUnlockedBG from '../assets/images/DoorUnlockedBG.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 

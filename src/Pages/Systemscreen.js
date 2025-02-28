@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import bgImage from '../utils/images/desktop-bg.png';
+import bgImage from '../assets/images/desktop-bg.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 

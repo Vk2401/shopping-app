@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import searchicon from '../utils/images/search.png';
-import basketImage from '../utils/images/basket.png';
+import searchicon from '../assets/images/search.png';
+import basketImage from '../assets/images/basket.png';
 import { useAuth } from "../context/AuthContext.js";
-import loader from '../utils/images/loader.gif';
-import leftArrow from '../utils/images/leftArrow.png';
+import loader from '../assets/images/loader.gif';
+import leftArrow from '../assets/images/leftArrow.png';
 import { useNavigate } from 'react-router-dom';
-import productDefaultimg from '../utils/images/grocery.png';
-import discountImag from '../utils/images/discount.png';
-import closeImage from '../utils/images/ios-close-circle.png';
-import tickMark from '../utils/images/tick.png';
-import userIcon from '../utils/images/FontAwosemUser.png';
+import productDefaultimg from '../assets/images/grocery.png';
+import discountImag from '../assets/images/discount.png';
+import closeImage from '../assets/images/ios-close-circle.png';
+import tickMark from '../assets/images/tick.png';
+import userIcon from '../assets/images/FontAwosemUser.png';
 import axios from "axios";
-import empty from '../utils/images/ProductsNotFoundpng.png';
-import noProductImage from '../utils/images/ProductsNotFoundpng.png';
-import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart } from '../utils/cartUtils';
-import { Data } from '../Components/r.js';
-import { findTotal, changeProductQuantity } from '../utils/cartUtils.js';
+import empty from '../assets/images/ProductsNotFoundpng.png';
+import noProductImage from '../assets/images/ProductsNotFoundpng.png';
+import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart, findTotal, changeProductQuantity } from '../utils/helpers.js';
+import { Data } from '../Pages/r.js';
+import { Button, notification } from 'antd';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -35,6 +35,8 @@ const ProductScreen = () => {
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
   const [currence, setCurrence] = useState('SEK');
+  const [isAlert,setIsAlert]=useState(false);
+  const [alertMessage,setAlertMessage]=useState('');
 
   useEffect(() => {
 
@@ -59,11 +61,17 @@ const ProductScreen = () => {
           let responsew = response.data;
           console.log(responsew);
           // let responsew = Data;
+
           responsew.forEach((prod) => {
-            if (prod.quantity === undefined) {
-              prod.quantity = 0; // Set quantity to 0 if undefined
+            if (prod.availableItems === 0) {
+              return;
             }
-          })
+          
+            if (prod.quantity === undefined) {
+              prod.quantity = 0;
+            }
+          });
+          
 
           let fetchProduct = responsew;
 
@@ -149,7 +157,16 @@ const ProductScreen = () => {
     }
   };
 
+ 
+
   const handleIncrement = (Product) => {
+
+    if(Product.quantity==Product.availableItems){
+      setIsAlert(true);
+      setAlertMessage(`Stock available only ${Product.quantity}`);
+      return
+    }
+    
     if (Product.isDiscount) {
       updateDicsountProductInCart(Product, '+', setProducts, setTotalPrice);
     }
@@ -460,6 +477,17 @@ const ProductScreen = () => {
           </div>
         </div>
       )}
+
+      {
+        isAlert && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
+              <div className="bg-white w-[280px] h-[150px] rounded-md flex flex-col justify-center items-center gap-3">
+                <h1 className="text-xl text-buttonColor">{alertMessage}</h1>
+                <button className="px-16 py-2 bg-buttonColor rounded-full text-white font-bold text-xl" onClick={()=>setIsAlert(false)}>OK</button>
+              </div>
+          </div>
+        )
+      }
 
       {noProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">

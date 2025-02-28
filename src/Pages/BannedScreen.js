@@ -1,9 +1,9 @@
 import React from "react";
-import closeicon from '../utils/images/WhiteClose.png';
-import bannedUser from '../utils/images/ban-user.png';
-import group from '../utils/images/Group.png';
-import mail from '../utils/images/mail.png';
-import phone from '../utils/images/phone.png';
+import closeicon from '../assets/images/WhiteClose.png';
+import bannedUser from '../assets/images/ban-user.png';
+import group from '../assets/images/Group.png';
+import mail from '../assets/images/mail.png';
+import phone from '../assets/images/phone.png';
 
 const BannedScreen = () => {
     return (

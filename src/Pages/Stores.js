@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import locationIcon from '../utils/images/location-sharp.png';
+import locationIcon from '../assets/images/location-sharp.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from "axios";
-import searchicon from '../utils/images/search.png';
+import searchicon from '../assets/images/search.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
-import userIcon from '../utils/images/FontAwosemUser.png';
-import leftArrow from '../utils/images/leftArrow.png';
+import userIcon from '../assets/images/FontAwosemUser.png';
+import leftArrow from '../assets/images/leftArrow.png';
 
 const Stores = () => {
   const navigate = useNavigate();
@@ -222,7 +222,7 @@ const Stores = () => {
         <div className="flex flex-col gap-3 z-1 overflow-y-scroll h-[70%] mt-5">
           {loading ? (
             <div className="flex flex-1 items-center justify-center">
-              <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+              <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
             </div>
           ) : (
             filteredShops.map((shop) => {

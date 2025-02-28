@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import bg from '../utils/images/desktop-bg.png';
+import bg from '../assets/images/desktop-bg.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
-import image from '../utils/images/errrPageimage.png';
-import userIcon from '../utils/images/FontAwosemUser.png';
-import leftArrow from '../utils/images/leftArrow.png';
+import image from '../assets/images/errrPageimage.png';
+import userIcon from '../assets/images/FontAwosemUser.png';
+import leftArrow from '../assets/images/leftArrow.png';
 
 const ErrorScreen = () => {
     const { isAuthenticated, logout } = useAuth();

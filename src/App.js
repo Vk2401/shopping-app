@@ -1,25 +1,25 @@
 import './App.css';
-import Welcome_Screen from './Components/Welcome_Screen.js';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NolocationScreen from './Components/NolocationScreen.js';
-import ProductScreen from './Components/ProductScreen.js';
-import SystemScreen from './Components/Systemscreen.js';
-import NotclosetoStore from './Components/NotclosetoStore.js';
-import Stores from './Components/Stores.js';
-import { DragCloseDrawerExample } from "./Components/DragCloseDrawerExample";
-import CheckoutScreen from './Components/CheckoutScreen.js';
-import PaymentScreen from './Components/PaymentScreen.js';
-import PaymentSuccess from './Components/PaymentSuccess.js';
-import ProfileScreen from './Components/ProfileScreen.js';
-import ReachedStore from './Components/ReachedStore.js';
+import Welcome_Screen from './Pages/Welcome_Screen.js';
+import NolocationScreen from './Pages/NolocationScreen.js';
+import ProductScreen from './Pages/ProductScreen.js';
+import SystemScreen from './Pages/Systemscreen.js';
+import NotclosetoStore from './Pages/NotclosetoStore.js';
+import Stores from './Pages/Stores.js';
+import { DragCloseDrawerExample } from "./Pages/DragCloseDrawerExample";
+import CheckoutScreen from './Pages/CheckoutScreen.js';
+import PaymentScreen from './Pages/PaymentScreen.js';
+import PaymentSuccess from './Pages/PaymentSuccess.js';
+import ProfileScreen from './Pages/ProfileScreen.js';
+import ReachedStore from './Pages/ReachedStore.js';
 import ProtectedRoute from "./context/ProtectedRoute.js";
 import NotFoundScreen from "./Pages/NotFoundScreen.js";
-import SettingScreen from './Components/SettingScreen.js'
-import HistoryScreen from './Components/History.js'
-import Error_page from './Components/ErrorScreen.js'
+import SettingScreen from './Pages/SettingScreen.js'
+import HistoryScreen from './Pages/History.js'
+import Error_page from './Pages/ErrorScreen.js'
 import React, { useEffect, useState } from "react";
-import Nointernet from './Components/Nointernet.js'
-import HomeScreen from './Components/HomeScreen.js'
+import Nointernet from './Pages/Nointernet.js'
+import HomeScreen from './Pages/HomeScreen.js'
 
 
 function App() {

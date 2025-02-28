@@ -1,10 +1,10 @@
-import visaImage from '../utils/images/visa.png';
-import cardImage from '../utils/images/card.png';
-import gPay from '../utils/images/Google-Pay-hero.webp'
-import closeIcon from '../utils/images/ios-close-circle.png';
+import visaImage from '../assets/images/visa.png';
+import cardImage from '../assets/images/card.png';
+import gPay from '../assets/images/Google-Pay-hero.webp'
+import closeIcon from '../assets/images/ios-close-circle.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
-import leftArrow from '../utils/images/leftArrow.png';
+import leftArrow from '../assets/images/leftArrow.png';
 
 const PaymentScreen = () => {
     const navigate = useNavigate();

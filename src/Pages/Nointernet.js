@@ -1,5 +1,5 @@
 import react, { useState } from "react";
-import noInternet from '../utils/images/No-Internet.png'
+import noInternet from '../assets/images/No-Internet.png'
 
 const Nointernet=()=>{
     const [isChecking, setIsChecking] = useState(false);

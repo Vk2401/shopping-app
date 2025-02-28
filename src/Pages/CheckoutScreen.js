@@ -1,13 +1,13 @@
 import { div } from "framer-motion/client";
 import react, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import leftArrow from '../utils/images/leftArrow.png';
+import leftArrow from '../assets/images/leftArrow.png';
 import axios from 'axios';
-import productDefaultimg from '../utils/images/grocery.png';
+import productDefaultimg from '../assets/images/grocery.png';
 import { useAuth } from "../context/AuthContext.js";
-import userIcon from '../utils/images/FontAwosemUser.png';
-import { Data } from '../Components/r.js';
-import { findTotal } from '../utils/cartUtils.js';
+import userIcon from '../assets/images/FontAwosemUser.png';
+import { Data } from '../Pages/r.js';
+import { findTotal } from '../utils/helpers.js';
 import { useLocation } from "react-router-dom";
 
 const CheckoutScreen = () => {
@@ -197,7 +197,7 @@ const CheckoutScreen = () => {
 
       {loading ? (
         <div className="flex flex-1 items-center justify-center">
-          <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+          <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
         </div>
       ) : (
 
@@ -298,7 +298,6 @@ const CheckoutScreen = () => {
               {clicked ? "Processing..." : `Pay ${total} ${currency}`} {/* Show 'Processing...' after click */}
             </button>
           </div>
-
         </div>
       )}
 

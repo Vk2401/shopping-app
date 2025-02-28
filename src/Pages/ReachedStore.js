@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import locationReached from '../utils/images/locationReached.gif';
-import backArrow from '../\/utils/images/arrow-circle-left_solid.png';
+import locationReached from '../assets/images/locationReached.gif';
+import backArrow from '../assets/images/arrow-circle-left_solid.png';
 import { useAuth } from "../context/AuthContext.js";
 
 const ReachedStore = () => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import arrow from '../utils/images/arrow-circle-left_solid.png';
-import closeicon from '../utils/images/ios-close-circle.png';
-import rightArrow from '../utils/images/rightArrow.png';
+import arrow from '../assets/images/arrow-circle-left_solid.png';
+import closeicon from '../assets/images/ios-close-circle.png';
+import rightArrow from '../assets/images/rightArrow.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
 

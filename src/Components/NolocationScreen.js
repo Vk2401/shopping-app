@@ -55,14 +55,14 @@ const NolocationScreen = () => {
         </div>
 
         {/* Button Section */}
-        <div className="flex items-center justify-center w-full pb-20">
+        {/* <div className="flex items-center justify-center w-full pb-20">
           <button
             className="bg-redColor text-white text-center rounded-full w-[250px] py-4 font-bold"
             onClick={getCurrectLocation}
           >
             Enable Location
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Custom Modal Popup */}

@@ -1,3 +1,5 @@
+import { div } from "framer-motion/client"
+
 export const Data=[
   {
       "_id": "01JHAA5CC9A2HBK67PD9BM0N21",
@@ -630,3 +632,4 @@ export const Data=[
     //   );
   
     // }
+

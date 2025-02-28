@@ -56,20 +56,20 @@ const CheckoutScreen = () => {
     const fetchProduct = async () => {
       try {
 
-        // let  response = await axios.get(
-        //   `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
-        //   {
-        //     headers: {
-        //       'Authorization': `Bearer ${aToken}`,
-        //       'accept': '*/*',
-        //       'env': environment,
-        //     },
-        //   }
-        // );
+        let response = await axios.get(
+          `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${aToken}`,
+              'accept': '*/*',
+              'env': environment,
+            },
+          }
+        );
 
-        // const fetchedProduct = response.data;
+        const fetchedProduct = response.data;
 
-        const fetchedProduct = data;
+        // const fetchedProduct = data;
 
         // Update cartProduct with fetched product details
         cartProduct = cartProduct.map((cartItem) => {
@@ -109,6 +109,46 @@ const CheckoutScreen = () => {
     setUser(JSON.parse(sessionStorage.getItem("user")));
   }, [storeID]);
 
+  const checkStatus = async (responseID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const checkStatusInterval = setInterval(async () => {
+          try {
+            const response = await axios.post(
+              `${productPurchaseAPI_URL}/storedatasync/erp-task/${user.id}/${responseID}`,
+              {
+                headers: {
+                  'accept': 'application/json',
+                  'env': environment,
+                  'Authorization': `Bearer ${accessTOken}`,  // Ensure correct token name here
+                  'Content-Type': 'application/json'
+                }
+              }
+            );
+  
+            // Check the status in the response
+            const status = response.data.status;
+  
+            if (status === "completed") {
+              console.log("Task completed successfully!");
+              clearInterval(checkStatusInterval);  // Stop the interval when the status is "completed"
+              resolve(true); // Resolve the promise with `true` when task is completed
+            } else {
+              console.log("Status not completed yet. Checking again...");
+            }
+          } catch (error) {
+            console.error("Error checking status:", error);
+            clearInterval(checkStatusInterval);  // Stop the interval if there's an error
+            reject(error); // Reject the promise if there's an error
+          }
+        }, 2000); // Set the interval to 2 seconds (2000 ms)
+      } catch (error) {
+        console.error("Error initiating status check:", error);
+        reject(error); // Reject the promise if there's an issue initiating the check
+      }
+    });
+  };
+  
   const handleCheckout = async () => {
 
     const response = await axios.post(
@@ -130,13 +170,15 @@ const CheckoutScreen = () => {
         }
       }
     )
- 
-    if (response.status == 201) {
-      localStorage.removeItem('cart');
-      localStorage.removeItem('total');
-      setProducts([]);
-      navigate('/PaymentSuccess');
-    }
+
+    const responseID=response.data.id;
+    checkStatus(responseID);
+    // if (response.status == 201) {
+    //   localStorage.removeItem('cart');
+    //   localStorage.removeItem('total');
+    //   setProducts([]);
+    //   navigate('/PaymentSuccess');
+    // }
     navigate('/payment');
   };
 

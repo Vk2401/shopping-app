@@ -56,14 +56,15 @@ const ProductScreen = () => {
             }
           );
 
-          let responsew = Data;
+          let responsew = response.data;
+          // let responsew = Data;
           responsew.forEach((prod) => {
             if (prod.quantity === undefined) {
               prod.quantity = 0; // Set quantity to 0 if undefined
             }
           })
 
-          let fetchProduct =responsew;
+          let fetchProduct = responsew;
 
           if (fetchProduct.length == 0) {
             setisProductfetched(true);
@@ -232,11 +233,11 @@ const ProductScreen = () => {
   };
 
   return (
-    <div className=" h-screen">
+    <div className="">
 
       {loading ? (
         <div className="h-screen flex items-center justify-center bg-buttonColor">
-          <img src={loader} alt="" className=""/>
+          <img src={loader} alt="" className="" />
         </div>
       ) : (
         <div className="font-poppins px-3 h-screen ">
@@ -270,9 +271,9 @@ const ProductScreen = () => {
               <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
-            <div className="flex flex-col items-center flex-1 min-h-[570px]">
+            <div className="flex flex-col items-center flex-1 pb-24">
               {filteredProducts?.length > 0 ? (
-                <div className=" flex flex-col overflow-y-auto mb-5 gap-2 w-full mt-36">
+                <div className="flex flex-col  mb-5 gap-2 w-full mt-36 overflow-y-auto">
                   {filteredProducts?.filter((product) => product.isVending).map((product) => (
                     <div key={product._id}
                       className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"

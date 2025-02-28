@@ -26,12 +26,12 @@ const PaymentScreen = () => {
     return (
         <div className="flex flex-col px-5 font-poppins h-screen">
             <div className="flex items-center justify-between py-7">
-                <img src={leftArrow} alt="" className="h-8 w-8" onClick={navigate('/products')}/>
+                <img src={leftArrow} alt="" className="h-8 w-8" onClick={()=>navigate('/products')}/>
                 <h1 className="text-black font-bold text-xl">Payment</h1>
-                <img src={closeIcon} alt="" className=" h-8 w-8" onClick={navigate('/products')}/>
+                <img src={closeIcon} alt="" className=" h-8 w-8" onClick={()=>navigate('/products')}/>
             </div>
 
-            <div className="flex flex-col justify-between  h-full">
+            <div className="flex flex-col justify-between">
                 <div className="flex flex-col gap-5">
                     <div className="flex flex-col gap-5">
                         <p className="font-semibold">Choose Payment</p>

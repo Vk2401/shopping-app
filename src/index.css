@@ -14,3 +14,14 @@
   .hidden-scrollbar::-webkit-scrollbar {
     display: none; /* Hide scrollbar for Chrome/Safari */
 }
+
+/* Add this in your global styles or a specific CSS file */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* for Internet Explorer */
+    scrollbar-width: none;  /* for Firefox */
+  }
+  

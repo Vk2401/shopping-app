@@ -1,4 +1,4 @@
-import { Data } from '../Components/r.js';
+import { Data } from '../Pages/r.js';
 
 export const updateDicsountProductInCart = (newProduct, action, setProducts, setTotalPrice) => {
   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];

@@ -59,7 +59,6 @@ const ProductScreen = () => {
           );
 
           let responsew = response.data;
-          console.log(responsew);
           // let responsew = Data;
 
           responsew.forEach((prod) => {
@@ -157,8 +156,6 @@ const ProductScreen = () => {
     }
   };
 
- 
-
   const handleIncrement = (Product) => {
 
     if(Product.quantity==Product.availableItems){
@@ -166,7 +163,7 @@ const ProductScreen = () => {
       setAlertMessage(`Stock available only ${Product.quantity}`);
       return
     }
-    
+
     if (Product.isDiscount) {
       updateDicsountProductInCart(Product, '+', setProducts, setTotalPrice);
     }
@@ -289,9 +286,9 @@ const ProductScreen = () => {
               <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
           ) : (
-            <div className="flex flex-col items-center flex-1 pb-24">
+            <div className="flex flex-col items-center flex-1 ">
               {filteredProducts?.length > 0 ? (
-                <div className="flex flex-col  mb-5 gap-2 w-full mt-36 overflow-y-auto">
+                <div className="flex flex-col  mb-5 gap-2 w-full mt-36 overflow-y-auto pb-24">
                   {filteredProducts?.filter((product) => product.isVending).map((product) => (
                     <div key={product._id}
                       className="flex px-1 justify-between bg-gray-50 rounded-lg items-center w-full py-3 border-2 border-gray-200 outline-none"

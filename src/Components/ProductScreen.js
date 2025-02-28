@@ -57,6 +57,7 @@ const ProductScreen = () => {
           );
 
           let responsew = response.data;
+          console.log(responsew);
           // let responsew = Data;
           responsew.forEach((prod) => {
             if (prod.quantity === undefined) {

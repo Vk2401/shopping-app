@@ -11,6 +11,8 @@ import { findTotal } from '../utils/cartUtils.js';
 import { useLocation } from "react-router-dom";
 
 const CheckoutScreen = () => {
+  const [clicked, setClicked] = useState(false);
+  
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [total, setTotal] = useState(0);
@@ -23,7 +25,7 @@ const CheckoutScreen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts, setCartProducts] = useState([]);
   const [storeID, setStoreID] = useState('');
-  const [currence, setCurrence] = useState('SEK');
+  const [currency, setCurrence] = useState('SEK');
   const [accessTOken, setAccessToken] = useState('');
   const location = useLocation();
   const data = location.state; // Get passed data
@@ -112,9 +114,9 @@ const CheckoutScreen = () => {
 
   const checkStatus = async (responseID) => {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms)); // Helper function to delay
-  
+
     let status = '';
-    
+
     // Loop to keep calling the API until the status is 'done'
     while (status !== 'done') {
       try {
@@ -129,26 +131,28 @@ const CheckoutScreen = () => {
             }
           }
         );
-        
+
         status = response.data.status;
         console.log('Current status:', status); // Log the status for debugging
-  
+
         if (status !== 'done') {
           console.log('Status is not done, retrying...');
           await delay(5000); // Wait for 5 seconds before retrying
         }
-        
+
       } catch (error) {
         console.error('Error checking status:', error);
         break; // Optionally, break the loop if there's an error with the request
       }
     }
-    
+
     return true;
   };
-  
-  
+
+
   const handleCheckout = async () => {
+
+    setClicked(true);
     const response = await axios.post(
 
       `${productPurchaseAPI_URL}/storedatasync/erp-task`,
@@ -170,16 +174,17 @@ const CheckoutScreen = () => {
       }
     )
 
-    const responseID=response.data.id;
-    let isDispenced=await checkStatus(responseID);
-  
+    const responseID = response.data.id;
+    let isDispenced = await checkStatus(responseID);
+    setClicked(true);
+
     if (isDispenced) {
       localStorage.removeItem('cart');
       localStorage.removeItem('total');
       setProducts([]);
       navigate('/PaymentSuccess');
     }
-    
+
   };
 
   return (
@@ -215,7 +220,7 @@ const CheckoutScreen = () => {
                     <span className="font-bold text-black">{product.title}</span>
                     <span className="text-lightBlack">Qty: {product.productCount}</span>
                     <span className="text-buttonColor font-semibold text-lg">
-                      {product.price + ' ' + currence}
+                      {product.price + ' ' + currency}
                     </span>
                   </div>
                 </div>
@@ -251,7 +256,7 @@ const CheckoutScreen = () => {
                           <div className="flex flex-col">
                             <span className="font-bold text-black">{pro.title}</span>
                             <span className="text-lightBlack">Qty: {rule.productQuantiy * rule.saleRule.count}</span>
-                            <span className="text-buttonColor font-semibold text-lg">{(rule.productQuantiy * rule.saleRule.price) + ' ' + currence}</span>
+                            <span className="text-buttonColor font-semibold text-lg">{(rule.productQuantiy * rule.saleRule.price) + ' ' + currency}</span>
                           </div>
                         </div>
                         <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
@@ -271,7 +276,7 @@ const CheckoutScreen = () => {
                         <div className="flex flex-col">
                           <span className="font-bold text-black">{pro.title}</span>
                           <span className="text-lightBlack">Qty: {total}</span>
-                          <span className="text-buttonColor font-semibold text-lg">{(total * pro.productPrice) + ' ' + currence}</span>
+                          <span className="text-buttonColor font-semibold text-lg">{(total * pro.productPrice) + ' ' + currency}</span>
                         </div>
                       </div>
                       <div className="flex font-semibold items-center justify-center gap-2 border-2 border-gray-400 rounded-full px-8 py-4 h-4">
@@ -284,10 +289,16 @@ const CheckoutScreen = () => {
                 </div>
               );
             })}
-
           <div className="flex justify-center items-center fixed bottom-0 left-0 w-full z-10 pb-5 bg-white">
-            <button onClick={handleCheckout} className="bg-buttonColor text-white text-center rounded-full px-10 py-3">Pay {total} {currence}</button>
+            <button
+              onClick={handleCheckout}
+              className={`bg-buttonColor text-white text-center rounded-full px-10 py-3 ${clicked ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={clicked} // Disable the button after click
+            >
+              {clicked ? "Processing..." : `Pay ${total} ${currency}`} {/* Show 'Processing...' after click */}
+            </button>
           </div>
+
         </div>
       )}
 

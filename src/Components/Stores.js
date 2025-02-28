@@ -12,6 +12,7 @@ import leftArrow from '../utils/images/leftArrow.png';
 
 const Stores = () => {
   const navigate = useNavigate();
+  const [shops, setShops] = useState([]);
   const [stores, seStores] = useState([]);
   const { isAuthenticated } = useAuth();
   const [accessToken, setAccessToken] = useState();
@@ -81,7 +82,7 @@ const Stores = () => {
     const query = e.target.value.toLowerCase();
 
     // Filter shops based on query
-    const filtered = stores.filter(shop =>
+    const filtered = shops.filter(shop =>
       shop.name.toLowerCase().includes(query)
     );
 
@@ -137,11 +138,13 @@ const Stores = () => {
           }));
 
           seStores(storesData);
+          setShops(sortedShops); // Update state with sorted shops
           setFilteredShops(sortedShops);
         });
 
       } catch (error) {
         console.error("Error fetching stores:", error);
+        setShops([]);  // Empty the shops data or set an error state
         setFilteredShops([]);
       } finally {
         setLoading(false);  // Set loading to false after data is fetched or error occurred
@@ -238,7 +241,6 @@ const Stores = () => {
                   ? `${(distanceInMeters / 1000).toFixed(1)} km`
                   : `${Math.round(distanceInMeters)} m`;
               }
-     
               return (
                 <div key={shop.id} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                   <div className="flex gap-2 items-center">

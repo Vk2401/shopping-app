@@ -21,6 +21,8 @@ const Stores = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const apiUrl = process.env.REACT_APP_API_URL;
   const environment = process.env.REACT_APP_ENVIRONMENT;
+  const [currentLat, setCurrentLat] = useState(null);
+  const [currentLon, setCurrentLon] = useState(null);
 
   const customIcon = L.icon({
     iconUrl: locationIcon,
@@ -35,6 +37,7 @@ const Stores = () => {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  
     const toRadians = (degrees) => degrees * (Math.PI / 180);
     const R = 6371; // Earth's radius in km
 
@@ -47,35 +50,6 @@ const Stores = () => {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c * 1000; // Convert km to meters
-  };
-
-  const sortShopsByDistance = (shops, callback) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLat = position.coords.latitude;
-          const userLon = position.coords.longitude;
-
-          const sortedShops = shops
-            .map((shop) => ({
-              ...shop,
-              distance: calculateDistance(
-                userLat, userLon,
-                parseFloat(shop.location.lat),
-                parseFloat(shop.location.lon)
-              )
-            }))
-            .sort((a, b) => a.distance - b.distance);
-
-          callback(sortedShops); // Return sorted shops via callback
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
   };
 
   const handleSearchChange = async (e) => {
@@ -94,20 +68,28 @@ const Stores = () => {
     const { lat, lon } = shop[0].location;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
   }
+  
+
+  function formatDistance(distanceInMeters) {
+    return distanceInMeters >= 1000
+      ? `${(distanceInMeters / 1000).toFixed(1)} km`
+      : `${Math.round(distanceInMeters)} m`;
+  }
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
     }
-
     setAccessToken(sessionStorage.getItem('accessToken'));
     if (navigator.geolocation) {
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          });
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          setCurrentLat(lat);  // Update state with latitude
+          setCurrentLon(lon);  // Update state with longitude
+         
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -129,19 +111,27 @@ const Stores = () => {
           },
         });
 
-        sortShopsByDistance(response.data.data, (sortedShops) => {
-          let storesData = sortedShops.map((shop, index) => ({
-            id: index + 1,  // Generating a sequential ID
-            name: shop.name,
-            lat: parseFloat(shop.location.lat),  // Converting lat to number
-            lng: parseFloat(shop.location.lon)   // Converting lon to number
-          }));
+        let storesData=response.data.data;
 
-          seStores(storesData);
-          setShops(sortedShops); // Update state with sorted shops
-          setFilteredShops(sortedShops);
+        const storesWithDistance = storesData.map((store) => {
+         
+          const lat = parseFloat(store.location.lat);
+          const lon = parseFloat(store.location.lon);
+
+          const distance = formatDistance(calculateDistance(currentLat, currentLon, lat, lon));
+         
+          return { ...store, distance }; // Add distance attribute to each store
         });
 
+        storesWithDistance.sort((a, b) => {
+          // Remove " km" and convert to number for sorting
+          const distanceA = parseFloat(a.distance.replace(' km', ''));
+          const distanceB = parseFloat(b.distance.replace(' km', ''));
+      
+          return distanceA - distanceB;  // Sort in ascending order
+      });
+        
+        seStores(storesWithDistance);
       } catch (error) {
         console.error("Error fetching stores:", error);
         setShops([]);  // Empty the shops data or set an error state
@@ -152,11 +142,11 @@ const Stores = () => {
     }
 
     fetchStores();
-
-  }, [accessToken]);
+  }, [currentLon]);
 
   return (
     <div className="h-screen font-poppins">
+
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-between h-20">
           <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => { navigate(`/products`) }} />
@@ -167,7 +157,7 @@ const Stores = () => {
           <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {stores.map((store) => (
-              <Marker key={store.id} position={[store.lat, store.lng]} icon={customIcon} >
+              <Marker key={store.id} position={[store.location.lat, store.location.lon]} icon={customIcon} >
                 <Popup>
                   <div style={{ textAlign: "center" }}>
                     <img src={locationIcon} alt="Store Icon" width="30" height="30" />
@@ -175,7 +165,7 @@ const Stores = () => {
                     <strong>{store.name}</strong>
                     <br />
                     <button
-                      onClick={() => openNavigation(store.lat, store.lng)}
+                      onClick={() => openNavigation(store.location.lat, store.location.lon)}
                       style={{
                         marginTop: "8px",
                         padding: "6px 12px",
@@ -225,22 +215,7 @@ const Stores = () => {
               <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
             </div>
           ) : (
-            filteredShops.map((shop) => {
-              const shopLat = parseFloat(shop.location.lat);
-              const shopLon = parseFloat(shop.location.lon);
-
-              const distance =
-                userLocation && shopLat && shopLon
-                  ? formatDistance(
-                    calculateDistance(userLocation.lat, userLocation.lon, shopLat, shopLon)
-                  )
-                  : "Calculating...";
-
-              function formatDistance(distanceInMeters) {
-                return distanceInMeters >= 1000
-                  ? `${(distanceInMeters / 1000).toFixed(1)} km`
-                  : `${Math.round(distanceInMeters)} m`;
-              }
+            stores.map((shop) => {
               return (
                 <div key={shop.id} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                   <div className="flex gap-2 items-center">
@@ -257,7 +232,7 @@ const Stores = () => {
                     >
                       {shop.status === "open" ? "Open" : "Coming Soon"}
                     </span>
-                    <span className="text-lg font-semibold">{distance}</span>
+                    <span className="text-lg font-semibold">{shop.distance}</span>
                   </div>
                 </div>
               );

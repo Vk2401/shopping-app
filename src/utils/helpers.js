@@ -162,12 +162,13 @@ export const updateSaleRuleProductInCart = (Product, operation, setProducts, set
 }
 
 export const findSaleRules = (Product, quantity) => {
+  console.log(Product.saleGroupRules);
   let flag = 0;
   let rules = Product.saleGroupRules;
   rules.sort((a, b) => b.count - a.count);
   let tempArr = [];
   let tempQuantity = quantity;
- 
+
   rules.forEach(rule => {
 
     let tempObj = {
@@ -196,7 +197,7 @@ export const findSaleRules = (Product, quantity) => {
 
     tempArr.push(tempObj);
   })
-
+  
   return tempArr;
 }
 

@@ -36,7 +36,7 @@ const CheckoutScreen = () => {
     if (!isAuthenticated) {
       navigate('/');
     }
-
+ 
     setCurrence(localStorage.getItem('currence'));
     let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
     const aToken = sessionStorage.getItem('accessToken');
@@ -109,7 +109,7 @@ const CheckoutScreen = () => {
 
     fetchProduct();
     // Set other states
-    setUser(JSON.parse(sessionStorage.getItem("user")));
+    setUser(JSON.parse(localStorage.getItem("user")));
   }, [storeID]);
 
   const checkStatus = async (responseID) => {

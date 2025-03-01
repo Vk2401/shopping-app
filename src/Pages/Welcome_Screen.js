@@ -180,6 +180,8 @@ const Welcome_Screen = () => {
           },
         });
 
+        console.log(response.data.tokens.access.expires);
+
         const rToken = response.data.tokens.refresh.token;
         const aToken = response.data.tokens.access.token;
         const expireAt = response.data.tokens.access.expires;

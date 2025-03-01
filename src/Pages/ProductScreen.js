@@ -15,14 +15,13 @@ import empty from '../assets/images/ProductsNotFoundpng.png';
 import noProductImage from '../assets/images/ProductsNotFoundpng.png';
 import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart, findTotal, changeProductQuantity } from '../utils/helpers.js';
 import { Data } from '../Pages/r.js';
-import { Button, notification } from 'antd';
 
 const ProductScreen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [storeID, setStoreid] = useState('');
   const [noProduct, setNoproduct] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated ,refreshAccessToken} = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
   const [Products, setProducts] = useState(null);
@@ -43,22 +42,26 @@ const ProductScreen = () => {
     if (!isAuthenticated) {
       navigate("/");
     }
+
     else {
+      setAccessToken(localStorage.getItem('accessToken'));
       const fetchProducts = async () => {
         try {
-
           const response = await axios.get(
             `${apiUrl}/vms/getProducts/${storeID}`,
             {
               headers: {
-                'Authorization': `Bearer ${aToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'accept': '*/*',
                 'env': environment,
               },
             }
           );
-
           let responsew = response.data;
+
+          // if(response.data.status=='aun'){
+          //   refreshAccessToken
+          // }
           // let responsew = Data;
 
           responsew.forEach((prod) => {
@@ -94,36 +97,52 @@ const ProductScreen = () => {
       };
 
       const fetchCurrence = async () => {
-        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`,
-          {
+     let accessToken=localStorage.getItem('accessToken');
+        try {
+          // Make the API request to fetch currency data
+          const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
             headers: {
-              'Authorization': `Bearer ${aToken}`,
+              'Authorization': `Bearer ${accessToken}`,
               'accept': '*/*',
               'env': environment,
             },
+          });
+ 
+      
+          // Check if 'currency' exists in the response data
+          const currencyExists = corrence.data.value.hasOwnProperty('currency');
+      
+          if (currencyExists) {
+            if (corrence.data.value !== '') {
+              setCurrence(corrence.data.value.currency); // Set the currency state
+            }
           }
-        );
-
-        const currencyExists = corrence.data.value.hasOwnProperty('currency');
-
-        if (currencyExists) {
-          if (corrence.data.value !== '') {
-            setCurrence(corrence.data.value.currency)
-          }
+      
+          // Save the currency to localStorage
+          localStorage.setItem('currence', corrence.data.value.currency);
+          
+        } catch (error) {
+          
+          // if(error.status==401 && error.messsage=='authenticate'){
+          //   const newToken = await refreshAccessToken();
+          //   if(newToken){
+          //     fetchCurrence();
+          //   }
+          // }
+          console.error('Error fetching currency:', error);
+          // Handle error (e.g., show an error message, or fallback behavior)
         }
-        localStorage.setItem('currence', currence);
-      }
+      };
+      
 
       getCurrectLocation();
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      const aToken = sessionStorage.getItem('accessToken');
 
       // const storeID=localStorage.getItem('storeID');
       const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
       setTotalCount(addedProducts.length);
       setTotalPrice(findTotal(addedProducts));
-
       fetchCurrence();
       fetchProducts();
     }
@@ -451,7 +470,7 @@ const ProductScreen = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {saleRule.map((rule, index) => (
+              {saleRule.map((rule, index) =>   rule.status === 'Active' &&  (
                 <div
                   key={index}
                   className={`flex flex-col border-2 border-gray-200 rounded-md items-center justify-center relative py-2 

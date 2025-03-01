@@ -15,7 +15,7 @@ const ProfileScreen = () => {
     if (!isAuthenticated) {
       navigate('/');
     }
-    setUser(JSON.parse(sessionStorage.getItem("user")));
+    setUser(JSON.parse(localStorage.getItem("user")));
   }, []);
 
   return (

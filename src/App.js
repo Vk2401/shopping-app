@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route,useNavigate } from 'react-router-dom';
 import Welcome_Screen from './Pages/Welcome_Screen.js';
 import NolocationScreen from './Pages/NolocationScreen.js';
 import ProductScreen from './Pages/ProductScreen.js';
@@ -20,12 +20,15 @@ import Error_page from './Pages/ErrorScreen.js'
 import React, { useEffect, useState } from "react";
 import Nointernet from './Pages/Nointernet.js'
 import HomeScreen from './Pages/HomeScreen.js'
-
+import { useAuth } from "../src/context/AuthContext.js";
 
 function App() {
+  const navigate = useNavigate();
+  const { isAuthenticated,refreshAccessToken } = useAuth();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [isOnline, setIsOnline] = useState(navigator.onLine); // Track internet status
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
+  
 
   const checkLocation = () => {
     if ("geolocation" in navigator) {
@@ -39,6 +42,11 @@ function App() {
   };
 
   useEffect(() => {
+    
+    if (!isAuthenticated) {
+      navigate('/');
+    }
+
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1024);
     };

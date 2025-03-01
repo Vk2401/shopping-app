@@ -1,4 +1,3 @@
-import { div } from "framer-motion/client";
 import react, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import leftArrow from '../assets/images/leftArrow.png';
@@ -8,58 +7,48 @@ import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../assets/images/FontAwosemUser.png';
 import { Data } from '../Pages/r.js';
 import { findTotal } from '../utils/helpers.js';
-import { useLocation } from "react-router-dom";
 
 const CheckoutScreen = () => {
-  const [clicked, setClicked] = useState(false);
-  
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const [total, setTotal] = useState(0);
-  const [user, setUser] = useState({});
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const productFecthAPI_URL = process.env.REACT_APP_API_URL
   const productPurchaseAPI_URL = process.env.REACT_APP_AUTH_API_URL
-  const Distance = process.env.REACT_APP_DISTANCE
+  const productFecthAPI_URL = process.env.REACT_APP_API_URL
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [cartProducts, setCartProducts] = useState([]);
-  const [storeID, setStoreID] = useState('');
-  const [currency, setCurrence] = useState('SEK');
   const [accessTOken, setAccessToken] = useState('');
-  const location = useLocation();
-  const data = location.state; // Get passed data
+  const [currency, setCurrence] = useState('SEK');
+  const [clicked, setClicked] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [storeID, setStoreID] = useState('');
+  const { refreshAccessToken } = useAuth();
+  const [total, setTotal] = useState(0);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
   let Total = 0;
 
   useEffect(() => {
+    const cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
 
-    if (!isAuthenticated) {
-      navigate('/');
-    }
- 
-    setCurrence(localStorage.getItem('currence'));
-    let cartProduct = JSON.parse(localStorage.getItem("cart")) || [];
-    const aToken = sessionStorage.getItem('accessToken');
-    let localUSER = JSON.parse(sessionStorage.getItem("user")) || [];
-    // let store = sessionStorage.getItem('storeID');
-    let store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-
-    setAccessToken(aToken);
-    setStoreID(store);
-    setUser(localUSER);
-    setTotal(findTotal(cartProduct));
-    Total = cartProduct;
-
-    if (cartProduct.length == 0) {
+    if (cartProduct.length === 0) {
       navigate('/products');
     }
-    setCartProducts(cartProduct);
 
+    const aToken = localStorage.getItem('accessToken');
+    const store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    // Set state values
+    setStoreID(store);
+    setAccessToken(aToken);
+    setCartProducts(cartProduct);
+    setTotal(findTotal(cartProduct));
+    setCurrence(localStorage.getItem('currence'));
+    setUser(JSON.parse(localStorage.getItem("user")) || []);
+
+    Total = cartProduct;
+
+    // Fetch products from API
     const fetchProduct = async () => {
       try {
-
         let response = await axios.get(
-          `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
+          `${productFecthAPI_URL}/vms/getProducts/${store}`,
           {
             headers: {
               'Authorization': `Bearer ${aToken}`,
@@ -70,12 +59,9 @@ const CheckoutScreen = () => {
         );
 
         const fetchedProduct = response.data;
-        console.log(fetchedProduct);
-
-        // const fetchedProduct = data;
 
         // Update cartProduct with fetched product details
-        cartProduct = cartProduct.map((cartItem) => {
+        const updatedCartProduct = cartProduct.map((cartItem) => {
           const matchingProduct = fetchedProduct.find(
             (product) => product._id === cartItem.productID
           );
@@ -83,17 +69,17 @@ const CheckoutScreen = () => {
           if (matchingProduct) {
             return {
               ...cartItem,
-              picture: matchingProduct.picture, // Add image from fetchedProduct
-              title: matchingProduct.title, // Add title from fetchedProduct
+              picture: matchingProduct.picture,
+              title: matchingProduct.title,
             };
           }
           return cartItem;
         });
 
-        setCartProducts(cartProduct);
+        setCartProducts(updatedCartProduct);
 
         // Prepare products array
-        let proArr = cartProduct.map((pro) => ({
+        const proArr = updatedCartProduct.map((pro) => ({
           productId: pro.productID,
           quantity: pro.productType === "saleRule" ? pro.totalCount : pro.productCount,
         }));
@@ -101,20 +87,24 @@ const CheckoutScreen = () => {
         setProducts(proArr);
 
       } catch (error) {
-        // console.error("Error fetching products:", error);
+        console.log(error);
+        // Uncomment this part if you want to handle token refresh
+        // if (error.status === 401) {
+        //   const newToken = await refreshAccessToken();
+        //   if (newToken) {
+        //     fetchProduct();  // Retry fetching after refreshing token
+        //   }
+        // }
       } finally {
-        setLoading(false); // Stop loading once data is fetched
+        setLoading(false);
       }
     };
 
     fetchProduct();
-    // Set other states
-    setUser(JSON.parse(localStorage.getItem("user")));
   }, [storeID]);
 
   const checkStatus = async (responseID) => {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms)); // Helper function to delay
-
     let status = '';
 
     // Loop to keep calling the API until the status is 'done'
@@ -133,10 +123,8 @@ const CheckoutScreen = () => {
         );
 
         status = response.data.status;
-        console.log('Current status:', status); // Log the status for debugging
 
         if (status !== 'done') {
-          console.log('Status is not done, retrying...');
           await delay(5000); // Wait for 5 seconds before retrying
         }
 
@@ -149,13 +137,9 @@ const CheckoutScreen = () => {
     return true;
   };
 
-
   const handleCheckout = async () => {
-
     setClicked(true);
-    const response = await axios.post(
-
-      `${productPurchaseAPI_URL}/storedatasync/erp-task`,
+    const response = await axios.post(`${productPurchaseAPI_URL}/storedatasync/erp-task`,
       {
         storeId: storeID,
         userId: user.id,

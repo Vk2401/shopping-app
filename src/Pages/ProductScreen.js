@@ -21,7 +21,7 @@ const ProductScreen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [storeID, setStoreid] = useState('');
   const [noProduct, setNoproduct] = useState(false);
-  const { isAuthenticated ,refreshAccessToken} = useAuth();
+  const { isAuthenticated, refreshAccessToken } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
   const [Products, setProducts] = useState(null);
@@ -34,16 +34,10 @@ const ProductScreen = () => {
   const [saleRule, setSalerule] = useState([]);
   const [isProductfetched, setisProductfetched] = useState(false);
   const [currence, setCurrence] = useState('SEK');
-  const [isAlert,setIsAlert]=useState(false);
-  const [alertMessage,setAlertMessage]=useState('');
+  const [isAlert, setIsAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
-
-    if (!isAuthenticated) {
-      navigate("/");
-    }
-
-    else {
       setAccessToken(localStorage.getItem('accessToken'));
       const fetchProducts = async () => {
         try {
@@ -59,21 +53,16 @@ const ProductScreen = () => {
           );
           let responsew = response.data;
 
-          // if(response.data.status=='aun'){
-          //   refreshAccessToken
-          // }
-          // let responsew = Data;
-
           responsew.forEach((prod) => {
             if (prod.availableItems === 0) {
               return;
             }
-          
+
             if (prod.quantity === undefined) {
               prod.quantity = 0;
             }
           });
-          
+
 
           let fetchProduct = responsew;
 
@@ -89,6 +78,15 @@ const ProductScreen = () => {
           }
 
         } catch (error) {
+
+          if (error.status == 401) {
+            const newToken = await refreshAccessToken();
+            console.log(newToken);
+            if (newToken) {
+              fetchProducts();
+            }
+          }
+
           console.error('Error fetching products:', error);
         }
         finally {
@@ -97,7 +95,7 @@ const ProductScreen = () => {
       };
 
       const fetchCurrence = async () => {
-     let accessToken=localStorage.getItem('accessToken');
+        let accessToken = localStorage.getItem('accessToken');
         try {
           // Make the API request to fetch currency data
           const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
@@ -107,37 +105,34 @@ const ProductScreen = () => {
               'env': environment,
             },
           });
- 
-      
+
+
           // Check if 'currency' exists in the response data
           const currencyExists = corrence.data.value.hasOwnProperty('currency');
-      
           if (currencyExists) {
             if (corrence.data.value !== '') {
               setCurrence(corrence.data.value.currency); // Set the currency state
             }
           }
-      
+
           // Save the currency to localStorage
           localStorage.setItem('currence', corrence.data.value.currency);
-          
+
         } catch (error) {
-          
-          // if(error.status==401 && error.messsage=='authenticate'){
-          //   const newToken = await refreshAccessToken();
-          //   if(newToken){
-          //     fetchCurrence();
-          //   }
-          // }
+          if (error.status == 401) {
+            const newToken = await refreshAccessToken();
+            console.log(newToken);
+            if (newToken) {
+              fetchCurrence();
+            }
+          }
           console.error('Error fetching currency:', error);
           // Handle error (e.g., show an error message, or fallback behavior)
         }
       };
-      
 
       getCurrectLocation();
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-
       // const storeID=localStorage.getItem('storeID');
       const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
@@ -145,7 +140,6 @@ const ProductScreen = () => {
       setTotalPrice(findTotal(addedProducts));
       fetchCurrence();
       fetchProducts();
-    }
   }, []);
 
   const getCurrectLocation = () => {
@@ -177,7 +171,7 @@ const ProductScreen = () => {
 
   const handleIncrement = (Product) => {
 
-    if(Product.quantity==Product.availableItems){
+    if (Product.quantity == Product.availableItems) {
       setIsAlert(true);
       setAlertMessage(`Stock available only ${Product.quantity}`);
       return
@@ -470,7 +464,7 @@ const ProductScreen = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {saleRule.map((rule, index) =>   rule.status === 'Active' &&  (
+              {saleRule.map((rule, index) => rule.status === 'Active' && (
                 <div
                   key={index}
                   className={`flex flex-col border-2 border-gray-200 rounded-md items-center justify-center relative py-2 
@@ -497,10 +491,10 @@ const ProductScreen = () => {
       {
         isAlert && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
-              <div className="bg-white w-[280px] h-[150px] rounded-md flex flex-col justify-center items-center gap-3">
-                <h1 className="text-xl text-buttonColor">{alertMessage}</h1>
-                <button className="px-16 py-2 bg-buttonColor rounded-full text-white font-bold text-xl" onClick={()=>setIsAlert(false)}>OK</button>
-              </div>
+            <div className="bg-white w-[280px] h-[150px] rounded-md flex flex-col justify-center items-center gap-3">
+              <h1 className="text-xl text-buttonColor">{alertMessage}</h1>
+              <button className="px-16 py-2 bg-buttonColor rounded-full text-white font-bold text-xl" onClick={() => setIsAlert(false)}>OK</button>
+            </div>
           </div>
         )
       }

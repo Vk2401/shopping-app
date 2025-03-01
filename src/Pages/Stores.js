@@ -16,7 +16,6 @@ const Stores = () => {
   const [stores, seStores] = useState([]);
   const { isAuthenticated } = useAuth();
   const [accessToken, setAccessToken] = useState();
-  const [userLocation, setUserLocation] = useState(null);
   const [filteredShops, setFilteredShops] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -37,7 +36,7 @@ const Stores = () => {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  
+
     const toRadians = (degrees) => degrees * (Math.PI / 180);
     const R = 6371; // Earth's radius in km
 
@@ -68,7 +67,6 @@ const Stores = () => {
     const { lat, lon } = shop[0].location;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
   }
-  
 
   function formatDistance(distanceInMeters) {
     return distanceInMeters >= 1000
@@ -77,9 +75,7 @@ const Stores = () => {
   }
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/');
-    }
+
     setAccessToken(sessionStorage.getItem('accessToken'));
     if (navigator.geolocation) {
 
@@ -89,7 +85,7 @@ const Stores = () => {
           const lon = position.coords.longitude;
           setCurrentLat(lat);  // Update state with latitude
           setCurrentLon(lon);  // Update state with longitude
-         
+
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -98,51 +94,62 @@ const Stores = () => {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
+
   }, []);
 
   useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'accept': 'application/json',
-            'env': environment,
-          },
-        });
+    if (currentLon && currentLat) {
+      fetchStores();
+    }
+  }, [currentLon, currentLat]);
 
-        let storesData=response.data.data;
+  const fetchStores = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'accept': 'application/json',
+          'env': environment,
+        },
+      });
 
+      let storesData = response.data.data;
+
+      const sortStoresByDistance = (storesData, currentLat, currentLon) => {
+        console.log(currentLat);
+        console.log(currentLon);
+        // First, calculate the distance for each store
         const storesWithDistance = storesData.map((store) => {
-         
           const lat = parseFloat(store.location.lat);
           const lon = parseFloat(store.location.lon);
 
-          const distance = formatDistance(calculateDistance(currentLat, currentLon, lat, lon));
-         
-          return { ...store, distance }; // Add distance attribute to each store
+          // Calculate the distance between current location and the store's location
+          const distanceInKm = calculateDistance(currentLat, currentLon, lat, lon);
+          const formattedDistance = formatDistance(distanceInKm);  // format the distance (e.g., 2.3 km)
+
+          // Add the distance to the store object
+          return { ...store, distance: formattedDistance, distanceInKm };  // Include raw distanceInKm for sorting
         });
 
-        storesWithDistance.sort((a, b) => {
-          // Remove " km" and convert to number for sorting
-          const distanceA = parseFloat(a.distance.replace(' km', ''));
-          const distanceB = parseFloat(b.distance.replace(' km', ''));
-      
-          return distanceA - distanceB;  // Sort in ascending order
-      });
-        
-        seStores(storesWithDistance);
-      } catch (error) {
-        console.error("Error fetching stores:", error);
-        setShops([]);  // Empty the shops data or set an error state
-        setFilteredShops([]);
-      } finally {
-        setLoading(false);  // Set loading to false after data is fetched or error occurred
-      }
-    }
+        // Then, sort the stores based on the distanceInKm (which is the raw distance)
+        storesWithDistance.sort((a, b) => a.distanceInKm - b.distanceInKm);  // Sorting by distance in ascending order
 
-    fetchStores();
-  }, [currentLon]);
+        // After sorting, return the stores with the calculated distance
+        return storesWithDistance;
+      };
+
+      const sortedStores = sortStoresByDistance(storesData, currentLat, currentLon);
+
+      seStores(sortedStores);
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      setShops([]);  // Empty the shops data or set an error state
+      setFilteredShops([]);
+    } finally {
+      setLoading(false);
+      // Set loading to false after data is fetched or error occurred
+    }
+  }
 
   return (
     <div className="h-screen font-poppins">

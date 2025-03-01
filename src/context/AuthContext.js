@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
     // Function to refresh access token
     const refreshAccessToken = useCallback(async () => {
+      console.log('kjhh');
       let retryCount = 0;  // Track retry attempts
     
       while (retryCount < 3) {

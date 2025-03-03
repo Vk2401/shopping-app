@@ -44,7 +44,6 @@ const CheckoutScreen = () => {
     setUser(JSON.parse(localStorage.getItem("user")) || []);
 
     Total = cartProduct;
-    let ok='lnn';
 
     // Fetch products from API
     const fetchProduct = async () => {

@@ -13,7 +13,8 @@ export const AuthProvider = ({ children }) => {
   const apiUrl = process.env.REACT_APP_AUTH_API_URL
 
     // Function to store tokens in session storage
-    const storeTokens = (accessToken, expiresAt,refreshToken,user) => {
+    const storeTokens = (accessToken, expiresAt,refreshToken,user,rtExpireAt) => {
+      localStorage.setItem('refreshTokenExpireAt',rtExpireAt);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem('user',JSON.stringify(user));
@@ -30,7 +31,6 @@ export const AuthProvider = ({ children }) => {
 
     // Function to refresh access token
     const refreshAccessToken = useCallback(async () => {
-      console.log('kjhh');
       let retryCount = 0;  // Track retry attempts
     
       while (retryCount < 3) {
@@ -65,7 +65,6 @@ export const AuthProvider = ({ children }) => {
     
       return null;  // Return null if all attempts fail
     }, [refreshToken, apiUrl]);
-    
 
      // Schedule token refresh before it expires (1 minute before expiry)
      useEffect(() => {
@@ -97,8 +96,21 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const checkTokenExpiration = () => {
+    const expiresAt = localStorage.getItem("refreshTokenExpireAt");  
+    if (!expiresAt) return;  
+
+    const currentTime = new Date().getTime(); // Current time in milliseconds
+    const expiryTime = new Date(expiresAt).getTime(); // Convert stored string to timestamp
+
+    if (currentTime >= expiryTime) {
+        console.log("Token expired. Logging out...");
+        logout(); 
+    }
+};
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logout, accessToken, refreshAccessToken, storeTokens ,storeLatestLocation}}>
+    <AuthContext.Provider value={{ isAuthenticated, logout, accessToken, refreshAccessToken, storeTokens ,storeLatestLocation,checkTokenExpiration}}>
       {children}
     </AuthContext.Provider>
   );

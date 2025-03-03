@@ -14,7 +14,7 @@ const Stores = () => {
   const navigate = useNavigate();
   const [shops, setShops] = useState([]);
   const [stores, seStores] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { checkTokenExpiration } = useAuth();
   const [accessToken, setAccessToken] = useState();
   const [filteredShops, setFilteredShops] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
@@ -99,6 +99,7 @@ const Stores = () => {
 
   useEffect(() => {
     if (currentLon && currentLat) {
+      checkTokenExpiration();
       fetchStores();
     }
   }, [currentLon, currentLat]);

@@ -21,7 +21,7 @@ const ProductScreen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [storeID, setStoreid] = useState('');
   const [noProduct, setNoproduct] = useState(false);
-  const { isAuthenticated, refreshAccessToken } = useAuth();
+  const { isAuthenticated, refreshAccessToken,checkTokenExpiration } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
   const [Products, setProducts] = useState(null);
@@ -39,18 +39,23 @@ const ProductScreen = () => {
 
   useEffect(() => {
       setAccessToken(localStorage.getItem('accessToken'));
+      let aT=localStorage.getItem('accessToken');
+     
       const fetchProducts = async () => {
+        console.log(aT);
+        console.log(storeID);
         try {
           const response = await axios.get(
             `${apiUrl}/vms/getProducts/${storeID}`,
             {
               headers: {
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${aT}`,
                 'accept': '*/*',
                 'env': environment,
               },
             }
           );
+          console.log(response);
           let responsew = response.data;
 
           responsew.forEach((prod) => {
@@ -78,7 +83,7 @@ const ProductScreen = () => {
           }
 
         } catch (error) {
-
+        
           if (error.status == 401) {
             const newToken = await refreshAccessToken();
             console.log(newToken);
@@ -131,6 +136,7 @@ const ProductScreen = () => {
         }
       };
 
+      checkTokenExpiration();
       getCurrectLocation();
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
       // const storeID=localStorage.getItem('storeID');

@@ -10,7 +10,7 @@ const Welcome_Screen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const Distance = process.env.REACT_APP_DISTANCE
   const imagePath = process.env.REACT_APP_IMAGE_PATH;
-  const { isAuthenticated, storeTokens } = useAuth();
+  const { isAuthenticated, storeTokens,checkTokenExpiration } = useAuth();
   const navigate = useNavigate();
   // const [data, setData] = useState('');
   const [data, setData] = useState({ userName: '', pnumber: '' });
@@ -179,13 +179,16 @@ const Welcome_Screen = () => {
             'Content-Type': 'application/json',
           },
         });
-        
+
+        const currentTimestamp = response.data.tokens.refresh.expires;
+        console.log(response.data.tokens.refresh.expires);
+        const rtExpireAt =  currentTimestamp; 
         const rToken = response.data.tokens.refresh.token;
         const aToken = response.data.tokens.access.token;
         const expireAt = response.data.tokens.access.expires;
         const user = response.data.user;
 
-        storeTokens(aToken, expireAt, rToken, user);
+        storeTokens(aToken, expireAt, rToken, user,rtExpireAt);
 
         let nearbyStores = await fetchStores();
         if (nearbyStores.length > 0) {
@@ -212,7 +215,9 @@ const Welcome_Screen = () => {
   };
 
   useEffect(() => {
+    
     if (isAuthenticated) {
+      checkTokenExpiration();
       navigate('products');
     }
     getCurrectLocation();

@@ -181,7 +181,6 @@ const Welcome_Screen = () => {
         });
 
         const currentTimestamp = response.data.tokens.refresh.expires;
-        console.log(response.data.tokens.refresh.expires);
         const rtExpireAt =  currentTimestamp; 
         const rToken = response.data.tokens.refresh.token;
         const aToken = response.data.tokens.access.token;
@@ -191,13 +190,16 @@ const Welcome_Screen = () => {
         storeTokens(aToken, expireAt, rToken, user,rtExpireAt);
 
         let nearbyStores = await fetchStores();
+        console.log(nearbyStores[0].id);
         if (nearbyStores.length > 0) {
           if (nearbyStores.length > 1) {
             // navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
+            console.log( nearbyStores[0].id);
             localStorage.setItem('storeID', nearbyStores[0].id);
             navigate(`/products`);
           } else {
-            localStorage.setItem('storeID', nearbyStores.id);
+            console.log(nearbyStores[0].id);
+            localStorage.setItem('storeID', nearbyStores[0].id);
             navigate(`/products`);
             // navigate('/notClose-toStore', { state: { stores: nearbyStores } });
           }

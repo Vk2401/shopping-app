@@ -33,7 +33,8 @@ const CheckoutScreen = () => {
     }
 
     const aToken = localStorage.getItem('accessToken');
-    const store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    const store=localStorage.getItem('storeID');
+    // const store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
     // Set state values
     setStoreID(store);
     setAccessToken(aToken);

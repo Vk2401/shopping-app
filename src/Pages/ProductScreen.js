@@ -42,8 +42,6 @@ const ProductScreen = () => {
       let aT=localStorage.getItem('accessToken');
      
       const fetchProducts = async () => {
-        console.log(aT);
-        console.log(storeID);
         try {
           const response = await axios.get(
             `${apiUrl}/vms/getProducts/${storeID}`,
@@ -55,7 +53,6 @@ const ProductScreen = () => {
               },
             }
           );
-          console.log(response);
           let responsew = response.data;
 
           responsew.forEach((prod) => {
@@ -111,7 +108,6 @@ const ProductScreen = () => {
             },
           });
 
-
           // Check if 'currency' exists in the response data
           const currencyExists = corrence.data.value.hasOwnProperty('currency');
           if (currencyExists) {
@@ -139,8 +135,8 @@ const ProductScreen = () => {
       checkTokenExpiration();
       getCurrectLocation();
       const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      // const storeID=localStorage.getItem('storeID');
-      const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+      const storeID=localStorage.getItem('storeID');
+      // const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
       setStoreid(storeID);
       setTotalCount(addedProducts.length);
       setTotalPrice(findTotal(addedProducts));

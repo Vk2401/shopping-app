@@ -7,7 +7,7 @@ import axios from "axios";
 import searchicon from '../assets/images/search.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/Icon awesome-user.svg';
 import leftArrow from '../assets/images/leftArrow.png';
 
 const Stores = () => {
@@ -22,7 +22,8 @@ const Stores = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT;
   const [currentLat, setCurrentLat] = useState(null);
   const [currentLon, setCurrentLon] = useState(null);
-
+  const [tempShop,setTempShop]=useState('');
+  
   const customIcon = L.icon({
     iconUrl: locationIcon,
     iconSize: [25, 28],
@@ -53,17 +54,24 @@ const Stores = () => {
 
   const handleSearchChange = async (e) => {
     const query = e.target.value.toLowerCase();
-
+    console.log(query);
     // Filter shops based on query
-    const filtered = shops.filter(shop =>
-      shop.name.toLowerCase().includes(query)
-    );
+    if(query==''){
+      seStores(filteredShops);
+      return;
+    }
 
-    setFilteredShops(filtered);
+    const filtered = stores.filter(store =>
+      store.name.toLowerCase().includes(query)
+    );
+ 
+    seStores(filtered);
   }
 
   const openonMap = (shopID) => {
+    console.log('hgb');
     const shop = filteredShops.filter((shop) => shop.id === shopID);
+    console.log(filteredShops);
     const { lat, lon } = shop[0].location;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
   }
@@ -75,7 +83,7 @@ const Stores = () => {
   }
 
   useEffect(() => {
-
+    setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842');
     setAccessToken(sessionStorage.getItem('accessToken'));
     if (navigator.geolocation) {
 
@@ -106,7 +114,7 @@ const Stores = () => {
 
   const fetchStores = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
+      const response = await axios.get(`${apiUrl}/shops/getshops?limit=20&page=1`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'accept': 'application/json',
@@ -138,7 +146,7 @@ const Stores = () => {
       };
 
       const sortedStores = sortStoresByDistance(storesData, currentLat, currentLon);
-
+      setFilteredShops(sortedStores);
       seStores(sortedStores);
     } catch (error) {
       console.error("Error fetching stores:", error);
@@ -155,9 +163,11 @@ const Stores = () => {
 
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-between h-20">
-          <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => { navigate(`/products`) }} />
+     
+
+          <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => {   navigate("/products", { state: { stores: stores[0].id } });}} />
           <h1 className="text-lightBlack font-bold text-xl"></h1>
-          <img src={userIcon} alt="" className="h-9 w-9" onClick={() => { navigate(`/settings`) }} />
+          <img src={userIcon} alt="" className="h-9 w-9 buttonColor" onClick={() => { navigate(`/settings`) }} />
         </div>
         <div className="flex-1 ">
           <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>

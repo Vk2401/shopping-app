@@ -1,4 +1,10 @@
 import { Data } from '../Pages/r.js';
+import axios from 'axios';
+
+let currentLocation = {
+  currentLatitude: '',
+  currentLongitude: '',
+};
 
 export const updateDicsountProductInCart = (newProduct, action, setProducts, setTotalPrice) => {
   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
@@ -197,7 +203,7 @@ export const findSaleRules = (Product, quantity) => {
 
     tempArr.push(tempObj);
   })
-  
+
   return tempArr;
 }
 
@@ -273,14 +279,14 @@ export const findTotal2 = (cartProducts, allProducts) => {
   return totalPrice.toFixed(1);
 }
 
-export const changeProductQuantity=(fetchedProducts)=>{
+export const changeProductQuantity = (fetchedProducts) => {
 
-  const cartProducts=JSON.parse(localStorage.getItem('cart'));
-  
-  if(cartProducts.length>0){
-    
+  const cartProducts = JSON.parse(localStorage.getItem('cart'));
+
+  if (cartProducts.length > 0) {
+
     fetchedProducts.forEach(fPro => {
-    
+
       cartProducts.forEach(cartPRO => {
         if (cartPRO.productID === fPro._id) {
           if (cartPRO.productType === 'saleRule') {
@@ -297,3 +303,64 @@ export const changeProductQuantity=(fetchedProducts)=>{
   }
   return fetchedProducts;
 }
+
+export const getCurrectLocation = () => {
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      currentLocation.currentLatitude = latitude;
+      currentLocation.currentLongitude = longitude;
+    },
+    (err) => {
+      if (err.code === err.PERMISSION_DENIED) {
+      }
+    }
+  );
+};
+
+// export const haversineDistance = (lat1, lon1, lat2, lon2) => {z
+//   const toRadians = (deg) => (deg * Math.PI) / 180;
+//   const R = 6371; // Earth's radius in km
+//   const dLat = toRadians(lat2 - lat1);
+//   const dLon = toRadians(lon2 - lon1);
+
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+//     Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   return R * c * 1000; // Convert km to meters
+// };
+
+// export const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 15000) => {
+//   const nearbyStores = stores.filter((store) => {
+//     const storeLat = parseFloat(store.location.lat);
+//     const storeLon = parseFloat(store.location.lon);
+
+//     if (!storeLat || !storeLon) return false;
+
+//     const distance = haversineDistance(currentLat, currentLon, storeLat, storeLon);
+//     console.log(maxDistance);
+//     return distance <= maxDistance;
+//   });
+
+//   return nearbyStores.length > 0 ? nearbyStores : [];
+// };
+
+// export const fetchStores = async () => {
+//   const aToken = sessionStorage.getItem('accessToken');
+
+//   const response = await axios.get(`${apiUrl}/shops/getshops?limit=50&page=1`, {
+//     headers: {
+//       'Authorization': `Bearer ${aToken}`,
+//       'accept': 'application/json',
+//       'env': environment,
+//     },
+//   });
+
+//   const allStores = response.data.data;
+//   const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
+//   return nearbyStores;
+// };

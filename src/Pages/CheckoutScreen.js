@@ -33,7 +33,7 @@ const CheckoutScreen = () => {
     }
 
     const aToken = localStorage.getItem('accessToken');
-    const store=localStorage.getItem('storeID');
+    const store = localStorage.getItem('storeID');
     // const store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
     // Set state values
     setStoreID(store);
@@ -48,9 +48,9 @@ const CheckoutScreen = () => {
     // Fetch products from API
     const fetchProduct = async () => {
       try {
-
+        let tempShop = '11ed64c4-c893-4ef3-9930-25c9af02e842';
         let response = await axios.get(
-          `${productFecthAPI_URL}/vms/getProducts/${store}`,
+          `${productFecthAPI_URL}/vms/getProducts/${tempShop}`,
           {
             headers: {
               'Authorization': `Bearer ${aToken}`,
@@ -89,14 +89,14 @@ const CheckoutScreen = () => {
         setProducts(proArr);
 
       } catch (error) {
-        console.log(error);
+
         // Uncomment this part if you want to handle token refresh
-        // if (error.status === 401) {
-        //   const newToken = await refreshAccessToken();
-        //   if (newToken) {
-        //     fetchProduct();  // Retry fetching after refreshing token
-        //   }
-        // }
+        if (error.status === 401) {
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            fetchProduct();  // Retry fetching after refreshing token
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -140,10 +140,11 @@ const CheckoutScreen = () => {
   };
 
   const handleCheckout = async () => {
+    let tempShop = '11ed64c4-c893-4ef3-9930-25c9af02e842';
     setClicked(true);
     const response = await axios.post(`${productPurchaseAPI_URL}/storedatasync/erp-task`,
       {
-        storeId: storeID,
+        storeId: tempShop,
         userId: user.id,
         goal: "dispense",
         details: {
@@ -287,6 +288,13 @@ const CheckoutScreen = () => {
         </div>
       )}
 
+      {clicked &&
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
+          <div className="flex flex-1 items-center justify-center">
+            <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
+          </div>
+        </div>
+      }
     </div>
   );
 }

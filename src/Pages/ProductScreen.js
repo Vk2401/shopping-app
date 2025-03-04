@@ -9,7 +9,7 @@ import productDefaultimg from '../assets/images/grocery.png';
 import discountImag from '../assets/images/discount.png';
 import closeImage from '../assets/images/ios-close-circle.png';
 import tickMark from '../assets/images/tick.png';
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/Icon awesome-user.svg';
 import axios from "axios";
 import empty from '../assets/images/ProductsNotFoundpng.png';
 import noProductImage from '../assets/images/ProductsNotFoundpng.png';
@@ -38,23 +38,23 @@ const ProductScreen = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const location = useLocation();
   const store = location.state?.stores || null; // Get storeID from state if available
-
+  const [tempShop,setTempShop]=useState('');
+    
   useEffect(() => {
+    setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842');
     setAccessToken(localStorage.getItem('accessToken'));
     let aT = localStorage.getItem('accessToken');
     let prevStoreID = localStorage.getItem('storeID');
-    if (store !== null && prevStoreID !== store) {
-
-    }
-
-    if (store !== null && prevStoreID !== store) {
-      localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-    }
+    
+    // if (store !== null && prevStoreID !== store) {
+    //   localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+    // }
 
     const fetchProducts = async () => {
+      let temp='11ed64c4-c893-4ef3-9930-25c9af02e842';
       try {
         const response = await axios.get(
-          `${apiUrl}/vms/getProducts/${storeID}`,
+          `${apiUrl}/vms/getProducts/${temp}`,
           {
             headers: {
               'Authorization': `Bearer ${aT}`,
@@ -107,9 +107,10 @@ const ProductScreen = () => {
 
     const fetchCurrence = async () => {
       let accessToken = localStorage.getItem('accessToken');
+      let temp='11ed64c4-c893-4ef3-9930-25c9af02e842';
       try {
         // Make the API request to fetch currency data
-        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
+        const corrence = await axios.get(`${apiUrl}/settings/${temp}/preferences`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'accept': '*/*',
@@ -118,6 +119,7 @@ const ProductScreen = () => {
         });
 
         // Check if 'currency' exists in the response data
+        console.log(corrence);
         const currencyExists = corrence.data.value.hasOwnProperty('currency');
         if (currencyExists) {
           if (corrence.data.value !== '') {
@@ -281,10 +283,10 @@ const ProductScreen = () => {
       ) : (
         <div className="font-poppins px-3 h-screen ">
           <div className=" px-3 h-36 flex flex-col fixed top-0 left-0 w-full bg-white ">
-            <div className="flex items-center justify-between relative h-1/2">
+            <div className="flex text-buttonColor items-center justify-between relative h-1/2">
               <img onClick={() => navigate(`/stores`)} src={leftArrow} alt="" className="h-10 w-10" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img onClick={() => navigate(`/settings`)} src={userIcon} alt="" className="h-8 w-8" />
+              <img onClick={() => navigate(`/settings`)} src={userIcon} alt="" className="h-8 w-8 text-buttonColor" />
             </div>
 
             <div className="flex items-center justify-center h-1/2">

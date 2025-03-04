@@ -67,7 +67,6 @@ const Welcome_Screen = () => {
   };
 
   const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 15000) => {
-
     const nearbyStores = stores.filter((store) => {
       const storeLat = parseFloat(store.location.lat);
       const storeLon = parseFloat(store.location.lon);
@@ -75,6 +74,7 @@ const Welcome_Screen = () => {
       if (!storeLat || !storeLon) return false;
 
       const distance = haversineDistance(currentLat, currentLon, storeLat, storeLon);
+      console.log(maxDistance);
       return distance <= maxDistance;
     });
 
@@ -84,7 +84,7 @@ const Welcome_Screen = () => {
   const fetchStores = async () => {
     const aToken = sessionStorage.getItem('accessToken');
 
-    const response = await axios.get(`${apiUrl}/shops/getshops?limit=10&page=1`, {
+    const response = await axios.get(`${apiUrl}/shops/getshops?limit=50&page=1`, {
       headers: {
         'Authorization': `Bearer ${aToken}`,
         'accept': 'application/json',
@@ -204,6 +204,7 @@ const Welcome_Screen = () => {
             navigate("/products", { state: { stores: nearbyStores[0].id } });
             // navigate(`/products`);
           } else {
+            console.log(nearbyStores[0]);
             let prevStoreID = localStorage.getItem('storeID');
 
             if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {

@@ -218,11 +218,12 @@ const ProductScreen = () => {
   const handleSearchChange = async (e) => {
     const searchTerm = e.target.value.toLowerCase(); // Convert input to lowercase
     const cartProducts = JSON.parse(localStorage.getItem('cart')) || []; // Get cart products (if any)
+    const tempstore='11ed64c4-c893-4ef3-9930-25c9af02e842';
 
     // Build the API URL dynamically based on whether the search term is empty or not
     const searchUrl = searchTerm === ''
-      ? `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa`
-      : `${apiUrl}/vms/getProducts/ab25680f-916c-4b25-98cf-02cba5d2c8fa?searchTxt=${searchTerm}`;
+      ? `${apiUrl}/vms/getProducts/${tempstore}`
+      : `${apiUrl}/vms/getProducts/${tempstore}?searchTxt=${searchTerm}`;
 
     try {
       // Make the API call to fetch the products
@@ -307,7 +308,7 @@ const ProductScreen = () => {
           </div>
 
           {isProductfetched ? (
-            <div className=" flex flex-col bg justify-center items-center h-full w-full gap-2">
+            <div className=" flex flex-col bg justify-center items-center h-full w-full bg-red-500 gap-2 ">
               <img src={noProductImage} alt="" className="h-52 w-52" />
               <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
@@ -391,7 +392,7 @@ const ProductScreen = () => {
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col mb-5 gap-2 w-full h-full items-center justify-center">
+                <div className="flex flex-col mb-5 gap-2 w-full h-screen items-center justify-center">
                   <img src={empty} alt="" className="h-44 w-44 " />
                 </div>
               )}
@@ -513,7 +514,7 @@ const ProductScreen = () => {
       }
 
       {noProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20 bg-red-500">
           <div className="w-96 h-48 bg-white rounded-xl flex flex-col items-center justify-center gap-2">
             <img src={basketImage} alt="" className="h-14 w-14" />
             <strong className="text-black font-semibold text-lg">Please add product</strong>

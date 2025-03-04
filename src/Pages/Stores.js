@@ -117,8 +117,6 @@ const Stores = () => {
       let storesData = response.data.data;
 
       const sortStoresByDistance = (storesData, currentLat, currentLon) => {
-        console.log(currentLat);
-        console.log(currentLon);
         // First, calculate the distance for each store
         const storesWithDistance = storesData.map((store) => {
           const lat = parseFloat(store.location.lat);
@@ -167,7 +165,7 @@ const Stores = () => {
             {stores.map((store) => (
               <Marker key={store.id} position={[store.location.lat, store.location.lon]} icon={customIcon} >
                 <Popup>
-                  <div style={{ textAlign: "center" }}>
+                  <div style={{ textAlign: "center" }} className="flex flex-col items-center">
                     <img src={locationIcon} alt="Store Icon" width="30" height="30" />
                     <br />
                     <strong>{store.name}</strong>

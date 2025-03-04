@@ -14,10 +14,10 @@ export const updateDicsountProductInCart = (newProduct, action, setProducts, set
 
   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
 
-  if (cartProducts.length != 0) {
+  if (cartProducts.length !== 0) {
     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
 
-    if (newQuantity != 0) {
+    if (newQuantity !== 0) {
       dpOBJ.productCount = newQuantity;
       dpOBJ.price = parseFloat((newQuantity * (newProduct.price - (newProduct.price * newProduct.discount) / 100)).toFixed(2));
       cartProducts.push(dpOBJ);
@@ -36,7 +36,7 @@ export const updateDicsountProductInCart = (newProduct, action, setProducts, set
         const updatedProduct = { ...pro, quantity: newQuantity };
 
         Data.forEach(proe => {
-          if (proe._id == pro._id) {
+          if (proe._id === pro._id) {
             proe.quantity = newQuantity
           }
         })
@@ -61,9 +61,9 @@ export const updateNormalProductIncart = (newProduct, action, setProducts, setTo
   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
 
-  if (cartProducts != null) {
+  if (cartProducts !== null) {
     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
-    if (newQuantity != 0) {
+    if (newQuantity !== 0) {
       npOBJ.productCount = newQuantity;
       console.log((newQuantity * newProduct.price));
       npOBJ.price = (newQuantity * newProduct.price)
@@ -82,7 +82,7 @@ export const updateNormalProductIncart = (newProduct, action, setProducts, setTo
         const updatedProduct = { ...pro, quantity: newQuantity };
 
         Data.forEach(proe => {
-          if (proe._id == pro._id) {
+          if (proe._id === pro._id) {
             proe.quantity = newQuantity
           }
         })
@@ -112,7 +112,7 @@ export const updateSaleRuleProductInCart = (Product, operation, setProducts, set
 
   newProductQuantity = operation === '-' ? --Product.quantity : ++Product.quantity;
 
-  if (cartProducts.length == 0) {
+  if (cartProducts.length === 0) {
     resultArr = findSaleRules(Product, newProductQuantity);
     saleRuleProduct.saleRuleDetails = resultArr;
     saleRuleProduct.totalPrice = findSaleRuleProductTOtal(saleRuleProduct, newProductQuantity);
@@ -123,7 +123,7 @@ export const updateSaleRuleProductInCart = (Product, operation, setProducts, set
     resultArr = findSaleRules(Product, newProductQuantity);
     saleRuleProduct.saleRuleDetails = resultArr;
 
-    if (newProductQuantity != 0) {
+    if (newProductQuantity !== 0) {
       resultArr = findSaleRules(Product, newProductQuantity);
       saleRuleProduct.saleRuleDetails = resultArr;
       saleRuleProduct.totalCount = newProductQuantity;
@@ -178,12 +178,12 @@ export const findSaleRules = (Product, quantity) => {
       isSaleApplied: false,
     }
 
-    if ((tempQuantity + 1) % rule.count == 0 && flag == 0) {
+    if ((tempQuantity + 1) % rule.count === 0 && flag === 0) {
       tempObj.isNearby = true;
       flag = 1;
     }
 
-    if (rule.status == 'Active' && rule.count <= tempQuantity) {
+    if (rule.status === 'Active' && rule.count <= tempQuantity) {
 
 
       let saleAppliedQuantiy = Math.floor(tempQuantity / rule.count);
@@ -222,14 +222,12 @@ export const findSaleRuleProductTOtal = (Product,) => {
 
 export const findTotal = (cartProducts, op) => {
   let totalPrice = 0;
-  let totalCount = 0;
-
-  if (cartProducts.length == 0) {
+  if (cartProducts.length === 0) {
     return totalPrice;
   }
 
   cartProducts.forEach((pro) => {
-    if (pro.productType == 'saleRule') {
+    if (pro.productType === 'saleRule') {
       totalPrice += pro.totalPrice;
     }
     else {
@@ -241,15 +239,14 @@ export const findTotal = (cartProducts, op) => {
 
 export const findTotal2 = (cartProducts, allProducts) => {
   let totalPrice = 0;
-  let totalCount = 0;
 
-  if (cartProducts.length == 0) {
+  if (cartProducts.length === 0) {
     return totalPrice;
   }
 
   cartProducts.forEach((pro) => {
-    if (pro.productType == 'saleRule') {
-      let matchingProduct = allProducts.filter(pro => pro._id == pro.productID);
+    if (pro.productType === 'saleRule') {
+      let matchingProduct = allProducts.filter(pro => pro._id === pro.productID);
       let allRules = matchingProduct.saleGroupRules;
       let tempCOUNT = pro.totalCount;
       let v = 0;
@@ -257,7 +254,7 @@ export const findTotal2 = (cartProducts, allProducts) => {
       pro.saleRuleDetails.forEach(temp => {
         if (temp.isSaleApplied) {
           allRules.forEach(ruleT => {
-            if (temp.saleRule.count == ruleT.count && temp.saleRule.price == ruleT.price) {
+            if (temp.saleRule.count === ruleT.count && temp.saleRule.price === ruleT.price) {
               tempCOUNT -= temp.saleRule.count;
               let a = temp.saleRule.count * temp.saleRule.price;
               v += a;
@@ -285,8 +282,8 @@ export const changeProductQuantity=(fetchedProducts)=>{
     fetchedProducts.forEach(fPro => {
     
       cartProducts.forEach(cartPRO => {
-        if (cartPRO.productID == fPro._id) {
-          if (cartPRO.productType == 'saleRule') {
+        if (cartPRO.productID === fPro._id) {
+          if (cartPRO.productType === 'saleRule') {
             fPro.quantity = cartPRO.totalCount;
           }
           else {

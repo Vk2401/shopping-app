@@ -4,7 +4,7 @@ import basketImage from '../assets/images/basket.png';
 import { useAuth } from "../context/AuthContext.js";
 import loader from '../assets/images/loader.gif';
 import leftArrow from '../assets/images/leftArrow.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import productDefaultimg from '../assets/images/grocery.png';
 import discountImag from '../assets/images/discount.png';
 import closeImage from '../assets/images/ios-close-circle.png';
@@ -21,7 +21,7 @@ const ProductScreen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const [storeID, setStoreid] = useState('');
   const [noProduct, setNoproduct] = useState(false);
-  const { isAuthenticated, refreshAccessToken,checkTokenExpiration } = useAuth();
+  const { isAuthenticated, refreshAccessToken, checkTokenExpiration } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
   const [Products, setProducts] = useState(null);
@@ -36,112 +36,121 @@ const ProductScreen = () => {
   const [currence, setCurrence] = useState('SEK');
   const [isAlert, setIsAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const location = useLocation();
+  const store = location.state?.stores || null; // Get storeID from state if available
 
   useEffect(() => {
-      setAccessToken(localStorage.getItem('accessToken'));
-      let aT=localStorage.getItem('accessToken');
-     
-      const fetchProducts = async () => {
-        try {
-          const response = await axios.get(
-            `${apiUrl}/vms/getProducts/${storeID}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${aT}`,
-                'accept': '*/*',
-                'env': environment,
-              },
-            }
-          );
-          let responsew = response.data;
+    setAccessToken(localStorage.getItem('accessToken'));
+    let aT = localStorage.getItem('accessToken');
+    let prevStoreID = localStorage.getItem('storeID');
+    if (store !== null && prevStoreID !== store) {
 
-          responsew.forEach((prod) => {
-            if (prod.availableItems === 0) {
-              return;
-            }
+    }
 
-            if (prod.quantity === undefined) {
-              prod.quantity = 0;
-            }
-          });
+    if (store !== null && prevStoreID !== store) {
+      localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+    }
 
-
-          let fetchProduct = responsew;
-
-          if (fetchProduct.length == 0) {
-            setisProductfetched(true);
-          }
-
-          if (addedProducts.length > 0) {
-            fetchProduct = changeProductQuantity(fetchProduct);
-            setProducts(fetchProduct);
-          } else {
-            setProducts(fetchProduct);
-          }
-
-        } catch (error) {
-        
-          if (error.status == 401) {
-            const newToken = await refreshAccessToken();
-            console.log(newToken);
-            if (newToken) {
-              fetchProducts();
-            }
-          }
-
-          console.error('Error fetching products:', error);
-        }
-        finally {
-          setLoading(false);
-        }
-      };
-
-      const fetchCurrence = async () => {
-        let accessToken = localStorage.getItem('accessToken');
-        try {
-          // Make the API request to fetch currency data
-          const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/vms/getProducts/${storeID}`,
+          {
             headers: {
-              'Authorization': `Bearer ${accessToken}`,
+              'Authorization': `Bearer ${aT}`,
               'accept': '*/*',
               'env': environment,
             },
-          });
+          }
+        );
+        let responsew = response.data;
 
-          // Check if 'currency' exists in the response data
-          const currencyExists = corrence.data.value.hasOwnProperty('currency');
-          if (currencyExists) {
-            if (corrence.data.value !== '') {
-              setCurrence(corrence.data.value.currency); // Set the currency state
-            }
+        responsew.forEach((prod) => {
+          if (prod.availableItems === 0) {
+            return;
           }
 
-          // Save the currency to localStorage
-          localStorage.setItem('currence', corrence.data.value.currency);
-
-        } catch (error) {
-          if (error.status == 401) {
-            const newToken = await refreshAccessToken();
-            console.log(newToken);
-            if (newToken) {
-              fetchCurrence();
-            }
+          if (prod.quantity === undefined) {
+            prod.quantity = 0;
           }
-          console.error('Error fetching currency:', error);
-          // Handle error (e.g., show an error message, or fallback behavior)
+        });
+
+
+        let fetchProduct = responsew;
+
+        if (fetchProduct.length == 0) {
+          setisProductfetched(true);
         }
-      };
 
-      checkTokenExpiration();
-      getCurrectLocation();
-      const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
-      const storeID=localStorage.getItem('storeID');
-      // const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-      setStoreid(storeID);
-      setTotalCount(addedProducts.length);
-      setTotalPrice(findTotal(addedProducts));
-      fetchCurrence();
-      fetchProducts();
+        if (addedProducts.length > 0) {
+          fetchProduct = changeProductQuantity(fetchProduct);
+          setProducts(fetchProduct);
+        } else {
+          setProducts(fetchProduct);
+        }
+
+      } catch (error) {
+
+        if (error.status == 401) {
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            fetchProducts();
+          }
+        }
+
+        console.error('Error fetching products:', error);
+      }
+      finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchCurrence = async () => {
+      let accessToken = localStorage.getItem('accessToken');
+      try {
+        // Make the API request to fetch currency data
+        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'accept': '*/*',
+            'env': environment,
+          },
+        });
+
+        // Check if 'currency' exists in the response data
+        const currencyExists = corrence.data.value.hasOwnProperty('currency');
+        if (currencyExists) {
+          if (corrence.data.value !== '') {
+            setCurrence(corrence.data.value.currency); // Set the currency state
+          }
+        }
+
+        // Save the currency to localStorage
+        localStorage.setItem('currence', corrence.data.value.currency);
+
+      } catch (error) {
+        if (error.status == 401) {
+          const newToken = await refreshAccessToken();
+          console.log(newToken);
+          if (newToken) {
+            fetchCurrence();
+          }
+        }
+        console.error('Error fetching currency:', error);
+        // Handle error (e.g., show an error message, or fallback behavior)
+      }
+    };
+
+    checkTokenExpiration();
+    getCurrectLocation();
+    const addedProducts = JSON.parse(localStorage.getItem("cart")) || [];
+    const storeID = localStorage.getItem('storeID');
+    // const storeID = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
+    setStoreid(storeID);
+    setTotalCount(addedProducts.length);
+    setTotalPrice(findTotal(addedProducts));
+    fetchCurrence();
+    fetchProducts();
   }, []);
 
   const getCurrectLocation = () => {

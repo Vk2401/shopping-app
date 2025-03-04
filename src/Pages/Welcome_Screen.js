@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import loginUser from '../assets/images/loginUser.png';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
+import { pre } from "framer-motion/client";
 
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -10,7 +11,7 @@ const Welcome_Screen = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT
   const Distance = process.env.REACT_APP_DISTANCE
   const imagePath = process.env.REACT_APP_IMAGE_PATH;
-  const { isAuthenticated, storeTokens,checkTokenExpiration } = useAuth();
+  const { isAuthenticated, storeTokens, checkTokenExpiration } = useAuth();
   const navigate = useNavigate();
   // const [data, setData] = useState('');
   const [data, setData] = useState({ userName: '', pnumber: '' });
@@ -181,27 +182,36 @@ const Welcome_Screen = () => {
         });
 
         const currentTimestamp = response.data.tokens.refresh.expires;
-        const rtExpireAt =  currentTimestamp; 
+        const rtExpireAt = currentTimestamp;
         const rToken = response.data.tokens.refresh.token;
         const aToken = response.data.tokens.access.token;
         const expireAt = response.data.tokens.access.expires;
         const user = response.data.user;
 
-        storeTokens(aToken, expireAt, rToken, user,rtExpireAt);
+        storeTokens(aToken, expireAt, rToken, user, rtExpireAt);
 
         let nearbyStores = await fetchStores();
-        console.log(nearbyStores[0].id);
         if (nearbyStores.length > 0) {
+
           if (nearbyStores.length > 1) {
-            // navigate('/notClose-toStore', { state: { stores: nearbyStores[0] } });
-            console.log( nearbyStores[0].id);
+            let prevStoreID = localStorage.getItem('storeID');
+
+            if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
+              localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+            }
+
             localStorage.setItem('storeID', nearbyStores[0].id);
-            navigate(`/products`);
+            navigate("/products", { state: { stores: nearbyStores[0].id } });
+            // navigate(`/products`);
           } else {
-            console.log(nearbyStores[0].id);
+            let prevStoreID = localStorage.getItem('storeID');
+
+            if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
+              localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+            }
             localStorage.setItem('storeID', nearbyStores[0].id);
-            navigate(`/products`);
-            // navigate('/notClose-toStore', { state: { stores: nearbyStores } });
+            // navigate(`/products`);
+            navigate("/products", { state: { stores: nearbyStores[0].id } });
           }
         } else {
           navigate('/stores');
@@ -217,7 +227,7 @@ const Welcome_Screen = () => {
   };
 
   useEffect(() => {
-    
+
     if (isAuthenticated) {
       checkTokenExpiration();
       navigate('products');

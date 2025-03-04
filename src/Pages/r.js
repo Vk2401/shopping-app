@@ -496,7 +496,7 @@ export const Data=[
     //     resultArr = findSaleRules(Product, newProductQuantity);
     //     saleRuleProduct.saleRuleDetails = resultArr;
   
-    //     if (newProductQuantity != 0) {
+    //     if (newProductQuantity !== 0) {
     //       resultArr = findSaleRules(Product, newProductQuantity);
     //       saleRuleProduct.saleRuleDetails = resultArr;
     //       saleRuleProduct.totalCount = newProductQuantity;
@@ -569,10 +569,10 @@ export const Data=[
   
     //   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
   
-    //   if (cartProducts.length!=0) {
+    //   if (cartProducts.length!==0) {
     //     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
   
-    //     if (newQuantity != 0) {
+    //     if (newQuantity !== 0) {
     //       dpOBJ.productCount = newQuantity;
     //       dpOBJ.price = newQuantity * (newProduct.price - (newProduct.price * newProduct.discount) / 100);
     //       cartProducts.push(dpOBJ);
@@ -607,9 +607,9 @@ export const Data=[
     //   let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
     //   let newQuantity = action === '+' ? newProduct.quantity + 1 : newProduct.quantity - 1;
   
-    //   if (cartProducts != null) {
+    //   if (cartProducts !== null) {
     //     cartProducts = cartProducts.filter(pro => pro.productID !== newProduct._id);
-    //     if (newQuantity != 0) {
+    //     if (newQuantity !== 0) {
     //       npOBJ.productCount = newQuantity;
     //       npOBJ.price = (newQuantity * newProduct.price)
     //       cartProducts.push(npOBJ);

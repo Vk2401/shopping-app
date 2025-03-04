@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
 import { pre } from "framer-motion/client";
+import { fetchStoresUtils } from '../utils/helpers.js';
 
 const Welcome_Screen = () => {
   const apiUrl = process.env.REACT_APP_API_URL
@@ -190,33 +191,40 @@ const Welcome_Screen = () => {
 
         storeTokens(aToken, expireAt, rToken, user, rtExpireAt);
 
-        let nearbyStores = await fetchStores();
-        if (nearbyStores.length > 0) {
+        let nearbyStores = await fetchStoresUtils();
+        let nearbyStore=nearbyStores[0];
 
-          if (nearbyStores.length > 1) {
-            let prevStoreID = localStorage.getItem('storeID');
-
-            if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
-              localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-            }
-
-            localStorage.setItem('storeID', nearbyStores[0].id);
-            navigate("/products", { state: { stores: nearbyStores[0].id } });
-            // navigate(`/products`);
-          } else {
-            console.log(nearbyStores[0]);
-            let prevStoreID = localStorage.getItem('storeID');
-
-            if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
-              localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-            }
-            localStorage.setItem('storeID', nearbyStores[0].id);
-            // navigate(`/products`);
-            navigate("/products", { state: { stores: nearbyStores[0].id } });
-          }
-        } else {
+        if(nearbyStore.distanceInKm<=Distance){
+          navigate("/products", { state: { stores: nearbyStore.id } });
+          localStorage.setItem('storeID', nearbyStore.id);
+        }else{
           navigate('/stores');
         }
+        
+        // if (nearbyStores.length > 0) {
+        //   if (nearbyStores.length > 1) {
+        //     let prevStoreID = localStorage.getItem('storeID');
+
+        //     if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
+        //       localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+        //     }
+
+        //     localStorage.setItem('storeID', nearbyStores[0].id);
+        //     navigate("/products", { state: { stores: nearbyStores[0].id } });
+        //     // navigate(`/products`);
+        //   } else {
+        //     let prevStoreID = localStorage.getItem('storeID');
+
+        //     if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
+        //       localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+        //     }
+        //     localStorage.setItem('storeID', nearbyStores[0].id);
+        //     // navigate(`/products`);
+        //     navigate("/products", { state: { stores: nearbyStores[0].id } });
+        //   }
+        // } else {
+        //   navigate('/stores');
+        // }
 
       } else {
         setErr("Invalid OTP. Please try again.");

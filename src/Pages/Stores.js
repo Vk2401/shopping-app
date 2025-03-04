@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 import userIcon from '../assets/images/Icon awesome-user.svg';
 import leftArrow from '../assets/images/leftArrow.png';
+import { fetchStoresUtils } from '../utils/helpers.js';
 
 const Stores = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const Stores = () => {
   }
 
   useEffect(() => {
-    setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842');
+    setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842')
     setAccessToken(sessionStorage.getItem('accessToken'));
     if (navigator.geolocation) {
 
@@ -114,40 +115,44 @@ const Stores = () => {
 
   const fetchStores = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/shops/getshops?limit=20&page=1`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'accept': 'application/json',
-          'env': environment,
-        },
-      });
+      // const response = await axios.get(`${apiUrl}/shops/getshops?limit=20&page=1`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${accessToken}`,
+      //     'accept': 'application/json',
+      //     'env': environment,
+      //   },
+      // });
 
-      let storesData = response.data.data;
+      // let storesData = response.data.data;
 
-      const sortStoresByDistance = (storesData, currentLat, currentLon) => {
-        // First, calculate the distance for each store
-        const storesWithDistance = storesData.map((store) => {
-          const lat = parseFloat(store.location.lat);
-          const lon = parseFloat(store.location.lon);
+      // const sortStoresByDistance = (storesData, currentLat, currentLon) => {
+      //   // First, calculate the distance for each store
+      //   const storesWithDistance = storesData.map((store) => {
+      //     const lat = parseFloat(store.location.lat);
+      //     const lon = parseFloat(store.location.lon);
 
-          // Calculate the distance between current location and the store's location
-          const distanceInKm = calculateDistance(currentLat, currentLon, lat, lon);
-          const formattedDistance = formatDistance(distanceInKm);  // format the distance (e.g., 2.3 km)
+      //     // Calculate the distance between current location and the store's location
+      //     const distanceInKm = calculateDistance(currentLat, currentLon, lat, lon);
+      //     const formattedDistance = formatDistance(distanceInKm);  // format the distance (e.g., 2.3 km)
 
-          // Add the distance to the store object
-          return { ...store, distance: formattedDistance, distanceInKm };  // Include raw distanceInKm for sorting
-        });
+      //     // Add the distance to the store object
+      //     return { ...store, distance: formattedDistance, distanceInKm };  // Include raw distanceInKm for sorting
+      //   });
 
-        // Then, sort the stores based on the distanceInKm (which is the raw distance)
-        storesWithDistance.sort((a, b) => a.distanceInKm - b.distanceInKm);  // Sorting by distance in ascending order
+      //   // Then, sort the stores based on the distanceInKm (which is the raw distance)
+      //   storesWithDistance.sort((a, b) => a.distanceInKm - b.distanceInKm);  // Sorting by distance in ascending order
 
-        // After sorting, return the stores with the calculated distance
-        return storesWithDistance;
-      };
+      //   // After sorting, return the stores with the calculated distance
+      //   return storesWithDistance;
+      // };
 
-      const sortedStores = sortStoresByDistance(storesData, currentLat, currentLon);
-      setFilteredShops(sortedStores);
-      seStores(sortedStores);
+      // const sortedStores = sortStoresByDistance(storesData, currentLat, currentLon);
+      // setFilteredShops(sortedStores);
+      // seStores(sortedStores);
+   
+      let fetchedStores=await fetchStoresUtils();
+      setFilteredShops(fetchedStores);
+      seStores(fetchedStores);
     } catch (error) {
       console.error("Error fetching stores:", error);
       setShops([]);  // Empty the shops data or set an error state
@@ -163,8 +168,6 @@ const Stores = () => {
 
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-between h-20">
-     
-
           <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => {   navigate("/products", { state: { stores: stores[0].id } });}} />
           <h1 className="text-lightBlack font-bold text-xl"></h1>
           <img src={userIcon} alt="" className="h-9 w-9 buttonColor" onClick={() => { navigate(`/settings`) }} />

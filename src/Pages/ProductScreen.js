@@ -38,23 +38,21 @@ const ProductScreen = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const location = useLocation();
   const store = location.state?.stores || null; // Get storeID from state if available
-  const [tempShop,setTempShop]=useState('');
     
   useEffect(() => {
-    setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842');
+    setStoreid(store);
     setAccessToken(localStorage.getItem('accessToken'));
     let aT = localStorage.getItem('accessToken');
     let prevStoreID = localStorage.getItem('storeID');
     
-    // if (store !== null && prevStoreID !== store) {
-    //   localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-    // }
+    if (store !== null && prevStoreID !== store) {
+      localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
+    }
 
     const fetchProducts = async () => {
-      let temp='11ed64c4-c893-4ef3-9930-25c9af02e842';
       try {
         const response = await axios.get(
-          `${apiUrl}/vms/getProducts/${temp}`,
+          `${apiUrl}/vms/getProducts/${storeID}`,
           {
             headers: {
               'Authorization': `Bearer ${aT}`,
@@ -107,10 +105,9 @@ const ProductScreen = () => {
 
     const fetchCurrence = async () => {
       let accessToken = localStorage.getItem('accessToken');
-      let temp='11ed64c4-c893-4ef3-9930-25c9af02e842';
       try {
         // Make the API request to fetch currency data
-        const corrence = await axios.get(`${apiUrl}/settings/${temp}/preferences`, {
+        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'accept': '*/*',
@@ -119,7 +116,6 @@ const ProductScreen = () => {
         });
 
         // Check if 'currency' exists in the response data
-        console.log(corrence);
         const currencyExists = corrence.data.value.hasOwnProperty('currency');
         if (currencyExists) {
           if (corrence.data.value !== '') {
@@ -218,12 +214,11 @@ const ProductScreen = () => {
   const handleSearchChange = async (e) => {
     const searchTerm = e.target.value.toLowerCase(); // Convert input to lowercase
     const cartProducts = JSON.parse(localStorage.getItem('cart')) || []; // Get cart products (if any)
-    const tempstore='11ed64c4-c893-4ef3-9930-25c9af02e842';
 
     // Build the API URL dynamically based on whether the search term is empty or not
     const searchUrl = searchTerm === ''
-      ? `${apiUrl}/vms/getProducts/${tempstore}`
-      : `${apiUrl}/vms/getProducts/${tempstore}?searchTxt=${searchTerm}`;
+      ? `${apiUrl}/vms/getProducts/${storeID}`
+      : `${apiUrl}/vms/getProducts/${storeID}?searchTxt=${searchTerm}`;
 
     try {
       // Make the API call to fetch the products

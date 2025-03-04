@@ -34,8 +34,6 @@ const CheckoutScreen = () => {
 
     const aToken = localStorage.getItem('accessToken');
     const store = localStorage.getItem('storeID');
-    // const store = 'ab25680f-916c-4b25-98cf-02cba5d2c8fa';
-    // Set state values
     setStoreID(store);
     setAccessToken(aToken);
     setCartProducts(cartProduct);
@@ -48,9 +46,8 @@ const CheckoutScreen = () => {
     // Fetch products from API
     const fetchProduct = async () => {
       try {
-        let tempShop = '11ed64c4-c893-4ef3-9930-25c9af02e842';
         let response = await axios.get(
-          `${productFecthAPI_URL}/vms/getProducts/${tempShop}`,
+          `${productFecthAPI_URL}/vms/getProducts/${storeID}`,
           {
             headers: {
               'Authorization': `Bearer ${aToken}`,
@@ -140,11 +137,10 @@ const CheckoutScreen = () => {
   };
 
   const handleCheckout = async () => {
-    let tempShop = '11ed64c4-c893-4ef3-9930-25c9af02e842';
     setClicked(true);
     const response = await axios.post(`${productPurchaseAPI_URL}/storedatasync/erp-task`,
       {
-        storeId: tempShop,
+        storeId: storeID,
         userId: user.id,
         goal: "dispense",
         details: {

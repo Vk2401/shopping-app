@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import arrow from '../assets/images/arrow-circle-left_solid.png';
-import FontAwosemUser from '../assets/images/FontAwosemUser.png';
 import Userpic from '../assets/images/Userpic.png';
+import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
+import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
 import door from '../assets/images/no-door.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
@@ -32,7 +33,7 @@ const SettingScreen = () => {
         <div>
             <div className="flex flex-col px-6 h-screen font-poppins">
                 <div className="flex items-center justify-center relative py-8">
-                    <img src={arrow} alt="" onClick={() => { navigate(`/products`) }} className="absolute h-10 w-10 left-0" />
+                    <LeftArrow onClick={() => { navigate(`/products`) }} className="absolute h-10 w-10 left-0 text-buttonColor" />
                     <strong className="font-bold text-2xl">Settings</strong>
                 </div>
 
@@ -45,22 +46,22 @@ const SettingScreen = () => {
 
                         <div className="flex flex-col gap-5 mt-10">
                             <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate(`/profile`) }}>
-                                <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
+                                <UserIcon className="h-8 w-8 text-buttonColor rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">Profile</h1>
                             </div>
 
                             <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300" onClick={() => { navigate('/history') }}>
-                                <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
+                                <UserIcon className="h-8 w-8 text-buttonColor rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">History</h1>
                             </div>
 
                             <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300">
-                                <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
+                                <UserIcon className="h-8 w-8 text-buttonColor rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">Call Store Support</h1>
                             </div>
 
                             <div className="flex items-center justify-start gap-5 py-3 border-b-2 border-gray-300">
-                                <img src={FontAwosemUser} alt="" className="h-8 w-8 bg-ligghtGray rounded-full" />
+                                <UserIcon className="h-8 w-8 text-buttonColor rounded-full" />
                                 <h1 className="font-bold text-xl text-lightBlack">Help</h1>
                             </div>
 

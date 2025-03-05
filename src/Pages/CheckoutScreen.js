@@ -4,7 +4,7 @@ import leftArrow from '../assets/images/leftArrow.png';
 import axios from 'axios';
 import productDefaultimg from '../assets/images/grocery.png';
 import { useAuth } from "../context/AuthContext.js";
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/awesome-user.svg';
 import { Data } from '../Pages/r.js';
 import { findTotal } from '../utils/helpers.js';
 

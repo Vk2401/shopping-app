@@ -4,7 +4,7 @@ import storeImage from '../assets/images/location.png'
 import locationImage from '../assets/images/locatioImage.png'
 import { useLocation as useRouterLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/awesome-user.svg';
 
 
 const NotclosetoStore = () => {

@@ -1,5 +1,5 @@
 import react from "react";
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/awesome-user.svg';
 import VM from '../assets/images/VM.png';
 import StoresImage from '../assets/images/location.png';
 import { useNavigate } from 'react-router-dom';

@@ -4,11 +4,11 @@ import locationIcon from '../assets/images/location-sharp.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from "axios";
-import searchicon from '../assets/images/search.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
-import userIcon from '../assets/images/Icon awesome-user.svg';
-import leftArrow from '../assets/images/leftArrow.png';
+import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
+import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
+import { ReactComponent as SearchIcon } from '../assets/images/search.svg';
 import { fetchStoresUtils } from '../utils/helpers.js';
 
 const Stores = () => {
@@ -23,8 +23,8 @@ const Stores = () => {
   const environment = process.env.REACT_APP_ENVIRONMENT;
   const [currentLat, setCurrentLat] = useState(null);
   const [currentLon, setCurrentLon] = useState(null);
-  const [tempShop,setTempShop]=useState('');
-  
+  const [tempShop, setTempShop] = useState('');
+
   const customIcon = L.icon({
     iconUrl: locationIcon,
     iconSize: [25, 28],
@@ -37,27 +37,11 @@ const Stores = () => {
     window.open(url, "_blank");
   };
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-
-    const toRadians = (degrees) => degrees * (Math.PI / 180);
-    const R = 6371; // Earth's radius in km
-
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c * 1000; // Convert km to meters
-  };
-
   const handleSearchChange = async (e) => {
     const query = e.target.value.toLowerCase();
-    console.log(query);
+
     // Filter shops based on query
-    if(query==''){
+    if (query == '') {
       seStores(filteredShops);
       return;
     }
@@ -65,8 +49,9 @@ const Stores = () => {
     const filtered = stores.filter(store =>
       store.name.toLowerCase().includes(query)
     );
- 
+    console.log('kjj');
     seStores(filtered);
+    setFilteredShops(filtered);
   }
 
   const openonMap = (shopID) => {
@@ -75,12 +60,6 @@ const Stores = () => {
     console.log(filteredShops);
     const { lat, lon } = shop[0].location;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
-  }
-
-  function formatDistance(distanceInMeters) {
-    return distanceInMeters >= 1000
-      ? `${(distanceInMeters / 1000).toFixed(1)} km`
-      : `${Math.round(distanceInMeters)} m`;
   }
 
   useEffect(() => {
@@ -115,42 +94,7 @@ const Stores = () => {
 
   const fetchStores = async () => {
     try {
-      // const response = await axios.get(`${apiUrl}/shops/getshops?limit=20&page=1`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${accessToken}`,
-      //     'accept': 'application/json',
-      //     'env': environment,
-      //   },
-      // });
-
-      // let storesData = response.data.data;
-
-      // const sortStoresByDistance = (storesData, currentLat, currentLon) => {
-      //   // First, calculate the distance for each store
-      //   const storesWithDistance = storesData.map((store) => {
-      //     const lat = parseFloat(store.location.lat);
-      //     const lon = parseFloat(store.location.lon);
-
-      //     // Calculate the distance between current location and the store's location
-      //     const distanceInKm = calculateDistance(currentLat, currentLon, lat, lon);
-      //     const formattedDistance = formatDistance(distanceInKm);  // format the distance (e.g., 2.3 km)
-
-      //     // Add the distance to the store object
-      //     return { ...store, distance: formattedDistance, distanceInKm };  // Include raw distanceInKm for sorting
-      //   });
-
-      //   // Then, sort the stores based on the distanceInKm (which is the raw distance)
-      //   storesWithDistance.sort((a, b) => a.distanceInKm - b.distanceInKm);  // Sorting by distance in ascending order
-
-      //   // After sorting, return the stores with the calculated distance
-      //   return storesWithDistance;
-      // };
-
-      // const sortedStores = sortStoresByDistance(storesData, currentLat, currentLon);
-      // setFilteredShops(sortedStores);
-      // seStores(sortedStores);
-   
-      let fetchedStores=await fetchStoresUtils();
+      let fetchedStores = await fetchStoresUtils();
       setFilteredShops(fetchedStores);
       seStores(fetchedStores);
     } catch (error) {
@@ -168,9 +112,9 @@ const Stores = () => {
 
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-between h-20">
-          <img src={leftArrow} alt="" className="h-9 w-9" onClick={() => {   navigate("/products", { state: { stores: stores[0].id } });}} />
-          <h1 className="text-lightBlack font-bold text-xl"></h1>
-          <img src={userIcon} alt="" className="h-9 w-9 buttonColor" onClick={() => { navigate(`/settings`) }} />
+          <LeftArrow onClick={() => { navigate("/products", { state: { stores: stores[0].id } }); }} className="h-10 w-10 text-buttonColor" />
+          <h1 className="text-lightBlack font-bold text-xl">Stores</h1>
+          <UserIcon onClick={() => { navigate(`/settings`) }} className="h-10 w-10 text-buttonColor" />
         </div>
         <div className="flex-1 ">
           <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
@@ -219,11 +163,7 @@ const Stores = () => {
                 onChange={handleSearchChange}
                 className="w-full font-semibold py-3 px-5 border-2  border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-green-500 transition-all"
               />
-              <img
-                src={searchicon}
-                alt="Search"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6"
-              />
+              <SearchIcon onClick={() => navigate(`/settings`)} className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import bg from '../assets/images/desktop-bg.png';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 import image from '../assets/images/errrPageimage.png';
-import userIcon from '../assets/images/FontAwosemUser.png';
+import userIcon from '../assets/images/awesome-user.svg';
 import leftArrow from '../assets/images/leftArrow.png';
 
 const ErrorScreen = () => {

@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import searchicon from '../assets/images/search.png';
 import basketImage from '../assets/images/basket.png';
 import { useAuth } from "../context/AuthContext.js";
 import loader from '../assets/images/loader.gif';
-import leftArrow from '../assets/images/leftArrow.png';
+import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
+import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
+import { ReactComponent as SearchIcon } from '../assets/images/search.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import productDefaultimg from '../assets/images/grocery.png';
 import discountImag from '../assets/images/discount.png';
 import closeImage from '../assets/images/ios-close-circle.png';
 import tickMark from '../assets/images/tick.png';
-import userIcon from '../assets/images/Icon awesome-user.svg';
 import axios from "axios";
 import empty from '../assets/images/ProductsNotFoundpng.png';
 import noProductImage from '../assets/images/ProductsNotFoundpng.png';
-import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart, findTotal, changeProductQuantity } from '../utils/helpers.js';
+import { updateDicsountProductInCart, updateNormalProductIncart, updateSaleRuleProductInCart, findTotal, changeProductQuantity, fetchProducts, fetchCurrence } from '../utils/helpers.js';
 import { Data } from '../Pages/r.js';
 
 const ProductScreen = () => {
@@ -38,106 +38,16 @@ const ProductScreen = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const location = useLocation();
   const store = location.state?.stores || null; // Get storeID from state if available
-    
+
   useEffect(() => {
     setStoreid(store);
     setAccessToken(localStorage.getItem('accessToken'));
     let aT = localStorage.getItem('accessToken');
     let prevStoreID = localStorage.getItem('storeID');
-    
+
     if (store !== null && prevStoreID !== store) {
       localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
     }
-
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/vms/getProducts/${storeID}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${aT}`,
-              'accept': '*/*',
-              'env': environment,
-            },
-          }
-        );
-        let responsew = response.data;
-
-        responsew.forEach((prod) => {
-          if (prod.availableItems === 0) {
-            return;
-          }
-
-          if (prod.quantity === undefined) {
-            prod.quantity = 0;
-          }
-        });
-
-
-        let fetchProduct = responsew;
-
-        if (fetchProduct.length == 0) {
-          setisProductfetched(true);
-        }
-
-        if (addedProducts.length > 0) {
-          fetchProduct = changeProductQuantity(fetchProduct);
-          setProducts(fetchProduct);
-        } else {
-          setProducts(fetchProduct);
-        }
-
-      } catch (error) {
-
-        if (error.status == 401) {
-          const newToken = await refreshAccessToken();
-          if (newToken) {
-            fetchProducts();
-          }
-        }
-
-        console.error('Error fetching products:', error);
-      }
-      finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchCurrence = async () => {
-      let accessToken = localStorage.getItem('accessToken');
-      try {
-        // Make the API request to fetch currency data
-        const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'accept': '*/*',
-            'env': environment,
-          },
-        });
-
-        // Check if 'currency' exists in the response data
-        const currencyExists = corrence.data.value.hasOwnProperty('currency');
-        if (currencyExists) {
-          if (corrence.data.value !== '') {
-            setCurrence(corrence.data.value.currency); // Set the currency state
-          }
-        }
-
-        // Save the currency to localStorage
-        localStorage.setItem('currence', corrence.data.value.currency);
-
-      } catch (error) {
-        if (error.status == 401) {
-          const newToken = await refreshAccessToken();
-          console.log(newToken);
-          if (newToken) {
-            fetchCurrence();
-          }
-        }
-        console.error('Error fetching currency:', error);
-        // Handle error (e.g., show an error message, or fallback behavior)
-      }
-    };
 
     checkTokenExpiration();
     getCurrectLocation();
@@ -147,8 +57,8 @@ const ProductScreen = () => {
     setStoreid(storeID);
     setTotalCount(addedProducts.length);
     setTotalPrice(findTotal(addedProducts));
-    fetchCurrence();
-    fetchProducts();
+    fetchCurrence(storeID, setCurrence, refreshAccessToken);
+    fetchProducts(storeID, setLoading, setProducts, accessToken, setisProductfetched, addedProducts, refreshAccessToken);
   }, []);
 
   const getCurrectLocation = () => {
@@ -269,6 +179,7 @@ const ProductScreen = () => {
     setShowPopup(true);
   };
 
+
   return (
     <div className="">
 
@@ -280,9 +191,9 @@ const ProductScreen = () => {
         <div className="font-poppins px-3 h-screen ">
           <div className=" px-3 h-36 flex flex-col fixed top-0 left-0 w-full bg-white ">
             <div className="flex text-buttonColor items-center justify-between relative h-1/2">
-              <img onClick={() => navigate(`/stores`)} src={leftArrow} alt="" className="h-10 w-10" />
+              <LeftArrow onClick={() => navigate(`/stores`)} className="h-10 w-10 text-buttonColor" />
               <h1 className="text-lightBlack font-bold text-xl">Vending Machine</h1>
-              <img onClick={() => navigate(`/settings`)} src={userIcon} alt="" className="h-8 w-8 text-buttonColor" />
+              <UserIcon onClick={() => navigate(`/settings`)} className="h-10 w-10 fill-buttonColor" />
             </div>
 
             <div className="flex items-center justify-center h-1/2">
@@ -293,17 +204,13 @@ const ProductScreen = () => {
                   onChange={handleSearchChange}
                   className="w-full font-semibold py-3 px-5 border-2 border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-buttonColor transition-all"
                 />
-                <img
-                  src={searchicon}
-                  alt="Search"
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6"
-                />
+                <SearchIcon onClick={() => navigate(`/settings`)} className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
               </div>
             </div>
           </div>
 
           {isProductfetched ? (
-            <div className=" flex flex-col bg justify-center items-center h-full w-full bg-red-500 gap-2 ">
+            <div className=" flex flex-col bg justify-center items-center h-full w-full gap-2 ">
               <img src={noProductImage} alt="" className="h-52 w-52" />
               <button onClick={() => { navigate(`/stores`) }} className="bg-buttonColor text-white text-lg font-semibold px-10 py-3 rounded-full">Check other stores</button>
             </div>
@@ -509,7 +416,7 @@ const ProductScreen = () => {
       }
 
       {noProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20 bg-red-500">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins z-20">
           <div className="w-96 h-48 bg-white rounded-xl flex flex-col items-center justify-center gap-2">
             <img src={basketImage} alt="" className="h-14 w-14" />
             <strong className="text-black font-semibold text-lg">Please add product</strong>

@@ -1,9 +1,8 @@
 import { Data } from '../Pages/r.js';
 import axios from 'axios';
+
 const apiUrl = process.env.REACT_APP_API_URL
-const authAPIURL = process.env.REACT_APP_AUTH_API_URL
 const environment = process.env.REACT_APP_ENVIRONMENT
-const Distance = process.env.REACT_APP_DISTANCE
 
 let currentLocation = {
   currentLatitude: '',
@@ -397,7 +396,7 @@ export const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 1
 };
 
 export const fetchStoresUtils = async () => {
-   getCurrectLocation();
+  getCurrectLocation();
   const aToken = sessionStorage.getItem('accessToken');
 
   const response = await axios.get(`${apiUrl}/shops/getshops?limit=50&page=1`, {
@@ -409,6 +408,99 @@ export const fetchStoresUtils = async () => {
   });
 
   const allStores = response.data.data;
+  console.log(allStores);
   const sortedStores = sortStoresByDistance(allStores, currentLocation.currentLatitude, currentLocation.currentLongitude);
   return sortedStores;
+};
+
+export const fetchProducts = async (storeID, setLoading, setProducts, accessToken, setisProductfetched, addedProducts, refreshAccessToken) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/vms/getProducts/${storeID}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'accept': '*/*',
+          'env': environment,
+        },
+      }
+    );
+
+    let responsew = response.data;
+
+    responsew.forEach((prod) => {
+      if (prod.availableItems === 0) {
+        return;
+      }
+
+      if (prod.quantity === undefined) {
+        prod.quantity = 0;
+      }
+    });
+
+    let fetchProduct = responsew;
+    if (fetchProduct.length == 0) {
+      setisProductfetched(true);
+    }
+
+    if (addedProducts.length > 0) {
+      fetchProduct = changeProductQuantity(fetchProduct);
+      setProducts(fetchProduct);
+    } else {
+      setProducts(fetchProduct);
+    }
+
+  } catch (error) {
+
+    if (error.status == 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        fetchProducts();
+      }
+    }
+
+    console.error('Error fetching products:', error);
+  }
+  finally {
+    setLoading(false);
+  }
+};
+
+export const fetchCurrence = async (storeID, setCurrence, refreshAccessToken) => {
+  let accessToken = localStorage.getItem('accessToken');
+
+  try {
+    // Make the API request to fetch currency data
+    const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'accept': '*/*',
+        'env': environment,
+      },
+    });
+    console.log(corrence);
+ 
+    // Check if 'currency' exists in the response data
+    const currencyExists = corrence.data.value.hasOwnProperty('currency');
+    if (currencyExists) {
+      if (corrence.data.value !== '') {
+        setCurrence(corrence.data.value.currency); // Set the currency state
+      }
+    }
+  
+
+    // Save the currency to localStorage
+    localStorage.setItem('currence', corrence.data.value.currency);
+
+  } catch (error) {
+    if (error.status == 401) {
+      const newToken = await refreshAccessToken();
+      console.log(newToken);
+      if (newToken) {
+        fetchCurrence();
+      }
+    }
+    console.error('Error fetching currency:', error);
+    // Handle error (e.g., show an error message, or fallback behavior)
+  }
 };

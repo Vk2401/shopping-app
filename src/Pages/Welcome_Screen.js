@@ -192,6 +192,7 @@ const Welcome_Screen = () => {
         storeTokens(aToken, expireAt, rToken, user, rtExpireAt);
 
         let nearbyStores = await fetchStoresUtils();
+        console.log(nearbyStores);
         let nearbyStore=nearbyStores[0];
 
         if(nearbyStore.distanceInKm<=Distance){

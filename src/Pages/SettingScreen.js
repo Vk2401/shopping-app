@@ -6,18 +6,38 @@ import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
 import door from '../assets/images/no-door.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
+import axios from "axios";
 
 const SettingScreen = () => {
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
 
+    const userLogout = async (orderReference) => {
+            try {
+                const response = await axios.get(`https://devapi-tanlux.storetech.ai/v1/bankid/logout?orderRef=${orderReference}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+            }
+            catch (err) {
+                console.log(err);
+            }
+        
+    }
 
     const handleLogout = (text) => {
         if (text == 'yes') {
+            let orderReference = localStorage.getItem('orderReferance');
+            if(orderReference!=null){
+                userLogout(orderReference);
+            }
             localStorage.removeItem('cart');
             localStorage.removeItem('total');
             localStorage.removeItem('storeID');
+            localStorage.removeItem('orderReferance');
+          
             logout();
             navigate('/');
         }

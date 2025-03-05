@@ -89,7 +89,6 @@ const ProductScreen = () => {
   };
 
   const handleIncrement = (Product) => {
-
     if (Product.quantity == Product.availableItems) {
       setIsAlert(true);
       setAlertMessage(`Stock available only ${Product.quantity}`);

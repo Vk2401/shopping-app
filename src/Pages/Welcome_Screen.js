@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import loginUser from '../assets/images/loginUser.png';
+import loginUserIMG from '../assets/images/loginUser.png';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
-import { pre } from "framer-motion/client";
 import { fetchStoresUtils } from '../utils/helpers.js';
 
 const Welcome_Screen = () => {
-  const apiUrl = process.env.REACT_APP_API_URL
   const authAPIURL = process.env.REACT_APP_AUTH_API_URL
-  const environment = process.env.REACT_APP_ENVIRONMENT
+
   const Distance = process.env.REACT_APP_DISTANCE
   const imagePath = process.env.REACT_APP_IMAGE_PATH;
   const { isAuthenticated, storeTokens, checkTokenExpiration } = useAuth();
@@ -20,8 +18,8 @@ const Welcome_Screen = () => {
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [serverOTP, setServerOTP] = useState("");
   const [showOTPField, setShowOTPField] = useState(false);
-  const [registerUser, setRegisterUser] = useState(false);
-  const loginData = {
+  const [isUserLogin, setIsUserLogin] = useState(false);
+  let loginData = {
     "login_type": "bankid",
     "login_id": "199609052387",
     "login_name": "Jegan",
@@ -52,71 +50,45 @@ const Welcome_Screen = () => {
     );
   };
 
-  const haversineDistance = (lat1, lon1, lat2, lon2) => {
-    const toRadians = (deg) => (deg * Math.PI) / 180;
-    const R = 6371; // Earth's radius in km
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
+  const checkUser = async (orderRef) => {
+    setIsUserLogin(true);
+    try {
+      const response = await axios.get('https://devapi-tanlux.storetech.ai/v1/bankid/collect', {
+        params: { orderRef },  // Sending orderRef as a query parameter
+        headers: { Accept: 'application/json' } // Required header
+      });
 
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      let user = response.data;
+      user = user.user;
+      loginData.login_id = user.personalNumber;
+      loginData.login_name = user.givenName;
+      loginData.device_type = 'android';
+      loginUser();
 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c * 1000; // Convert km to meters
-  };
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-  const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 15000) => {
-    const nearbyStores = stores.filter((store) => {
-      const storeLat = parseFloat(store.location.lat);
-      const storeLon = parseFloat(store.location.lon);
-
-      if (!storeLat || !storeLon) return false;
-
-      const distance = haversineDistance(currentLat, currentLon, storeLat, storeLon);
-      console.log(maxDistance);
-      return distance <= maxDistance;
-    });
-
-    return nearbyStores.length > 0 ? nearbyStores : [];
-  };
-
-  const fetchStores = async () => {
-    const aToken = sessionStorage.getItem('accessToken');
-
-    const response = await axios.get(`${apiUrl}/shops/getshops?limit=50&page=1`, {
-      headers: {
-        'Authorization': `Bearer ${aToken}`,
-        'accept': 'application/json',
-        'env': environment,
-      },
-    });
-
-    const allStores = response.data.data;
-    const nearbyStores = await findNearbyStores(currentLocation.currentLatitude, currentLocation.currentLongitude, allStores, Distance);
-    return nearbyStores;
-  };
-
-  const BankcId=async()=>{
+  const BankcId = async () => {
+   
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    try{
-      const response=await axios.get('https://devapi-tanlux.storetech.ai/v1/bankid/auth',{
+    try {
+      const response = await axios.get('https://devapi-tanlux.storetech.ai/v1/bankid/auth', {
         params: { endUserIp: '1.1.1.1' }, // Query parameter
         headers: { Accept: 'application/json' }, // Header
       });
-      console.log(response.data.autoStartToken);
-      
-      const redirectURL='https://vending.webronics.com';
-      const bankIdLink =`https://app.bankid.com/?autostarttoken=${response.data.autoStartToken}&redirect=${redirectURL}`;
+      localStorage.setItem('orderReferance', response.data.orderRef);
+      const redirectURL = `https://vending.webronics.com`;
+      const bankIdLink = `https://app.bankid.com/?autostarttoken=${response.data.autoStartToken}&redirect=${redirectURL}`;
       if (isMobile) {
         window.location.href = bankIdLink; // Open BankID app
       } else {
         window.location.href = "https://bankid.example.com"; // Redirect to web authentication
       }
       // console.log('Response:', response.data);
-    }catch(err){
+    } catch (err) {
       console.error('Error:', err);
     }
   }
@@ -216,15 +188,15 @@ const Welcome_Screen = () => {
 
         let nearbyStores = await fetchStoresUtils();
         console.log(nearbyStores);
-        let nearbyStore=nearbyStores[0];
+        let nearbyStore = nearbyStores[0];
 
-        if(nearbyStore.distanceInKm<=Distance){
+        if (nearbyStore.distanceInKm <= Distance) {
           navigate("/products", { state: { stores: nearbyStore.id } });
           localStorage.setItem('storeID', nearbyStore.id);
-        }else{
+        } else {
           navigate('/stores');
         }
-        
+
         // if (nearbyStores.length > 0) {
         //   if (nearbyStores.length > 1) {
         //     let prevStoreID = localStorage.getItem('storeID');
@@ -259,12 +231,52 @@ const Welcome_Screen = () => {
     }
   };
 
-  useEffect(() => {
+  const loginUser = async () => {
 
-    if (isAuthenticated) {
-      checkTokenExpiration();
-      navigate('products');
+    try {
+      const response = await axios.post(`${authAPIURL}/auth/customer-login`, loginData, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const { tokens, user } = response.data;
+      const { access, refresh } = tokens;
+
+      storeTokens(access.token, access.expires, refresh.token, user, refresh.expires);
+
+      let nearbyStores = await fetchStoresUtils();
+      if (nearbyStores.length > 0) {
+        setIsUserLogin(false);
+        let nearbyStore = nearbyStores[0];
+
+        if (nearbyStore.distanceInKm <= Distance) {
+          navigate("/products", { state: { stores: nearbyStore.id } });
+          localStorage.setItem('storeID', nearbyStore.id);
+        } else {
+          navigate('/stores');
+        }
+      } else {
+        setIsUserLogin(false);
+        navigate('/stores');
+      }
+    } catch (error) {
+      console.error('Login error:', error.response?.data || error.message);
     }
+  };
+
+
+  useEffect(() => {
+    let orderRefernce = localStorage.getItem('orderReferance');
+    if (orderRefernce != null) {
+      checkUser(orderRefernce);
+    }
+
+    // if (isAuthenticated) {
+    //   checkTokenExpiration();
+    //   navigate('products');
+    // }
     getCurrectLocation();
   }, []);
 
@@ -275,27 +287,13 @@ const Welcome_Screen = () => {
     >
       <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6 mt-10">
         <strong className="text-white text-3xl font-bold">Welcome!</strong>
-        <img src={loginUser} alt="" className="h-[200px] w-[200px]" />
+        <img src={loginUserIMG} alt="" className="h-[200px] w-[200px]" />
         <h1 className="text-3xl font-bold text-white mt-7">Sign In</h1>
       </div>
 
       <div className="h-1/2  w-full flex flex-col items-center justify- gap-x-1 mt-5 ">
         <form onSubmit={showOTPField ? handleOTPSubmit : handleFormSubmit} className="flex flex-col gap-6 bg-white rounded-lg py-7 px-6 shadow-lg">
           <div className="flex flex-col gap-3 w-full">
-            {
-              registerUser &&
-              <>
-                <label htmlFor="userName" className="font-semibold text-lg text-gray-700 ml-2">User Name</label>
-                <input
-                  type="text"
-                  name="userName"
-                  className="w-full border border-gray-300 outline-none py-3 px-4 rounded-md focus:ring-2 focus:ring-buttonColor transition-all"
-                  placeholder="Enter Name"
-                  onChange={handleChange}
-                />
-              </>
-            }
-
             <label htmlFor="phone" className="font-semibold text-lg text-gray-700 ml-2">Phone Number</label>
             <input
               type="number"
@@ -336,21 +334,30 @@ const Welcome_Screen = () => {
           </div>
 
           <div className="flex flex-col items-center gap-2">
+
+            <p id='result' className="overflow-x-auto"></p>
             <button className="bg-buttonColor text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
               {showOTPField ? 'Validate OTP' : 'GET OTP'}
             </button>
             or
-            <button onClick={()=>BankcId()}  className="bg-red-500 text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
-               Sign In using BankID
-            </button>
+            <a onClick={() => BankcId()} className="text-center bg-red-500 text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
+              Sign In using BankID
+            </a>
             <p className="text-gray-600 text-sm text-center text-wrap">
               By Signing In you accept our
               <span className="text-buttonColor font-semibold cursor-pointer"> Terms of Services</span> and
               <span className="text-buttonColor font-semibold cursor-pointer"> Privacy Policy</span>.
             </p>
+
           </div>
         </form>
       </div>
+
+      {isUserLogin && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5 pb-5 font-poppins">
+          <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
+        </div>
+      )}
     </div>
   );
 };

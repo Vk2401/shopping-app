@@ -98,6 +98,29 @@ const Welcome_Screen = () => {
     return nearbyStores;
   };
 
+  const BankcId=async()=>{
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    try{
+      const response=await axios.get('https://devapi-tanlux.storetech.ai/v1/bankid/auth',{
+        params: { endUserIp: '1.1.1.1' }, // Query parameter
+        headers: { Accept: 'application/json' }, // Header
+      });
+      console.log(response.data.autoStartToken);
+      
+      const redirectURL='https://vending.webronics.com';
+      const bankIdLink =`https://app.bankid.com/?autostarttoken=${response.data.autoStartToken}&redirect=${redirectURL}`;
+      if (isMobile) {
+        window.location.href = bankIdLink; // Open BankID app
+      } else {
+        window.location.href = "https://bankid.example.com"; // Redirect to web authentication
+      }
+      // console.log('Response:', response.data);
+    }catch(err){
+      console.error('Error:', err);
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
@@ -316,10 +339,10 @@ const Welcome_Screen = () => {
             <button className="bg-buttonColor text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
               {showOTPField ? 'Validate OTP' : 'GET OTP'}
             </button>
-            {/* <p onClick={() => setRegisterUser((prev) => !prev)} className="cursor-pointer text-buttonColor">
-              {registerUser ? "Already registered? Login here!" : "New here? Register now!"}
-            </p> */}
-
+            or
+            <button onClick={()=>BankcId()}  className="bg-red-500 text-white font-semibold rounded-full w-full py-3 transition-all hover:opacity-90">
+               Sign In using BankID
+            </button>
             <p className="text-gray-600 text-sm text-center text-wrap">
               By Signing In you accept our
               <span className="text-buttonColor font-semibold cursor-pointer"> Terms of Services</span> and

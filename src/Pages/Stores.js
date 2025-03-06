@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import locationIcon from '../assets/images/location-sharp.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -24,6 +25,10 @@ const Stores = () => {
   const [currentLat, setCurrentLat] = useState(null);
   const [currentLon, setCurrentLon] = useState(null);
   const [tempShop, setTempShop] = useState('');
+  const mapContainerStyle = {
+    width: "100%",
+    height: "100%",
+  };
 
   const customIcon = L.icon({
     iconUrl: locationIcon,
@@ -121,7 +126,7 @@ const Stores = () => {
           <UserIcon onClick={() => { navigate(`/settings`) }} className="h-10 w-10 text-buttonColor" />
         </div>
         <div className="flex-1 ">
-          <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
+          {/* <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {stores.map((store) => (
               <Marker key={store.id} position={[store.location.lat, store.location.lon]} icon={customIcon} >
@@ -149,7 +154,19 @@ const Stores = () => {
                 </Popup>
               </Marker>
             ))}
-          </MapContainer>
+          </MapContainer> */}
+
+<GoogleMap mapContainerStyle={mapContainerStyle} zoom={5} center={[16.893746, 77.438584]}>
+      {stores.map((store) => (
+        <Marker
+          key={store.id}
+          position={{ lat: parseFloat(store.location.lat), lng: parseFloat(store.location.lon) }}
+          onClick={() => window.open(`https://www.google.com/maps?q=${store.location.lat},${store.location.lon}`, "_blank")}
+        />
+      ))}
+    </GoogleMap>
+
+
         </div>
       </div>
 

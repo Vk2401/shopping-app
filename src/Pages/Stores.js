@@ -14,7 +14,7 @@ import { fetchStoresUtils } from '../utils/helpers.js';
 const Stores = () => {
   const navigate = useNavigate();
   const [shops, setShops] = useState([]);
-  const [stores, seStores] = useState([]);
+  const [stores, setStores] = useState([]);
   const { checkTokenExpiration } = useAuth();
   const [accessToken, setAccessToken] = useState();
   const [filteredShops, setFilteredShops] = useState([]);
@@ -38,20 +38,21 @@ const Stores = () => {
   };
 
   const handleSearchChange = async (e) => {
-    const query = e.target.value.toLowerCase();
+    setLoading(true);
 
-    // Filter shops based on query
+    const query = e.target.value.toLowerCase();
     if (query == '') {
-      seStores(filteredShops);
+      fetchStores();
       return;
     }
 
     const filtered = stores.filter(store =>
       store.name.toLowerCase().includes(query)
     );
-    console.log('kjj');
-    seStores(filtered);
+
+    setStores(filtered);
     setFilteredShops(filtered);
+    setLoading(false);
   }
 
   const openonMap = (shopID) => {
@@ -63,6 +64,7 @@ const Stores = () => {
   }
 
   useEffect(() => {
+
     setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842')
     setAccessToken(sessionStorage.getItem('accessToken'));
     if (navigator.geolocation) {
@@ -96,14 +98,13 @@ const Stores = () => {
     try {
       let fetchedStores = await fetchStoresUtils();
       setFilteredShops(fetchedStores);
-      seStores(fetchedStores);
+      setStores(fetchedStores);
     } catch (error) {
       console.error("Error fetching stores:", error);
-      setShops([]);  // Empty the shops data or set an error state
+      setShops([]);
       setFilteredShops([]);
     } finally {
       setLoading(false);
-      // Set loading to false after data is fetched or error occurred
     }
   }
 

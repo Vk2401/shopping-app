@@ -60,8 +60,9 @@ const Welcome_Screen = () => {
 
       let user = response.data;
       user = user.user;
+
       loginData.login_id = user.personalNumber;
-      loginData.login_name = user.givenName;
+      loginData.login_name = user.name;
       loginData.device_type = 'android';
       loginUser();
 
@@ -71,7 +72,7 @@ const Welcome_Screen = () => {
   }
 
   const BankcId = async () => {
-   
+
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     try {
@@ -187,7 +188,6 @@ const Welcome_Screen = () => {
         storeTokens(aToken, expireAt, rToken, user, rtExpireAt);
 
         let nearbyStores = await fetchStoresUtils();
-        console.log(nearbyStores);
         let nearbyStore = nearbyStores[0];
 
         if (nearbyStore.distanceInKm <= Distance) {
@@ -243,10 +243,11 @@ const Welcome_Screen = () => {
 
       const { tokens, user } = response.data;
       const { access, refresh } = tokens;
-
-      storeTokens(access.token, access.expires, refresh.token, user, refresh.expires);
+    
+      storeTokens(access.token, access.expires, refresh.token, loginData, refresh.expires);
 
       let nearbyStores = await fetchStoresUtils();
+
       if (nearbyStores.length > 0) {
         setIsUserLogin(false);
         let nearbyStore = nearbyStores[0];
@@ -266,24 +267,24 @@ const Welcome_Screen = () => {
     }
   };
 
-
   useEffect(() => {
+    if (isAuthenticated) {
+      checkTokenExpiration();
+      navigate('products');
+    }
+
     let orderRefernce = localStorage.getItem('orderReferance');
     if (orderRefernce != null) {
       checkUser(orderRefernce);
     }
 
-    // if (isAuthenticated) {
-    //   checkTokenExpiration();
-    //   navigate('products');
-    // }
     getCurrectLocation();
   }, []);
 
   return (
     <div
-      className="flex flex-col h-screen justify-center font-poppins px-5 overflow-y-scroll hidden-scrollbar"
-      style={{ backgroundImage: 'url(/images/desktop-bg.png)', backgroundSize: 'contain' }}
+      className="flex flex-col h-screen justify-center font-poppins px-5 overflow-y-scroll hidden-scrollbar bg-buttonColor"
+      style={{ backgroundImage: 'url(/images/shopping-app-bg.svg)', backgroundSize: 'contain' }}
     >
       <div className="h-1/2 w-full flex flex-col items-center justify-center gap-6 mt-10">
         <strong className="text-white text-3xl font-bold">Welcome!</strong>

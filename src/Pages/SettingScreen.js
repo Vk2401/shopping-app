@@ -12,6 +12,7 @@ const SettingScreen = () => {
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
+    const [user,setUser]=useState([]);
 
     const userLogout = async (orderReference) => {
             try {
@@ -48,6 +49,8 @@ const SettingScreen = () => {
         if (!isAuthenticated) {
             navigate("/");
         }
+        let storeUser=JSON.parse(localStorage.getItem('user')) ;
+        setUser(storeUser);
     }, []);
     return (
         <div>
@@ -61,7 +64,7 @@ const SettingScreen = () => {
                     <div className="flex flex-col">
                         <div className="flex flex-col items-center justify-center gap-3 py-5 bg-ligghtGray rounded-md">
                             <img src={Userpic} alt="" className="rounded-full" />
-                            <strong className="text-2xl ">John smith</strong>
+                            <strong className="text-2xl ">{user.login_name}</strong>
                         </div>
 
                         <div className="flex flex-col gap-5 mt-10">

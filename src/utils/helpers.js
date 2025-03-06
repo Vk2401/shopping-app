@@ -408,8 +408,8 @@ export const fetchStoresUtils = async () => {
   });
 
   const allStores = response.data.data;
-  console.log(allStores);
   const sortedStores = sortStoresByDistance(allStores, currentLocation.currentLatitude, currentLocation.currentLongitude);
+  
   return sortedStores;
 };
 

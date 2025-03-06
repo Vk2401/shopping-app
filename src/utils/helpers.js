@@ -1,5 +1,5 @@
 import { Data } from '../Pages/r.js';
-import axios from 'axios';
+import axios, { all } from 'axios';
 
 const apiUrl = process.env.REACT_APP_API_URL
 const environment = process.env.REACT_APP_ENVIRONMENT
@@ -409,7 +409,7 @@ export const fetchStoresUtils = async () => {
 
   const allStores = response.data.data;
   const sortedStores = sortStoresByDistance(allStores, currentLocation.currentLatitude, currentLocation.currentLongitude);
-  
+
   return sortedStores;
 };
 
@@ -478,8 +478,7 @@ export const fetchCurrence = async (storeID, setCurrence, refreshAccessToken) =>
         'env': environment,
       },
     });
-    console.log(corrence);
- 
+
     // Check if 'currency' exists in the response data
     const currencyExists = corrence.data.value.hasOwnProperty('currency');
     if (currencyExists) {
@@ -487,15 +486,13 @@ export const fetchCurrence = async (storeID, setCurrence, refreshAccessToken) =>
         setCurrence(corrence.data.value.currency); // Set the currency state
       }
     }
-  
 
-    // Save the currency to localStorage
     localStorage.setItem('currence', corrence.data.value.currency);
 
   } catch (error) {
     if (error.status == 401) {
+
       const newToken = await refreshAccessToken();
-      console.log(newToken);
       if (newToken) {
         fetchCurrence();
       }

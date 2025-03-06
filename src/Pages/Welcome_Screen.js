@@ -7,7 +7,6 @@ import { fetchStoresUtils } from '../utils/helpers.js';
 
 const Welcome_Screen = () => {
   const authAPIURL = process.env.REACT_APP_AUTH_API_URL
-
   const Distance = process.env.REACT_APP_DISTANCE
   const imagePath = process.env.REACT_APP_IMAGE_PATH;
   const { isAuthenticated, storeTokens, checkTokenExpiration } = useAuth();
@@ -243,7 +242,7 @@ const Welcome_Screen = () => {
 
       const { tokens, user } = response.data;
       const { access, refresh } = tokens;
-    
+
       storeTokens(access.token, access.expires, refresh.token, loginData, refresh.expires);
 
       let nearbyStores = await fetchStoresUtils();
@@ -361,6 +360,7 @@ const Welcome_Screen = () => {
       )}
     </div>
   );
+
 };
 
 export default Welcome_Screen;

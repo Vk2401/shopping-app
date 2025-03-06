@@ -12,33 +12,33 @@ const SettingScreen = () => {
     const { isAuthenticated, logout } = useAuth();
     const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
-    const [user,setUser]=useState([]);
+    const [user, setUser] = useState([]);
 
     const userLogout = async (orderReference) => {
-            try {
-                const response = await axios.get(`https://devapi-tanlux.storetech.ai/v1/bankid/logout?orderRef=${orderReference}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
-            }
-            catch (err) {
-                console.log(err);
-            }
-        
+        try {
+            const response = await axios.get(`https://devapi-tanlux.storetech.ai/v1/bankid/logout?orderRef=${orderReference}`, {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+
     }
 
     const handleLogout = (text) => {
         if (text == 'yes') {
             let orderReference = localStorage.getItem('orderReferance');
-            if(orderReference!=null){
+            if (orderReference != null) {
                 userLogout(orderReference);
             }
             localStorage.removeItem('cart');
             localStorage.removeItem('total');
             localStorage.removeItem('storeID');
             localStorage.removeItem('orderReferance');
-          
+
             logout();
             navigate('/');
         }
@@ -49,7 +49,7 @@ const SettingScreen = () => {
         if (!isAuthenticated) {
             navigate("/");
         }
-        let storeUser=JSON.parse(localStorage.getItem('user')) ;
+        let storeUser = JSON.parse(localStorage.getItem('user'));
         setUser(storeUser);
     }, []);
     return (

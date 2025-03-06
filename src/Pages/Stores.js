@@ -39,22 +39,25 @@ const Stores = () => {
 
   const handleSearchChange = async (e) => {
     setLoading(true);
+    try {
+      const query = e.target.value.toLowerCase();
+      if (query === '') {
+        await fetchStores(); // Ensure fetchStores is awaited
+        return;
+      }
+      const filtered = stores.filter(store =>
+        store.name.toLowerCase().includes(query)
+      );
+      setLoading(false);
+      setStores(filtered);
+      setFilteredShops(filtered);
+    } catch (error) {
+      console.error("Error in handleSearchChange:", error);
+    } finally {
 
-    const query = e.target.value.toLowerCase();
-    if (query == '') {
-      fetchStores();
-      return;
     }
-
-    const filtered = stores.filter(store =>
-      store.name.toLowerCase().includes(query)
-    );
-
-    setStores(filtered);
-    setFilteredShops(filtered);
-    setLoading(false);
-  }
-
+  };
+  
   const openonMap = (shopID) => {
     console.log('hgb');
     const shop = filteredShops.filter((shop) => shop.id === shopID);
@@ -175,9 +178,9 @@ const Stores = () => {
               <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
             </div>
           ) : (
-            stores.map((shop) => {
+            stores.map((shop,index) => {
               return (
-                <div key={shop.id} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
+                <div key={index} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                   <div className="flex gap-2 items-center">
                     <img src={locationIcon} alt="" className="h-5 w-4" />
                     <div className="flex flex-col">

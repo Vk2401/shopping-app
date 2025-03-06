@@ -6,7 +6,6 @@ import { useLocation as useRouterLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from "../context/AuthContext.js";
 import userIcon from '../assets/images/awesome-user.svg';
 
-
 const NotclosetoStore = () => {
   const navigate = useNavigate();
   const [distance, setDistance] = useState('');
@@ -77,7 +76,6 @@ const NotclosetoStore = () => {
     );
   };
 
- 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
@@ -97,6 +95,7 @@ const NotclosetoStore = () => {
   }, [isAuthenticated, stores]); // Include dependencies to re-run when `stores` changes
 
   return (
+
     <div className="flex flex-col h-screen w-full font-poppins">
       <div className="bg-buttonColor py-10 relative flex flex-col items-center justify-center"
         style={{ borderBottomLeftRadius: '38%', borderBottomRightRadius: '38%' }}>
@@ -134,6 +133,7 @@ const NotclosetoStore = () => {
           onClick={() => navigate('/stores')}>Find Other Stores</button>
       </div>
     </div>
+
   );
 }
 

@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import locationIcon from '../assets/images/location-sharp.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import axios from "axios";
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
@@ -21,10 +20,8 @@ const Stores = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const apiUrl = process.env.REACT_APP_API_URL;
   const environment = process.env.REACT_APP_ENVIRONMENT;
-  const [currentLat, setCurrentLat] = useState(null);
-  const [currentLon, setCurrentLon] = useState(null);
   const [tempShop, setTempShop] = useState('');
-  
+
   const customIcon = L.icon({
     iconUrl: locationIcon,
     iconSize: [25, 28],
@@ -71,36 +68,11 @@ const Stores = () => {
     setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842')
     setAccessToken(localStorage.getItem('accessToken'));
 
-    if (navigator.geolocation) {
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          setCurrentLat(lat);  // Update state with latitude
-          setCurrentLon(lon);  // Update state with longitudeW
-
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-
+    fetchStores();
   }, []);
-
-  useEffect(() => {
-    if (currentLon && currentLat) {
-      checkTokenExpiration();
-      fetchStores();
-    }
-  }, [currentLon, currentLat]);
 
   const fetchStores = async () => {
     try {
-
       let fetchedStores = await fetchStoresUtils();
       setFilteredShops(fetchedStores);
       setStores(fetchedStores);

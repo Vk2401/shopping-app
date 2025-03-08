@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import locationIcon from '../assets/images/location-sharp.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -10,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
 import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
 import { ReactComponent as SearchIcon } from '../assets/images/search.svg';
-import { fetchStoresUtils } from '../utils/helpers.js';
+import { fetchStoresUtils, getCurrectLocation } from '../utils/helpers.js';
 
 const Stores = () => {
   const navigate = useNavigate();
@@ -25,11 +24,7 @@ const Stores = () => {
   const [currentLat, setCurrentLat] = useState(null);
   const [currentLon, setCurrentLon] = useState(null);
   const [tempShop, setTempShop] = useState('');
-  const mapContainerStyle = {
-    width: "100%",
-    height: "100%",
-  };
-
+  
   const customIcon = L.icon({
     iconUrl: locationIcon,
     iconSize: [25, 28],
@@ -62,7 +57,7 @@ const Stores = () => {
 
     }
   };
-  
+
   const openonMap = (shopID) => {
     console.log('hgb');
     const shop = filteredShops.filter((shop) => shop.id === shopID);
@@ -74,7 +69,8 @@ const Stores = () => {
   useEffect(() => {
 
     setTempShop('11ed64c4-c893-4ef3-9930-25c9af02e842')
-    setAccessToken(sessionStorage.getItem('accessToken'));
+    setAccessToken(localStorage.getItem('accessToken'));
+
     if (navigator.geolocation) {
 
       navigator.geolocation.getCurrentPosition(
@@ -82,7 +78,7 @@ const Stores = () => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
           setCurrentLat(lat);  // Update state with latitude
-          setCurrentLon(lon);  // Update state with longitude
+          setCurrentLon(lon);  // Update state with longitudeW
 
         },
         (error) => {
@@ -104,6 +100,7 @@ const Stores = () => {
 
   const fetchStores = async () => {
     try {
+
       let fetchedStores = await fetchStoresUtils();
       setFilteredShops(fetchedStores);
       setStores(fetchedStores);
@@ -126,7 +123,7 @@ const Stores = () => {
           <UserIcon onClick={() => { navigate(`/settings`) }} className="h-10 w-10 text-buttonColor" />
         </div>
         <div className="flex-1 ">
-          {/* <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
+          <MapContainer className="rounded-lg" center={[16.893746, 77.438584]} zoom={5} style={{ height: "100%", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {stores.map((store) => (
               <Marker key={store.id} position={[store.location.lat, store.location.lon]} icon={customIcon} >
@@ -154,19 +151,7 @@ const Stores = () => {
                 </Popup>
               </Marker>
             ))}
-          </MapContainer> */}
-
-<GoogleMap mapContainerStyle={mapContainerStyle} zoom={5} center={[16.893746, 77.438584]}>
-      {stores.map((store) => (
-        <Marker
-          key={store.id}
-          position={{ lat: parseFloat(store.location.lat), lng: parseFloat(store.location.lon) }}
-          onClick={() => window.open(`https://www.google.com/maps?q=${store.location.lat},${store.location.lon}`, "_blank")}
-        />
-      ))}
-    </GoogleMap>
-
-
+          </MapContainer>
         </div>
       </div>
 
@@ -182,9 +167,9 @@ const Stores = () => {
                 type="text"
                 placeholder="Search"
                 onChange={handleSearchChange}
-                className="w-full font-semibold py-3 px-5 border-2  border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full font-semibold py-3 px-5 border-2  border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-buttonColor transition-all"
               />
-              <SearchIcon onClick={() => navigate(`/settings`)} className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
+              <SearchIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
             </div>
           </div>
         </div>
@@ -195,7 +180,7 @@ const Stores = () => {
               <div className="loader border-t-4 border-buttonColor rounded-full w-12 h-12 animate-spin"></div>
             </div>
           ) : (
-            stores.map((shop,index) => {
+            stores.map((shop, index) => {
               return (
                 <div key={index} onClick={() => { openonMap(shop.id) }} className="bg-gray-100 rounded-lg px-4 py-2 flex justify-between items-center border-b mt-2">
                   <div className="flex gap-2 items-center">

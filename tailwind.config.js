@@ -7,7 +7,7 @@ module.exports = {
     extend: {
       colors: {
         customGreen: "#459132", 
-        buttonColor:'#61AD4E',
+        buttonColor:'#000',
         redColor:'#FF2A2A',
         lightBlack:'#666666',
         lightWhite:'#FFFFFF',

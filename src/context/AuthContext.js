@@ -19,15 +19,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("refreshToken", refreshToken);
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem("tokenExpiry", new Date(expiresAt).getTime()); // Convert to timestamp
-
+    console.log('accessToken');
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setIsAuthenticated(true);
   };
 
-  const storeLatestLocation = (location) => {
-    localStorage.setItem('lastLocation', location);
-  }
+
 
   // Function to refresh access token
   const refreshAccessToken = useCallback(async () => {
@@ -93,6 +91,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("tokenExpiry");
     localStorage.removeItem("user");
     localStorage.removeItem('lastLocation');
+    localStorage.removeItem('refreshTokenExpireAt');
+    localStorage.removeItem('currence');
+    localStorage.removeItem('cart');
+    localStorage.removeItem('total');
+    localStorage.removeItem('storeID');
+    localStorage.removeItem('orderReferance');
+ 
     setIsAuthenticated(false);
   };
 
@@ -110,7 +115,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logout, accessToken, refreshAccessToken, storeTokens, storeLatestLocation, checkTokenExpiration }}>
+    <AuthContext.Provider value={{ isAuthenticated, logout, accessToken, refreshAccessToken, storeTokens, checkTokenExpiration }}>
       {children}
     </AuthContext.Provider>
   );

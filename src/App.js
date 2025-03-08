@@ -88,7 +88,6 @@ function App() {
           <Route path="/settings" element={<SettingScreen />} />
           <Route path="/history" element={<HistoryScreen />} />
           <Route path="/home" element={<HomeScreen />} />
-
           <Route path="/error" element={<Error_page />} />
         </Route>
 

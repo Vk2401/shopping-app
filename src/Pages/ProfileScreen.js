@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Userpic from '../assets/images/Userpic.png';
-import editIcon from '../assets/images/editIcon.png';
-import leftArrow from '../assets/images/leftArrow.png';
+import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
+import { ReactComponent as EditIcon } from '../assets/images/edit.svg';
 import { useAuth } from "../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const ProfileScreen = () => {
   return (
     <div className="px-6 font-poppins h-screen">
       <div className="flex items-center justify-between h-16">
-        <img src={leftArrow} alt="" className="h-8 w-8" onClick={() => { navigate(`/settings`) }} />
+        <LeftArrow onClick={() => { navigate(`/settings`) }} className="h-8 w-8" />
         <h1 className="text-black font-bold text-xl">Profile</h1>
         <img src={''} alt="" />
       </div>
@@ -30,7 +30,7 @@ const ProfileScreen = () => {
         <div className="flex flex-col items-center justify-center gap-3 py-5 w-full rounded-md">
           <div className="flex items-center justify-center relative">
             <img src={Userpic} alt="" className="rounded-full" />
-            <img src={editIcon} alt="" className="h-9 w-9 absolute right-1 bottom-2" />
+            <EditIcon onClick={() => { navigate(`/settings`) }} className="h-9 w-9 absolute right-1 bottom-2" />
           </div>
 
           <div className="flex items-center justify-between w-full mt-6">

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import arrow from '../assets/images/arrow-circle-left_solid.png';
-import Userpic from '../assets/images/Userpic.png';
 import { ReactComponent as LeftArrow } from "../assets/images/arrow-circle-left_solid.svg"
 import { ReactComponent as UserIcon } from '../assets/images/awesome-user.svg';
 import door from '../assets/images/no-door.png';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.js";
+import loginUserIMG from '../assets/images/loginUser.png';
 import axios from "axios";
 
 const SettingScreen = () => {
@@ -34,11 +33,7 @@ const SettingScreen = () => {
             if (orderReference != null) {
                 userLogout(orderReference);
             }
-            localStorage.removeItem('cart');
-            localStorage.removeItem('total');
-            localStorage.removeItem('storeID');
-            localStorage.removeItem('orderReferance');
-
+   
             logout();
             navigate('/');
         }
@@ -63,7 +58,7 @@ const SettingScreen = () => {
                 <div className="flex flex-col justify-around h-full">
                     <div className="flex flex-col">
                         <div className="flex flex-col items-center justify-center gap-3 py-5 bg-ligghtGray rounded-md">
-                            <img src={Userpic} alt="" className="rounded-full" />
+                            <img src={loginUserIMG} alt="" className="rounded-full h-40 w-40" />
                             <strong className="text-2xl ">{user.login_name}</strong>
                         </div>
 

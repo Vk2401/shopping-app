@@ -5,8 +5,37 @@ const apiUrl = process.env.REACT_APP_API_URL
 const environment = process.env.REACT_APP_ENVIRONMENT
 
 let currentLocation = {
-  currentLatitude: '',
-  currentLongitude: '',
+  latitude: 0,
+  longitude: 0
+}
+
+export const getCurrectLocation = async () => {
+
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      // Use watchPosition for quicker updates
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const curentLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+
+          resolve(curentLocation);
+
+          // Stop watching after getting the location
+          navigator.geolocation.clearWatch(watchId);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          reject(error);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } // Optimized options
+      );
+    } else {
+      reject("Geolocation is not supported by this browser.");
+    }
+  });
 };
 
 export const updateDicsountProductInCart = (newProduct, action, setProducts, setTotalPrice) => {
@@ -307,14 +336,15 @@ export const changeProductQuantity = (fetchedProducts) => {
   return fetchedProducts;
 }
 
-const sortStoresByDistance = (storesData, currentLat, currentLon) => {
+const sortStoresByDistance = (storesData, location) => {
   // First, calculate the distance for each store
+
   const storesWithDistance = storesData.map((store) => {
     const lat = parseFloat(store.location.lat);
     const lon = parseFloat(store.location.lon);
 
     // Calculate the distance between current location and the store's location
-    const distanceInKm = calculateDistance(currentLat, currentLon, lat, lon);
+    const distanceInKm = calculateDistance(location.latitude, location.longitude, lat, lon);
     const formattedDistance = formatDistance(distanceInKm);  // format the distance (e.g., 2.3 km)
 
     // Add the distance to the store object
@@ -322,6 +352,7 @@ const sortStoresByDistance = (storesData, currentLat, currentLon) => {
   });
 
   // Then, sort the stores based on the distanceInKm (which is the raw distance)
+
   storesWithDistance.sort((a, b) => a.distanceInKm - b.distanceInKm);  // Sorting by distance in ascending order
 
   // After sorting, return the stores with the calculated distance
@@ -350,20 +381,28 @@ function formatDistance(distanceInMeters) {
     : `${Math.round(distanceInMeters)} m`;
 }
 
-export const getCurrectLocation = () => {
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      currentLocation.currentLatitude = latitude;
-      currentLocation.currentLongitude = longitude;
-    },
-    (err) => {
-      if (err.code === err.PERMISSION_DENIED) {
-      }
-    }
-  );
-};
+// export const getCurrectLocation = async () => {
+//   return new Promise((resolve, reject) => {
+//     if (navigator.geolocation) {
+//       navigator.geolocation.getCurrentPosition(
+//         (position) => {
+//           const curentLocation = {
+//             latitude: position.coords.latitude,
+//             longitude: position.coords.longitude, // Fix typo from "laontitude"
+//           };
+//           console.log("Fetched Location:", curentLocation);
+//           resolve(curentLocation); // Return the fetched location
+//         },
+//         (error) => {
+//           console.error("Error getting location:", error);
+//           reject(error);
+//         }
+//       );
+//     } else {
+//       reject("Geolocation is not supported by this browser.");
+//     }
+//   });
+// };
 
 export const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const toRadians = (deg) => (deg * Math.PI) / 180;
@@ -388,7 +427,6 @@ export const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 1
     if (!storeLat || !storeLon) return false;
 
     const distance = haversineDistance(currentLat, currentLon, storeLat, storeLon);
-    console.log(maxDistance);
     return distance <= maxDistance;
   });
 
@@ -396,9 +434,9 @@ export const findNearbyStores = (currentLat, currentLon, stores, maxDistance = 1
 };
 
 export const fetchStoresUtils = async () => {
-  getCurrectLocation();
-  const aToken = sessionStorage.getItem('accessToken');
-
+  // {latitude: 13.0220032, longitude: 80.2422784}
+  let location = await getCurrectLocation();
+  const aToken = localStorage.getItem('accessToken');
   const response = await axios.get(`${apiUrl}/shops/getshops?limit=50&page=1`, {
     headers: {
       'Authorization': `Bearer ${aToken}`,
@@ -408,13 +446,14 @@ export const fetchStoresUtils = async () => {
   });
 
   const allStores = response.data.data;
-  const sortedStores = sortStoresByDistance(allStores, currentLocation.currentLatitude, currentLocation.currentLongitude);
+  const sortedStores = sortStoresByDistance(allStores, location);
 
   return sortedStores;
 };
 
 export const fetchProducts = async (storeID, setLoading, setProducts, accessToken, setisProductfetched, addedProducts, refreshAccessToken) => {
   try {
+
     const response = await axios.get(
       `${apiUrl}/vms/getProducts/${storeID}`,
       {
@@ -468,7 +507,6 @@ export const fetchProducts = async (storeID, setLoading, setProducts, accessToke
 
 export const fetchCurrence = async (storeID, setCurrence, refreshAccessToken) => {
   let accessToken = localStorage.getItem('accessToken');
-
   try {
     // Make the API request to fetch currency data
     const corrence = await axios.get(`${apiUrl}/settings/${storeID}/preferences`, {
@@ -496,6 +534,7 @@ export const fetchCurrence = async (storeID, setCurrence, refreshAccessToken) =>
       if (newToken) {
         fetchCurrence();
       }
+
     }
     console.error('Error fetching currency:', error);
     // Handle error (e.g., show an error message, or fallback behavior)

@@ -58,7 +58,7 @@ const ProductScreen = () => {
     setTotalCount(addedProducts.length);
     setTotalPrice(findTotal(addedProducts));
     fetchCurrence(storeID, setCurrence, refreshAccessToken);
-    fetchProducts(storeID, setLoading, setProducts, accessToken, setisProductfetched, addedProducts, refreshAccessToken);
+    fetchProducts(storeID, setLoading, setProducts, aT, setisProductfetched, addedProducts, refreshAccessToken);
   }, []);
 
   const getCurrectLocation = () => {
@@ -203,7 +203,7 @@ const ProductScreen = () => {
                   onChange={handleSearchChange}
                   className="w-full font-semibold py-3 px-5 border-2 border-buttonColor outline-none text-left rounded-full focus:ring-2 focus:ring-buttonColor transition-all"
                 />
-                <SearchIcon onClick={() => navigate(`/settings`)} className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
+                <SearchIcon  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-buttonColor" />
               </div>
             </div>
           </div>

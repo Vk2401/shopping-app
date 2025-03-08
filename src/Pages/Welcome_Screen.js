@@ -3,7 +3,9 @@ import loginUserIMG from '../assets/images/loginUser.png';
 import axios from "axios";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext.js";
-import { fetchStoresUtils } from '../utils/helpers.js';
+import { fetchStoresUtils, getCurrectLocation } from '../utils/helpers.js';
+import { a } from "framer-motion/client";
+import { distance } from "framer-motion";
 
 const Welcome_Screen = () => {
   const authAPIURL = process.env.REACT_APP_AUTH_API_URL
@@ -30,28 +32,10 @@ const Welcome_Screen = () => {
     currentLongitude: '',
   });
 
-  const getCurrectLocation = () => {
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation({
-          currentLatitude: latitude,
-          currentLongitude: longitude,
-        });
-
-      },
-      (err) => {
-        if (err.code === err.PERMISSION_DENIED) {
-        }
-      }
-    );
-  };
-
   const checkUser = async (orderRef) => {
     setIsUserLogin(true);
     try {
+
       const response = await axios.get('https://devapi-tanlux.storetech.ai/v1/bankid/collect', {
         params: { orderRef },  // Sending orderRef as a query parameter
         headers: { Accept: 'application/json' } // Required header
@@ -60,11 +44,15 @@ const Welcome_Screen = () => {
       let user = response.data;
       user = user.user;
 
+      if (user === null) {
+        setIsUserLogin(false);
+      }
+
+
       loginData.login_id = user.personalNumber;
       loginData.login_name = user.name;
       loginData.device_type = 'android';
       loginUser();
-
     } catch (err) {
       console.log(err);
     }
@@ -152,7 +140,6 @@ const Welcome_Screen = () => {
     e.preventDefault();
     const enteredOTP = otpValues.join("");
 
-
     if (enteredOTP.length !== 5) {
       setErr("Please enter the complete OTP");
       return;
@@ -166,6 +153,7 @@ const Welcome_Screen = () => {
       // const response={
       //   data:'suc'
       // };
+      setIsUserLogin(true);
 
       const response = true;
 
@@ -189,37 +177,12 @@ const Welcome_Screen = () => {
         let nearbyStores = await fetchStoresUtils();
         let nearbyStore = nearbyStores[0];
 
-        if (nearbyStore.distanceInKm <= Distance) {
+        if (nearbyStore.distanceInKm <= Number(Distance)) {
           navigate("/products", { state: { stores: nearbyStore.id } });
           localStorage.setItem('storeID', nearbyStore.id);
         } else {
           navigate('/stores');
         }
-
-        // if (nearbyStores.length > 0) {
-        //   if (nearbyStores.length > 1) {
-        //     let prevStoreID = localStorage.getItem('storeID');
-
-        //     if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
-        //       localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-        //     }
-
-        //     localStorage.setItem('storeID', nearbyStores[0].id);
-        //     navigate("/products", { state: { stores: nearbyStores[0].id } });
-        //     // navigate(`/products`);
-        //   } else {
-        //     let prevStoreID = localStorage.getItem('storeID');
-
-        //     if (prevStoreID !== null && prevStoreID !== String(nearbyStores[0].id)) {
-        //       localStorage.setItem('cart', JSON.stringify([])); // Store an empty array properly
-        //     }
-        //     localStorage.setItem('storeID', nearbyStores[0].id);
-        //     // navigate(`/products`);
-        //     navigate("/products", { state: { stores: nearbyStores[0].id } });
-        //   }
-        // } else {
-        //   navigate('/stores');
-        // }
 
       } else {
         setErr("Invalid OTP. Please try again.");
@@ -231,7 +194,7 @@ const Welcome_Screen = () => {
   };
 
   const loginUser = async () => {
-
+    setIsUserLogin(true);
     try {
       const response = await axios.post(`${authAPIURL}/auth/customer-login`, loginData, {
         headers: {
@@ -244,41 +207,38 @@ const Welcome_Screen = () => {
       const { access, refresh } = tokens;
 
       storeTokens(access.token, access.expires, refresh.token, loginData, refresh.expires);
-
       let nearbyStores = await fetchStoresUtils();
 
-      if (nearbyStores.length > 0) {
-        setIsUserLogin(false);
-        let nearbyStore = nearbyStores[0];
-
-        if (nearbyStore.distanceInKm <= Distance) {
-          navigate("/products", { state: { stores: nearbyStore.id } });
-          localStorage.setItem('storeID', nearbyStore.id);
-        } else {
-          navigate('/stores');
-        }
+      let nearbyStore = nearbyStores[0];
+      if (nearbyStore.distanceInKm <= Number(Distance)) {
+        navigate("/products", { state: { stores: nearbyStore.id } });
+        localStorage.setItem('storeID', nearbyStore.id);
       } else {
-        setIsUserLogin(false);
         navigate('/stores');
       }
+
     } catch (error) {
       console.error('Login error:', error.response?.data || error.message);
     }
+
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      checkTokenExpiration();
-      navigate('products');
-    }
+    const fetchData = async () => {
+      if (isAuthenticated) {
+        checkTokenExpiration();
+        navigate('products');
+      }
 
-    let orderRefernce = localStorage.getItem('orderReferance');
-    if (orderRefernce != null) {
-      checkUser(orderRefernce);
-    }
+      let orderRefernce = localStorage.getItem('orderReferance');
+      if (orderRefernce !== null) {
+        checkUser(orderRefernce);
+      }
+    };
 
-    getCurrectLocation();
-  }, []);
+    fetchData();
+  }, []); // Dependency array to run only once
+
 
   return (
     <div

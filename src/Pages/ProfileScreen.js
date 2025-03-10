@@ -30,7 +30,7 @@ const ProfileScreen = () => {
         <div className="flex flex-col items-center justify-center gap-3 py-5 w-full rounded-md">
           <div className="flex items-center justify-center relative">
             <img src={Userpic} alt="" className="rounded-full" />
-            <EditIcon onClick={() => { navigate(`/settings`) }} className="h-9 w-9 absolute right-1 bottom-2" />
+            <EditIcon   className="h-9 w-9 absolute right-1 bottom-2" />
           </div>
 
           <div className="flex items-center justify-between w-full mt-6">

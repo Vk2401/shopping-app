@@ -21,6 +21,7 @@ const Stores = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const environment = process.env.REACT_APP_ENVIRONMENT;
   const [tempShop, setTempShop] = useState('');
+  const [tempStores,setTeampstores]=useState([]);
 
   const customIcon = L.icon({
     iconUrl: locationIcon,
@@ -35,30 +36,30 @@ const Stores = () => {
   };
 
   const handleSearchChange = async (e) => {
+
     setLoading(true);
     try {
       const query = e.target.value.toLowerCase();
+
       if (query === '') {
-        await fetchStores(); // Ensure fetchStores is awaited
+        await fetchStores();
         return;
       }
-      const filtered = stores.filter(store =>
+
+      const filtered = tempStores.filter(store =>
         store.name.toLowerCase().includes(query)
       );
+
       setLoading(false);
       setStores(filtered);
-      setFilteredShops(filtered);
+
     } catch (error) {
       console.error("Error in handleSearchChange:", error);
-    } finally {
-
     }
   };
 
   const openonMap = (shopID) => {
-    console.log('hgb');
     const shop = filteredShops.filter((shop) => shop.id === shopID);
-    console.log(filteredShops);
     const { lat, lon } = shop[0].location;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
   }
@@ -76,6 +77,7 @@ const Stores = () => {
       let fetchedStores = await fetchStoresUtils();
       setFilteredShops(fetchedStores);
       setStores(fetchedStores);
+      setTeampstores(fetchedStores);
     } catch (error) {
       console.error("Error fetching stores:", error);
       setShops([]);
@@ -87,7 +89,6 @@ const Stores = () => {
 
   return (
     <div className="h-screen font-poppins">
-
       <div className="flex flex-col px-7 h-1/2">
         <div className="flex items-center justify-between h-20">
           <LeftArrow onClick={() => { navigate("/products", { state: { stores: stores[0].id } }); }} className="h-10 w-10 text-buttonColor" />

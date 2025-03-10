@@ -19,7 +19,7 @@ const History = () => {
     return (
         <div className="flex flex-col px-6 h-screen font-poppins">
             <div className="flex items-center justify-between py-8">
-                <LeftArrow onClick={() => navigate(`/stores`)} className="h-10 w-10 text-buttonColor" />
+                <LeftArrow onClick={() => navigate(`/settings`)} className="h-10 w-10 text-buttonColor" />
                 <strong className="font-bold text-2xl">History</strong>
                 <CloseIcon onClick={() => { navigate('/products') }} className="h-10 w-10 text-buttonColor" />
             </div>
